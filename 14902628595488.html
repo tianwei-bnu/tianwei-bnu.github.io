@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Deep Learning - 公子天的博客
+  Gensim进阶教程：训练word2vec与doc2vec模型 - 公子天的博客
   
   </title>
   
@@ -96,114 +96,145 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="14902534668711.html">
-                
-                  <h1>Deep Learning读书笔记（二）：线性代数</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">基本术语</h2>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Gensim进阶教程：训练word2vec与doc2vec模型</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/3/23</span>
 
-<ul>
-<li>Scalars：标量。通常是一个实数。</li>
-<li>Vectors：向量。由一组标量组成的一维有序数组；若无特殊说明通常是指列向量。通过下标索引可以找到其对应的元素。对应的几何意义是笛卡尔空间的一个点。</li>
-<li>Matrices：矩阵（特指二维矩阵）。由一组标量组成的二维数组。</li>
-<li>Tensors：张量。一个高维矩阵（\(D \geq 3\)）</li>
-</ul>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Tech.html'>技术</a></span>
+           
+         
+          <span class="comments">
+            
 
+            
+          </span>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902534668711.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+        </div>
+      </div><!-- article -->
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
+      <div class="article-content">
+      <p>本篇博客是Gensim的进阶教程，主要介绍用于词向量建模的word2vec模型和用于长文本向量建模的doc2vec模型在Gensim中的实现。</p>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_0">Word2vec</h2>
+
+<p>在Gensim中实现word2vec模型非常简单。首先，我们需要将原始的训练语料转化成一个sentence的迭代器；每一次迭代返回的sentence是一个word（utf8格式）的列表：</p>
+
+<pre><code class="language-python">class MySentences(object):
+    def __init__(self, dirname):
+        self.dirname = dirname
+
+    def __iter__(self):
+        for fname in os.listdir(self.dirname):
+            for line in open(os.path.join(self.dirname, fname)):
+                yield line.split()
+
+sentences = MySentences(&#39;/some/directory&#39;) # a memory-friendly iterator
+</code></pre>
+
+<p>接下来，我们用这个迭代器作为输入，构造一个Gensim内建的word2vec模型的对象（即将原始的one-hot向量转化为word2vec向量）：</p>
+
+<pre><code class="language-python">model = gensim.models.Word2Vec(sentences)
+</code></pre>
+
+<p>如此，便完成了一个word2vec模型的训练。</p>
+
+<p>我们也可以指定模型训练的参数，例如采用的模型（Skip-gram或是CBoW）；负采样的个数；embedding向量的维度等。具体的参数列表在<a href="http://radimrehurek.com/gensim/models/word2vec.html#gensim.models.word2vec.Word2Vec">这里</a></p>
+
+<p>同样，我们也可以通过调用<code>save()</code>和<code>load()</code>方法完成word2vec模型的持久化。此外，word2vec对象也支持原始bin文件格式的读写。</p>
+
+<p>Word2vec对象还支持online learning。我们可以将更多的训练数据传递给一个已经训练好的word2vec对象，继续更新模型的参数：</p>
+
+<pre><code class="language-python">model = gensim.models.Word2Vec.load(&#39;/tmp/mymodel&#39;)
+model.train(more_sentences)
+</code></pre>
+
+<p>若要查看某一个word对应的word2vec向量，可以将这个word作为索引传递给训练好的模型对象：</p>
+
+<pre><code class="language-python">model[&#39;computer&#39;]  # raw NumPy vector of a word
+</code></pre>
+
+<h2 id="toc_1">Doc2vec</h2>
+
+<p>Doc2vec是Mikolov在word2vec基础上提出的另一个用于计算长文本向量的工具。它的工作原理与word2vec极为相似——只是将长文本作为一个特殊的token id引入训练语料中。在Gensim中，doc2vec也是继承于word2vec的一个子类。因此，无论是API的参数接口还是调用文本向量的方式，doc2vec与word2vec都极为相似。</p>
+
+<p>主要的区别是在对输入数据的预处理上。Doc2vec接受一个由LabeledSentence对象组成的迭代器作为其构造函数的输入参数。其中，LabeledSentence是Gensim内建的一个类，它接受两个List作为其初始化的参数：word list和label list。</p>
+
+<pre><code class="language-python">from gensim.models.doc2vec import LabeledSentence
+sentence = LabeledSentence(words=[u&#39;some&#39;, u&#39;words&#39;, u&#39;here&#39;], labels=[u&#39;SENT_1&#39;])
+</code></pre>
+
+<p>类似地，可以构造一个迭代器对象，将原始的训练数据文本转化成LabeledSentence对象：</p>
+
+<pre><code class="language-python">class LabeledLineSentence(object):
+    def __init__(self, filename):
+        self.filename = filename
         
-			<div class="article">
-                <a class="clearlink" href="14902533416687.html">
-                
-                  <h1>Deep Learning读书笔记（一）：导论</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">什么是深度学习</h2>
+    def __iter__(self):
+        for uid, line in enumerate(open(filename)):
+            yield LabeledSentence(words=line.split(), labels=[&#39;SENT_%s&#39; % uid])
+</code></pre>
 
-<ul>
-<li><p>背景：两类AI任务</p>
+<p>准备好训练数据，模型的训练便只是一行命令：</p>
 
-<ul>
-<li>Formal Task：易于抽象和描述成计算机所能理解的表达，也因此在AI发展的早期就得到了很好的解决（例如国际象棋）</li>
-<li>Intuitive Task：依赖于人类的主观直觉，难于用计算机语言进行规范性描述的任务（例如语音和图像的识别）</li>
-</ul>
+<pre><code class="language-python">from gensim.models import Doc2Vec
+model = Doc2Vec(dm=1, size=100, window=5, negative=5, hs=0, min_count=2, workers=4)
+</code></pre>
+
+<p>该代码将同时训练word和sentence label的语义向量。如果我们只想训练label向量，可以传入参数<code>train_words=False</code>以固定词向量参数。更多参数的含义可以参见这里的<a href="http://radimrehurek.com/gensim/models/doc2vec.html">API文档</a>。</p>
+
+<p>注意，在目前版本的doc2vec实现中，每一个Sentence vector都是常驻内存的。因此，模型训练所需的内存大小同训练语料的大小正相关。</p>
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902533416687.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+    
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="14902633244327.html" 
+          title="Previous Post: 恋在Sri Lanka">&laquo; 恋在Sri Lanka</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="14902627439324.html" 
+          title="Next Post: Gensim入门教程">Gensim入门教程 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

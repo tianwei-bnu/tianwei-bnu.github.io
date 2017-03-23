@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Deep Learning - 公子天的博客
+  特征选择中的常用指标 - 公子天的博客
   
   </title>
   
@@ -96,114 +96,100 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="14902534668711.html">
-                
-                  <h1>Deep Learning读书笔记（二）：线性代数</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">基本术语</h2>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>特征选择中的常用指标</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/3/23</span>
 
-<ul>
-<li>Scalars：标量。通常是一个实数。</li>
-<li>Vectors：向量。由一组标量组成的一维有序数组；若无特殊说明通常是指列向量。通过下标索引可以找到其对应的元素。对应的几何意义是笛卡尔空间的一个点。</li>
-<li>Matrices：矩阵（特指二维矩阵）。由一组标量组成的二维数组。</li>
-<li>Tensors：张量。一个高维矩阵（\(D \geq 3\)）</li>
-</ul>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Tech.html'>技术</a></span>
+           
+         
+          <span class="comments">
+            
 
+            
+          </span>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902534668711.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+        </div>
+      </div><!-- article -->
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="14902533416687.html">
-                
-                  <h1>Deep Learning读书笔记（一）：导论</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">什么是深度学习</h2>
+      <div class="article-content">
+      <ol>
+<li><p>信息增益（Information Gain）<br/>
+特征\(T\)为分类系统\(C\)带来的信息增益为：<br/>
+\[\begin{aligned}<br/>
+GainEntropy(T) &amp;= Entropy(C) − Entropy(C|T) \\<br/>
+&amp;= Entropy(C) − \sum_i{p(T_i)Entropy(C|T_i)} \\<br/>
+\end{aligned}\]<br/>
+其中，\(Entropy(C)\)为系统关于分类属性\(C\)的信息熵，定义了系统描述某一个分类所需要的平均信息量。计算公式为：<br/>
+\[Entropy(C) = -\sum_i{p(C_i)\log_2{p(C_i)}}\]<br/>
+\(Entropy(C|T_i )\)为固定特征\(T=T_i\)下系统关于分类属性\(C\)的条件信息熵，计算公式为：<br/>
+\[Entropy(C|T_i) = -\sum_j{p(C_j|T_i)\log_2{p(C_j|T_i)}}\]</p>
 
-<ul>
-<li><p>背景：两类AI任务</p>
-
-<ul>
-<li>Formal Task：易于抽象和描述成计算机所能理解的表达，也因此在AI发展的早期就得到了很好的解决（例如国际象棋）</li>
-<li>Intuitive Task：依赖于人类的主观直觉，难于用计算机语言进行规范性描述的任务（例如语音和图像的识别）</li>
-</ul>
+<span id="more"></span><!-- more --></li>
+<li><p>信息增益率（Information Gain Ratio）<br/>
+特征\(T\)的信息增益是与特征\(T\)的取值个数有着密切联系的。一般来说，特征的取值个数越多，信息增益往往也会越大（极端的例子如用户ID特征）。为了避免这种特征取值个数的不同对特征选择时泛化能力的影响，考虑对信息增益进行一定程度的归一化。这就是信息增益率。<br/>
+\[GainEntropyRatio(T)=\frac{GainEntropy(T)}{SplitInformation(T)}\]<br/>
+其中，\(SplitInformation(T)\)为系统关于特征\(T\)的信息熵：<br/>
+\[SplitInformation(T) = Entropy(T) = -\sum_i{p(T_i)\log_2{p(T_i)}}\]<br/>
+也就是说，系统描述一个特征所需的信息量越大（表现为特征的分布越分散越平均），这个特征的泛化能力被认为越弱，也就不适合作为模型的特征被选择进来。</p></li>
+<li><p>基尼系数（Gini coefficient）<br/>
+我们定义一个\(K\)分类系统\(C\)的基尼系数为：<br/>
+\[Gini(C) = \sum_{i=1}^K{p(C_i)(1-p(C_i))} = 1 - \sum_{i=1}^K{p^2(C_i)}\]<br/>
+类似信息熵，基尼系数衡量了一个系统的不确定性。高基尼系数意味着一个不确定性高的系统：更加分散和平均的类别分布，和更高的信息量需求（来确定某一个类别）。<br/>
+我们可以类似的定义基尼系数增益来进行特征选择：<br/>
+\[GainGini(T) = Gini(C) - \sum_i{p(T_i)Gini(C|T_i)}\]<br/>
+也可以从基尼系数出发定义基尼系数增益率。这里不再赘述。</p></li>
+</ol>
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902533416687.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+    
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="14902627439324.html" 
+          title="Previous Post: Gensim入门教程">&laquo; Gensim入门教程</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="14902607196341.html" 
+          title="Next Post: iTerms2结合Expect实现SSH自动登录">iTerms2结合Expect实现SSH自动登录 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

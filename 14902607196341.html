@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Deep Learning - 公子天的博客
+  iTerms2结合Expect实现SSH自动登录 - 公子天的博客
   
   </title>
   
@@ -96,114 +96,130 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="14902534668711.html">
-                
-                  <h1>Deep Learning读书笔记（二）：线性代数</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">基本术语</h2>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>iTerms2结合Expect实现SSH自动登录</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/3/23</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Tools.html'>工具</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <p>iTerm2是Mac上一款十分强大的终端，然而与Windows上常用的SecureCRT或是XShell相比，iTerm2本身无法记录SSH登录名和密码，在实际使用中颇有不便。不过我们可以在iTerm2的Profiles中结合Expect脚本实现类似的功能。</p>
+
+<span id="more"></span><!-- more -->
 
 <ul>
-<li>Scalars：标量。通常是一个实数。</li>
-<li>Vectors：向量。由一组标量组成的一维有序数组；若无特殊说明通常是指列向量。通过下标索引可以找到其对应的元素。对应的几何意义是笛卡尔空间的一个点。</li>
-<li>Matrices：矩阵（特指二维矩阵）。由一组标量组成的二维数组。</li>
-<li>Tensors：张量。一个高维矩阵（\(D \geq 3\)）</li>
+<li><p>（预备工作）配置ssh config实现跳板机自动登录<br/>
+由于公司的限制，必须通过跳板机才能登录上内部的开发机。而我们公司跳板机的密码又是PIN＋动态TOKEN的形式，因此只能通过共享SSH渠道来实现免密登录：</p>
+
+<ol>
+<li>打开<code>.ssh/config</code>文件（若不存在则新建一个）</li>
+<li><p>配置SSH渠道共享：</p>
+
+<pre><code class="language-bash">Host *
+ControlMaster Auto
+ControlPath ~/.ssh/%h-%p-%r
+ControlPersist yes
+Host baidu
+hostname 跳板机
+user username
+</code></pre></li>
+</ol>
+
+<p>这样，在首次执行<code>ssh baidu</code>并输入PIN＋TOKEN后，我们就可以通过同一个命令随时免密登录跳板机。</p></li>
 </ul>
 
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902534668711.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="14902533416687.html">
-                
-                  <h1>Deep Learning读书笔记（一）：导论</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">什么是深度学习</h2>
-
 <ul>
-<li><p>背景：两类AI任务</p>
+<li><p>配置Expect脚本实现SSH免密登录<br/>
+实现免密登录跳板机后，我们可以通过一个Expect脚本实现SSH免密登录（由于跳板机上无法保存文件，因此无法通过配置秘钥来实现这一功能）：</p>
 
-<ul>
-<li>Formal Task：易于抽象和描述成计算机所能理解的表达，也因此在AI发展的早期就得到了很好的解决（例如国际象棋）</li>
-<li>Intuitive Task：依赖于人类的主观直觉，难于用计算机语言进行规范性描述的任务（例如语音和图像的识别）</li>
+<pre><code>#!/usr/bin/expect
+# 参数1: username; 参数2：远程host；参数3：远程password
+if { $argc != 3 } {
+    send_user &quot;Usage: user host password\n&quot;
+    exit
+}
+
+set user [lindex $argv 0]
+set host [lindex $argv 1]
+set pw [lindex $argv 2]
+
+# 登录跳板机
+catch {spawn ssh xxx}
+
+# 登录远程机器
+expect &quot;*ogin:*&quot; { send &quot;ssh -l $user $host\r&quot; }
+expect &quot;*assword:*&quot; { send &quot;$pw\r&quot;}
+
+interact
+</code></pre>
+
+<p>该脚本接收三个参数：用户名，主机名，和登录密码。<br/>
+将该脚本命名为login.exp，并保存在系统的PATH路径下（比如<code>/usr/local/bin/</code>路径）<br/>
+然后，在iTerm2的Profiles中配置登录时的脚本命令：<br/>
+<img src="http://on8zjjnhp.bkt.clouddn.com/14902624504403.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p></li>
 </ul>
 
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902533416687.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
+<p>使用时，首先调用<code>ssh baidu</code>并输入PIN＋TOKEN后，即可通过Profiles免密登录内网的开发机。</p>
 
 
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="14902626300821.html" 
+          title="Previous Post: 特征选择中的常用指标">&laquo; 特征选择中的常用指标</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="14902606130831.html" 
+          title="Next Post: 用Docker部署Jupyter Notebook">用Docker部署Jupyter Notebook &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

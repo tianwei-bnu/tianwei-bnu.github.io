@@ -1,0 +1,413 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  AlphaGo原理解读（Mastering the game of Go with deep neural networks and tree search) - 公子天的博客
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="公子天的博客" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:tianwei.github.io ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="http://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 公子天的博客</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+       
+       <li><a href="index.html">HOME</a></li>
+    <li><a href="archives.html">Archives</a></li>
+    <li><a href="about.html">ABOUT</a></li>
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="Reading.html">读书</a></li>
+        
+            <li><a href="Tech.html">技术</a></li>
+        
+            <li><a href="Tools.html">工具</a></li>
+        
+            <li><a href="Life.html">生活</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>AlphaGo原理解读（Mastering the game of Go with deep neural networks and tree search)</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/3/23</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='papers.html'>论文</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h2 id="toc_0">背景：完全信息博弈与MCTS算法</h2>
+
+<p>要完全弄清AlphaGo背后的原理，首先需要了解一下AI在博弈游戏中常用到的蒙特卡洛树搜索算法——MCTS。</p>
+
+<p>在一个完全信息下的博弈游戏中，如果所有参与者都采取最优策略，那么对于游戏中的任意一个局面\(s\)，总有一个确定性的估值函数\(v^*(s)\)可以直接计算出最终的博弈结果。理论上，我们可以通过构建一棵博弈树，递归地求解出\(v^*(s)\)。这就是<a href="https://en.wikipedia.org/wiki/Minimax">Minimax</a>算法。然而在有些问题中，这棵搜索树往往十分巨大（例如在围棋游戏中达到了\(250^{150}\)的搜索空间），以至于穷举的算法并不可行。</p>
+
+<span id="more"></span><!-- more -->
+
+<p>有两种策略可以有效地降低搜索空间的复杂度：1. 通过一个evalutaion function对当前局面进行价值的评估以降低搜索的深度；2. 剪枝以降低搜索的宽度。然而，这些策略都需要引入一些先验的知识。</p>
+
+<p>于是，人们提出了蒙特卡洛树搜索（MCTS）算法。MCTS是一类通用博弈算法——理论上，它不需要任何有关博弈的先验知识。</p>
+
+<p>想象一下，你站在一堆老虎机面前，每一台老虎机的reward都服从一个随机的概率分布。然而，一开始，你对这些概率分布一无所知。你的目标是寻找一种玩老虎机的策略，使得在整个游戏的过程中你能获得尽可能多的reward。很明显，你的策略需要能够在尝试尽可能多的老虎机（explore）与选择已知回报最多的老虎机（exploit）之间寻求一种平衡。</p>
+
+<p>一种叫做<em>UCB1</em>的策略可以满足这种需求。该策略为每台老虎机构造了一个关于reward的置信区间：<br/>
+\[x_i\pm\sqrt{\frac{2\ln{n}}{n_i}}\]<br/>
+其中，\(x_i\)是对第\(i\)台老虎机统计出来的平均回报；\(n\)是试验的总次数；\(n_i\)是在第\(i\)台老虎机上试验的次数。你要做的，就是在每一轮试验中，选择置信上限最大对应的那台老虎机。显然，这个策略平衡了explore与exploit。你的每一次试验，都会使被选中的那台老虎机的置信区间变窄，而使其他未被选中的老虎机的置信区别变宽——变相提升了这些老虎机在下一轮试验中被选中的概率。</p>
+
+<p>蒙特卡洛树搜索（MCTS）就是在UCB1基础上发展出来的一种解决多轮序贯博弈问题的策略。它包含四个步骤：<br/>
+1. Selection。从根节点状态出发，迭代地使用UCB1算法选择最优策略，直到碰到一个叶子节点。叶子节点是搜索树中存在至少一个子节点从未被访问过的状态节点。<br/>
+2. Expansion。对叶子节点进行扩展。选择其一个从未访问过的子节点加入当前的搜索树。<br/>
+3. Simulation。从2中的新节点出发，进行Monto Carlo模拟，直到博弈结束。<br/>
+4. Back-propagation。更新博弈树中所有节点的状态。进入下一轮的选择和模拟。</p>
+
+<p>可以看出，通过Selection步骤，MCTS算法降低了搜索的宽度；而通过Simulation步骤，MCTS算法又进一步降低了搜索的深度。因此，MCTS算法是一类极为高效地解决复杂博弈问题的搜索策略。</p>
+
+<p>关于MCTS算法更多详细的介绍，可参见博客：<a href="http://jeffbradberry.com/posts/2015/09/intro-to-monte-carlo-tree-search/">Introduction to Monte Carlo Tree Search</a></p>
+
+<h2 id="toc_1">AlphaGo的基本原理</h2>
+
+<p>围棋是一类完全信息的博弈游戏。然而，其庞大的搜索空间，以及局面棋势的复杂度，使得传统的剪枝搜索算法在围棋面前都望而却步。在AlphaGo出现之前，MCTS算法算是一类比较有效的算法。它通过重复性地模拟两个players的对弈结果，给出对局面\(s\)的一个估值\(v(s)\)（Monte Carlo rollouts）；并选择估值最高的子节点作为当前的策略（policy）。基于MCTS的围棋博弈程序已经达到了业余爱好者的水平。</p>
+
+<p>然而，传统的MCTS算法的局限性在于，它的估值函数或是策略函数都是一些局面特征的浅层组合，往往很难对一个棋局有一个较为精准的判断。为此，AlphaGo的作者训练了两个卷积神经网络来帮助MCTS算法制定策略：用于评估局面的value network，和用于决策的policy network。（后面会看到，这两个网络的主要区别是在输出层：前者是一个标量；后者则对应着棋盘上的一个概率分布。）</p>
+
+<p>首先，Huang等人利用人类之间的博弈数据训练了两个有监督学习的policy network：\(p_\sigma\)（SL policy network）和\(p_\pi\)（fast rollout policy network）。后者用于在MCTS的rollouts中快速地选择策略。接下来，他们在\(p_\sigma\)的基础上通过自我对弈训练了一个强化学习版本的policy network：\(p_\rho\)（RL policy network）。与用于预测人类行为的\(p_\sigma\)不同，\(p_\rho\)的训练目标被设定为最大化博弈收益（即赢棋）所对应的策略。最后，在自我对弈生成的数据集上，Huang等人又训练了一个value network：\(v_\theta\)，用于对当前棋局的赢家做一个快速的预估。</p>
+
+<p><img src="http://on8zjjnhp.bkt.clouddn.com/14902596804531.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>因此，用一句话简单概括一下AlphaGo的基本原理：在MCTS的框架下引入两个卷积神经网络policy network和value network以改进纯随机的Monte Carlo模拟，并借助supervised learning和reinforcement learning训练这两个网络。</p>
+
+<p>接下来将对AlphaGo的细节进行展开讨论。</p>
+
+<h3 id="toc_2">有监督学习的Policy Networks</h3>
+
+<p>Huang等人首先训练了一个有监督的Policy Network用来模拟人类专家的走子。SL policy network是一个卷积神经网络；其输出层是一个Softmax分类器，用来计算在给定的棋面状态\(s\)下每一个位置的落子概率\(p_\sigma(a|s)\)。对一个棋面状态\(s\)的描述如下：<br/>
+<img src="http://on8zjjnhp.bkt.clouddn.com/14902599201040.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/><br/>
+（这里的Features对应着卷积神经网络里的Channels。）</p>
+
+<p>经过人类高手三千万步围棋走法的训练后，SL policy network模拟人类落子的准确率已经达到了57%；相应地，网络的棋力也得到大大的提升。但是，如果直接用这个网络与人类高手，甚至是MCTS的博弈程序进行对弈，依然是输面居多。而且，这个网络的走子太慢了！平均每步\(3ms\)的响应时间，使得这个网络很难被直接用于MCTS的rollout中进行策略的随机。因此，Huang等人通过提取一些pattern features又训练了一个更快速（响应时间达到了\(2\mu s\)）但准确率有所降低（24.2%）的rollout policy network： \(p_\pi\)。</p>
+
+<h3 id="toc_3">强化学习的Policy Networks</h3>
+
+<p>接下来，为了进一步提高policy network的对弈能力，Huang等人又采用一种policy gradient reinforcement learning的技术，训练了一个RL policy network：\(p_\rho\)。这个网络的结构与SL policy network的网络结构相同，依然是一个输出为给定状态下落子概率的卷积神经网络。网络的参数被初始化为\(p_\sigma\)的参数；接下来，通过不断地自我对弈（与历史版本），网络的权重向着收益最大化的方向进化。此时，网络的学习目标不再是模拟人类的走法，而是更为终极的目标：赢棋。</p>
+
+<p>具体来说，我们定义了一个reward function \(r(s_t)\)：对于非终止的时间步\(t&lt;T\)，总有\(r(s_t)=0\)。每一步的收益\(z(t)\)被定义为\(\pm r(s_T)\)：即对当前玩家而言对弈的最终结果（\(+1\)代表赢棋；\(-1\)代表输棋）。网络的权重通过随机梯度上升法进行调整：<br/>
+\[\Delta\rho\propto\frac{\partial\log{p_\rho(a_t|s_t)}}{\partial\rho}z_t\]</p>
+
+<p>通过这种方式训练出来的RL policy network，在与SL policy network对弈时已有80%的赢面。即便是与依赖Monte Carlo搜索的围棋博弈程序相比，不依赖任何搜索的RL policy network，也已经达到了85%的赢面。</p>
+
+<h3 id="toc_4">强化学习的Value Networks</h3>
+
+<p>最后，Huang等人又开始寻求一个能快速预估棋面价值（棋势）的Value Network。一个棋面的价值函数\(v^p(s)\)，被定义为在给定的一组对弈策略\(p\)的情况下，从状态\(s\)出发，最终的期望收益（也即赢棋的概率）：<br/>
+\[v^p(s)=E[z_t|s_t=s,a_{t...T}\in p]\]</p>
+
+<p>显然，理想情况下，我们想知道的是在双方均采用最优策略的条件下得到的最优期望收益\(v^*(s)\)。然而，我们并不知道什么才是最优的策略。因此，在实际应用中，Huang等人采用了目前最强的策略函数\(p_\rho\)（RL policy network ）来计算一个棋面的价值\(v^{p_\rho}(s)\)，并训练了一个value network \(v_\theta(s)\)来拟合这个价值函数：\(v_\theta(s) \approx v^{p_\rho}(s) \approx v^*(s)\)。</p>
+
+<p>Value Network的网络结构与前面的Policy Network类似，也是一个卷积神经网络，只是输出层变成了一个单神经元的标量。我们可以通过构造一组\((s,z)\)的训练数据，并用随机梯度下降法最小化网络的输出\(v_\theta(s)\)与目标收益\(z\)的均方差，来调整网络的参数：<br/>
+\[\Delta\theta\propto\frac{\partial{v_\theta(s)}}{\partial\theta}(z-v_\theta(s))\]</p>
+
+<p>在构造训练数据时有一些技巧。如果我们从人类对弈的完整棋局中抽取足够数量的训练数据，很容易出现过拟合的问题。这是因为，在同一轮棋局中的两个棋面的相关性很强（往往只相差几个棋子）；此时，网络很容易记住这些棋面的最终结果，而对新棋面的泛化能力很弱。为了解决这个问题，Huang等人再次祭出强化学习的大杀器：通过RL policy network的自我对弈，产生了三千万个从不同棋局中提取出来的棋面－收益组合的训练数据。基于这份数据训练出来的Value Network，在对人类对弈结果的预测中，已经远远超过了使用fast rollout policy network的MCTS的准确率；即便是与使用RL policy network的MCTS相比，也已是不遑多让（而Value Network的计算效率更高）。</p>
+
+<p><img src="http://on8zjjnhp.bkt.clouddn.com/14902600204991.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<h3 id="toc_5">整合</h3>
+
+<p>到这里，我们手头上已经有一个牛逼但是巨慢的SL policy network；有一个不那么牛逼但是很快的fast policy network；有一个一心只想着如何赢棋的RL policy network；还有一个能一眼洞穿棋局的value network。那么，将这些networks放在一起互相补足，会得到什么呢？</p>
+
+<p>答案就是AlphaGo。而把这些networks整合在一起的框架，就是MCTS算法。</p>
+
+<p>与经典的MCTS算法类似，APV-MCTS（asynchronous policy and value MCTS）的每一轮模拟也包含四个步骤：<br/>
+1. Selection：APV-MCTS搜索树中的每条连边\((s,a)\)都包含三个状态：决策收益\(Q(s,a)\)，访问次数\(N(s,a)\)，和一个先验概率\(P(s,a)\)。这三个状态共同决定了对一个节点下行为的选择：<br/>
+\[a_t=\arg\max_a{(Q(s_t,a)+u(s_t,a))}\]<br/>
+其中，\(u(s,a)\propto\frac{P(s,a)}{1+N(s,a)}\)<br/>
+2. Expansion：步骤1中的selection终止于叶子节点。此时，要对叶子节点进行扩展。这里采用SL policy network \(p_\sigma\)计算出叶子节点上每个行为的概率，并作为先验概率\(P(s_L,a)\)存储下来。<br/>
+3. Evaluation。使用value network \(v_\theta(s)\)和fast rollout policy network \(p_\pi\)模拟得到的博弈结果对当前访问到的叶子节点进行估值：\[V(s_L)=(1-\lambda)v_\theta(s_L)+\lambda z_L\]<br/>
+4. Backup。更新这一轮模拟中所有访问到的路径的状态：<br/>
+\[N(s,a)=\sum_{i=1}^n{1(s,a,i)}\]<br/>
+\[Q(s,a)=\frac{1}{N(s,a)}\sum_{i=1}^n{1(s,a,i)V(s_L^i)}\]<br/>
+其中，\(n\)是模拟的总次数；\(1(s,a,i)\)标示第\(i\)轮模拟中是否经过边\((s,a)\)；\(s_L^i\)是第\(i\)轮模拟中访问到的叶子节点。</p>
+
+<p>下图展示了一轮模拟的动态过程。</p>
+
+<p><img src="http://on8zjjnhp.bkt.clouddn.com/14902600515196.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>模拟结束后，算法会选择访问次数\(N(s,a)\)最大的策略\(a\)作为当前的走子策略。</p>
+
+<p>值得注意的是，在整个模拟的过程中，我们见到了SL policy network（用于Expansion中先验概率的计算）；见到了fast rollout policy network（用于Evaluation中的快速走子）；见到了value network（用于Evaluation中对棋势的预估）。等等，RL policy network去哪了？为什么不用RL policy network替代SL policy network？明明RL policy network有着更强的棋力啊（85%的赢面）？</p>
+
+<p>这是因为，与RL policy network相比，由人类专家走法训练出来的SL policy network在策略上的多样性更强；因此更适用于MCTS中的搜索。但是，用RL policy network的自我对弈结果训练出来的value network的泛化能力就要比SL policy network训练出来的value network要强得多了。</p>
+
+<h2 id="toc_6">结语</h2>
+
+<p>回顾一下，我们发现AlphaGo本质上是CNN、RL、MCTS三者相结合的产物。其中，MCTS是AlphaGo的骨骼，支撑起了整个算法的框架；CNN是AlphaGo的眼睛和大脑，在复杂的棋局面前寻找尽可能优的策略；RL是AlphaGo的血液，源源不断地提供新鲜的训练数据。三者相辅相成，最终4:1战胜了人类围棋世界冠军李世石。其实还有很多细节我没有详细的展开，包括如何在分布式的机器上更高效地训练；如何更新MCTS中的权重等等。然而，其背后的基本原理差不多就是这些了。</p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="14902606130831.html" 
+          title="Previous Post: 用Docker部署Jupyter Notebook">&laquo; 用Docker部署Jupyter Notebook</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="14902534668711.html" 
+          title="Next Post: Deep Learning读书笔记（二）：线性代数">Deep Learning读书笔记（二）：线性代数 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>公子天的博客</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="Reading.html"><strong>读书</strong></a>
+        
+            <a href="Tech.html"><strong>技术</strong></a>
+        
+            <a href="Tools.html"><strong>工具</strong></a>
+        
+            <a href="Life.html"><strong>生活</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="14902633244327.html">恋在Sri Lanka</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14902628595488.html">Gensim进阶教程：训练word2vec与doc2vec模型</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14902627439324.html">Gensim入门教程</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14902626300821.html">特征选择中的常用指标</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14902607196341.html">iTerms2结合Expect实现SSH自动登录</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    <script src="asset/chart/all-min.js"></script><script type="text/javascript">$(function(){    var mwebii=0;    var mwebChartEleId = 'mweb-chart-ele-';    $('pre>code').each(function(){        mwebii++;        var eleiid = mwebChartEleId+mwebii;        if($(this).hasClass('language-sequence')){            var ele = $(this).addClass('nohighlight').parent();            $('<div id="'+eleiid+'"></div>').insertAfter(ele);            ele.hide();            var diagram = Diagram.parse($(this).text());            diagram.drawSVG(eleiid,{theme: 'simple'});        }else if($(this).hasClass('language-flow')){            var ele = $(this).addClass('nohighlight').parent();            $('<div id="'+eleiid+'"></div>').insertAfter(ele);            ele.hide();            var diagram = flowchart.parse($(this).text());            diagram.drawSVG(eleiid);        }    });});</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({TeX: { equationNumbers: { autoNumber: "AMS" } }});</script>
+
+
+  </body>
+</html>

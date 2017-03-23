@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Deep Learning - 公子天的博客
+  公子天的博客
   
   </title>
   
@@ -105,21 +105,14 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
-                <a class="clearlink" href="14902534668711.html">
+                <a class="clearlink" href="14902453987041.html">
                 
-                  <h1>Deep Learning读书笔记（二）：线性代数</h1>
+                  <h1>word2vec前世今生</h1>
                   <div class="a-content">
                       
                       <div class="a-content-text">
                         
-                        	<h2 id="toc_0">基本术语</h2>
-
-<ul>
-<li>Scalars：标量。通常是一个实数。</li>
-<li>Vectors：向量。由一组标量组成的一维有序数组；若无特殊说明通常是指列向量。通过下标索引可以找到其对应的元素。对应的几何意义是笛卡尔空间的一个点。</li>
-<li>Matrices：矩阵（特指二维矩阵）。由一组标量组成的二维数组。</li>
-<li>Tensors：张量。一个高维矩阵（\(D \geq 3\)）</li>
-</ul>
+                        	<p>2013年，Google开源了一款用于词向量计算的工具——word2vec，引起了工业界和学术界的关注。首先，word2vec可以在百万数量级的词典和上亿的数据集上进行高效地训练；其次，该工具得到的训练结果——词向量（word embedding），可以很好地度量词与词之间的相似性。随着深度学习（Deep Learning）在自然语言处理中应用的普及，很多人误以为word2vec是一种深度学习算法。其实word2vec算法的背后是一个浅层神经网络。另外需要强调的一点是，word2vec是一个计算word vector的开源工具。当我们在说word2vec算法或模型的时候，其实指的是其背后用于计算word vector的CBoW模型和Skip-gram模型。很多人以为word2vec指的是一个算法或模型，这也是一种谬误。接下来，本文将从统计语言模型出发，尽可能详细地介绍word2vec工具背后的算法模型的来龙去脉。</p>
 
 
                         
@@ -128,53 +121,11 @@
                 </a>
                 <div class="read-more clearfix">
                   <div class="more-left left">
-                   <a href="14902534668711.html">Read more</a>&nbsp;&nbsp; 
+                   <a href="14902453987041.html">Read more</a>&nbsp;&nbsp; 
                     <span class="date">2017/3/23</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="14902533416687.html">
-                
-                  <h1>Deep Learning读书笔记（一）：导论</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">什么是深度学习</h2>
-
-<ul>
-<li><p>背景：两类AI任务</p>
-
-<ul>
-<li>Formal Task：易于抽象和描述成计算机所能理解的表达，也因此在AI发展的早期就得到了很好的解决（例如国际象棋）</li>
-<li>Intuitive Task：依赖于人类的主观直觉，难于用计算机语言进行规范性描述的任务（例如语音和图像的识别）</li>
-</ul>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902533416687.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
+          					    <span class="posted-in"><a href='papers.html'>论文</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -193,7 +144,7 @@
 			<div class="row">
 			  <div class="large-6 columns">
 			  <p class="text-left" style="padding-top:25px;">
-			   
+			   <a href="all_1.html">&laquo; Prev Page</a>  
 			  </p>
 			  </div>
 			  <div class="large-6 columns">

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Deep Learning - 公子天的博客
+  用Docker部署Jupyter Notebook - 公子天的博客
   
   </title>
   
@@ -96,114 +96,160 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="14902534668711.html">
-                
-                  <h1>Deep Learning读书笔记（二）：线性代数</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">基本术语</h2>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>用Docker部署Jupyter Notebook</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/3/23</span>
 
-<ul>
-<li>Scalars：标量。通常是一个实数。</li>
-<li>Vectors：向量。由一组标量组成的一维有序数组；若无特殊说明通常是指列向量。通过下标索引可以找到其对应的元素。对应的几何意义是笛卡尔空间的一个点。</li>
-<li>Matrices：矩阵（特指二维矩阵）。由一组标量组成的二维数组。</li>
-<li>Tensors：张量。一个高维矩阵（\(D \geq 3\)）</li>
-</ul>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Tools.html'>工具</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <p>想在公司的服务器上搭建一套Jupyter Notebook的开发环境，这样无论走到哪里都可以打开浏览器敲代码了（有木有很屌丝）。然而公司的服务器各种不给力。于是想到了run it anywhere的Docker。</p>
+
+<span id="more"></span><!-- more -->
+
+<p>采用Docker部署Jupyter Notebook还有一个优势：一次生成镜像后，可以很方便地二次部署到其他服务器上（比如Amazon的AWS），省去了很多重复性的工作。</p>
+
+<p>由于是第一次使用Docker，踩了不少坑。所以这里记录下了Docker的一些主要使用方法。</p>
+
+<p>下面进入正题。</p>
+
+<p>首先，创建一个anaconda镜像的容器：</p>
+
+<pre><code>docker run -itd -p 8888:8888 -v /your/local/dir:/docker/dir --name anaconda continuumio/anaconda /bin/bash
+</code></pre>
+
+<p>简单解释一下这行代码：<br/>
+- <code>run</code>: 创建一个容器<br/>
+- <code>-i</code>: 打开容器的标准输入<br/>
+- <code>-t</code>: 分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上<br/>
+- <code>-d</code>: 让容器后台运行<br/>
+- <code>-p hostPort:containerPort</code>: 将本地的hostPort端口映射到容器的containerPort端口上。此处是对8888端口进行绑定（8888端口也是Jupyter Notebook的默认端口）<br/>
+- <code>-v /your/local/dir:/docker/dir</code>: 挂载一个本地目录到容器中去，以实现本地和容器的文件共享。<br/>
+- <code>--name</code>: 指定容器的名字，方便后面对容器的管理<br/>
+- <code>continuumio/anaconda</code>: 要加载的镜像仓库地址<br/>
+- <code>/bin/bash</code>: 默认容器创建完成后的执行命令。这里为了对容器进行进一步的修改，启动了bash应用。（这也是很常用的一个命令）</p>
+
+<p>如果是第一次创建，docker会首先从服务器上获取镜像（相当于执行命令：<code>docker pull continuumio/anaconda</code>）。</p>
+
+<p>创建完成后，可以用<code>docker ps</code>查看正在运行的容器（<code>docker ps -a</code>查看创建过的所有容器；<code>docker images</code>查看所有下载到本地的镜像）。</p>
+
+<p>以下是几个与容器（镜像）有关的常用命令：<br/>
+- <code>docker rm [container]</code>: 删除一个已经停止的容器<br/>
+- <code>docker rmi [image]</code>: 删除一个本地的镜像<br/>
+- <code>docker start [container]</code>: 启动一个容器<br/>
+- <code>docker stop [container]</code>: 停止一个容器<br/>
+- <code>docker inspect [container]</code>: 列出容器的相关信息<br/>
+- <code>docker attach [container]</code>: 进入一个容器</p>
+
+<p>接下来，我们将用最后一个命令进入到容器里面，并安装Google的深度学习工具包：Tensorflow。</p>
+
+<pre><code>docker attach anaconda
+</code></pre>
+
+<p>首先安装pip：</p>
+
+<pre><code>apt-get update
+apt-get install python-pip python-dev
+</code></pre>
+
+<p>用pip安装Tensorflow：</p>
+
+<pre><code>export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.9.0-cp27-none-linux_x86_64.whl
+pip install --upgrade $TF_BINARY_URL
+</code></pre>
+
+<p>你也可以继续定制属于你自己的Jupyter（<a href="https://github.com/ipython/ipython/wiki/IPython-kernels-for-other-languages">让Jupyter支持更多的语言</a>）。笔者就安装了R和Octave两种语言的kernel。</p>
+
+<p>最后，开启Notebook服务：</p>
+
+<pre><code>jupyter notebook --port=8888 --ip=* --no-browser
+</code></pre>
+
+<p>至此，打开浏览器，开启你的Jupyter之旅吧！</p>
+
+<p>对容器进行更改后，我们需要将其保存为镜像，方便日后的使用。</p>
+
+<p>退出刚才进入的容器（快捷键：Ctrl+P+Q），并执行命令：</p>
+
+<pre><code>docker commit anaconda weitian/myanaconda
+</code></pre>
+
+<p>即生成了一个名为weitian/myanaconda的镜像（可以用images命令查看）。</p>
+
+<p>我们可以将这个镜像push到docker hub上：</p>
+
+<pre><code>docker login #首次上传需要先登录docker hub
+docker push weitian/myanaconda
+</code></pre>
+
+<p>也可以导出到本地：</p>
+
+<pre><code>docker save -o myanaconda.tar weitian/myanaconda
+# 本地加载
+docker load --input myanaconda.tar
+</code></pre>
+
+<p>更多关于Docker的使用介绍可以参见Gitbook上的一本书：<a href="https://yeasy.gitbooks.io/docker_practice/content/">Docker —— 从入门到实践</a>。</p>
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902534668711.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
+    
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="14902533416687.html">
-                
-                  <h1>Deep Learning读书笔记（一）：导论</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">什么是深度学习</h2>
+      </div>
 
-<ul>
-<li><p>背景：两类AI任务</p>
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="14902607196341.html" 
+          title="Previous Post: iTerms2结合Expect实现SSH自动登录">&laquo; iTerms2结合Expect实现SSH自动登录</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="14902595540843.html" 
+          title="Next Post: AlphaGo原理解读（Mastering the game of Go with deep neural networks and tree search)">AlphaGo原理解读（Mastering the game of Go with deep neural networks and tree search) &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
 
-<ul>
-<li>Formal Task：易于抽象和描述成计算机所能理解的表达，也因此在AI发展的早期就得到了很好的解决（例如国际象棋）</li>
-<li>Intuitive Task：依赖于人类的主观直觉，难于用计算机语言进行规范性描述的任务（例如语音和图像的识别）</li>
-</ul>
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902533416687.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/3/23</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
-
-
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
