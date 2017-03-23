@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Archives - 公子天的博客
+  Deep Learning读书笔记（一）：导论 - 公子天的博客
   
   </title>
   
@@ -91,80 +91,132 @@
 
  <script type="text/javascript">
   $(function(){
-    $('#menu_item_archives').addClass('is_active');
+    $('#menu_item_index').addClass('is_active');
   });
 </script>
 <div class="row">
   <div class="large-8 medium-8 columns">
-    <div id="archives-page-wrap">
-        <h1>Archives</h1>
-        <div class="markdown-body archives-wrap">
+      <div class="markdown-body article-wrap">
+       <div class="article">
           
-             
-                <h1>2017</h1>
-            
-            <div class="article">
-              <a class="clearlink" href="deeplearning_note2.html">
-                <h1>Deep Learning读书笔记（二）：线性代数</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2017/3/23</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-                 
-              </div>
-            </div><!-- article -->
+          <h1>Deep Learning读书笔记（一）：导论</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/3/23</span>
 
+          <span>posted in&nbsp;</span> 
           
-            
-            <div class="article">
-              <a class="clearlink" href="deeplearning_note1.html">
-                <h1>Deep Learning读书笔记（一）：导论</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2017/3/23</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="prml_note1.html">
-                <h1>PRML读书笔记（一）：概率论，决策论，与信息论</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2017/3/23</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='PRML.html'>Pattern Recognition and Machine Learning</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="word2vec.html">
-                <h1>word2vec前世今生</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2017/3/23</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='papers.html'>论文</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
+              <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
            
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h2 id="toc_0">什么是深度学习</h2>
+
+<ul>
+<li><p>背景：两类AI任务</p>
+
+<ul>
+<li>Formal Task：易于抽象和描述成计算机所能理解的表达，也因此在AI发展的早期就得到了很好的解决（例如国际象棋）</li>
+<li>Intuitive Task：依赖于人类的主观直觉，难于用计算机语言进行规范性描述的任务（例如语音和图像的识别）</li>
+</ul>
+
+<span id="more"></span><!-- more --></li>
+<li><p>Deep Learning的第一种解读：解决Intuitive Task的尝试</p>
+
+<ol>
+<li>Rule-based System：
+
+<ul>
+<li>基本思想：尝试人为地将知识“硬编码”为一种规则化语言。AI系统将基于庞大的人工规则库进行逻辑推断，从而解决Intuitive Task。</li>
+<li>缺陷：逻辑和知识的表达过于刻板，无法处理多样的任务</li>
+<li>代表作：Cyc</li>
+</ul></li>
+<li>Classical Machine Learning：
+
+<ul>
+<li>基本思想：尝试训练AI系统从原始数据中自主发现Pattern并获取对知识的编码。</li>
+<li>缺陷：机器学习算法的performance严重依赖于数据的特征表达；然而很多时候我们并不知道什么样的特征是有效的（这就需要特征工程）</li>
+<li>代表作：Logistic Regression；Naive Bayes</li>
+</ul></li>
+<li>Representation Learning：
+
+<ul>
+<li>基本思想：训练AI系统不仅可以学习到特征到目标的映射关系，同时还可以学习到特征的表达。</li>
+<li>优势：相对于人工设计的特征，机器自我学习到的特征表达有着更好的performance。同时，对于一个全新的task，系统也可以在较短的时间内和较少的人工干预下迅速进化。</li>
+<li>代表作：autoencoder</li>
+</ul></li>
+<li>Deep Learning：
+
+<ul>
+<li>基本思想：无论是人工设计特征还是自我学习特征，其核心目标都是尽可能分离出影响观测数据表层变化的底层因子（factors）。而直接抽取high-level的抽象因子的难度不亚于去解决原始问题本身。基于此，深度学习提出了概念层次化的网络结构（the hierarchy of concepts），将high-level的复杂特征用low-level的简单特征表达，从而解决这个问题。</li>
+<li>代表作：MLP（multilayer perceptron）</li>
+</ul></li>
+</ol></li>
+<li><p>Deep Learning的第二种解读：a multi-step computer program</p>
+
+<ul>
+<li>模型的每一层特征表达都对应着某种计算序列下的内存状态</li>
+<li>并非所有的特征都对应着输入数据的因子编码——也有可能是存储了某种计算机状态（例如指针或计数器）</li>
+</ul></li>
+<li><p>深度真的重要吗？</p>
+
+<ul>
+<li>模型深度的度量方法：
+
+<ol>
+<li>计算序列的深度（依赖于计算元单元的定义）</li>
+<li>概念层级的深度（网络层级中可能存在回路）</li>
+</ol></li>
+<li>深度学习的核心是用<strong>一组学习函数／概念的层次组合</strong>来表征这个世界</li>
+</ul></li>
+</ul>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="deeplearning_note2.html" 
+          title="Previous Post: Deep Learning读书笔记（二）：线性代数">&laquo; Deep Learning读书笔记（二）：线性代数</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="prml_note1.html" 
+          title="Next Post: PRML读书笔记（一）：概率论，决策论，与信息论">PRML读书笔记（一）：概率论，决策论，与信息论 &raquo;</a>
+      
+      </p>
         </div>
       </div>
-  </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

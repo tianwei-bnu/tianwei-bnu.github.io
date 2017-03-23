@@ -4,7 +4,7 @@
   <title><![CDATA[公子天的博客]]></title>
   <link href="tianwei.github.io/atom.xml" rel="self"/>
   <link href="tianwei.github.io/"/>
-  <updated>2017-03-23T14:45:52+08:00</updated>
+  <updated>2017-03-23T15:19:49+08:00</updated>
   <id>tianwei.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -13,10 +13,519 @@
   <generator uri="http://www.mweb.im/">MWeb</generator>
   
   <entry>
+    <title type="html"><![CDATA[Deep Learning读书笔记（二）：线性代数]]></title>
+    <link href="tianwei.github.io/deeplearning_note2.html"/>
+    <updated>2017-03-23T15:17:46+08:00</updated>
+    <id>tianwei.github.io/deeplearning_note2.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">基本术语</h2>
+
+<ul>
+<li>Scalars：标量。通常是一个实数。</li>
+<li>Vectors：向量。由一组标量组成的一维有序数组；若无特殊说明通常是指列向量。通过下标索引可以找到其对应的元素。对应的几何意义是笛卡尔空间的一个点。</li>
+<li>Matrices：矩阵（特指二维矩阵）。由一组标量组成的二维数组。</li>
+<li>Tensors：张量。一个高维矩阵（\(D \geq 3\)）</li>
+</ul>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_1">基本运算</h2>
+
+<ul>
+<li>Transpose：\((A^\top)_{i, j} = A_{j, i}\)</li>
+<li>Broadcasting：将向量的元素按行或按列广播为一个矩阵，从而与另一个矩阵进行计算</li>
+<li>Multiplying：
+
+<ol>
+<li>matrix product：\((AB)_{i,j}=\sum_k{A_{i,k}B_{k,j}}\)</li>
+<li>element-wise product：\((A \odot B)_{i,j}=A_{i,j}B_{i,j}\)</li>
+<li>dot product：\(x^\top y\)</li>
+<li>matrix-vector product：\(Ax=b\) 对应着一组线性方程组。</li>
+</ol></li>
+<li>Inverse Matrices：\(A^{-1}A=I_n\) （逆矩阵主要被用于理论分析的工具）</li>
+</ul>
+
+<h2 id="toc_2">线性相关和矩阵的Span</h2>
+
+<ul>
+<li>线性方程组\(Ax=b, A \in \mathbb{R}^{m \times n}\)的解的可能性：
+
+<ul>
+<li>唯一解（对于任意向量\(b \in \mathbb{R}^m\)）</li>
+<li>无穷解</li>
+<li>无解</li>
+</ul></li>
+<li>Linear Combination：一组向量的线性组合被定义为是将每一个向量都乘以一个标量系数并求和的结果：\(\sum_i{c_iv^{(i)}}\)
+
+<ul>
+<li>矩阵-向量乘积\(Ax\)的意义：\(Ax=\sum_i{x_i A_{:, i}}\) 矩阵列向量的一种线性组合（linear combination）</li>
+</ul></li>
+<li>Span：一组向量的Span被定义为这组向量所有可能的线性组合所构成的向量的集合。
+
+<ul>
+<li>矩阵的列空间（column space）：矩阵列向量的span</li>
+<li>判断线性方程组\(Ax=b\)有无解等价于判断向量\(b\)是否在矩阵\(A\)的列空间里</li>
+</ul></li>
+<li>Linear Dependence：对于一组向量的集合，如果其中存在一个向量是其他向量的线性组合，则称这组向量是线性相关的。
+
+<ul>
+<li>线性方程组\(Ax=b\)对任意\(b \in \mathbb{R}^m\)至少有一个解（矩阵\(A \in \mathbb{R}^{m \times n}\)的列空间等于\(\mathbb{R}^m\)）的充要条件：矩阵\(A\)至少有一组\(m\)个线性不相关的列向量</li>
+<li>线性方程组\(Ax=b\)对任意\(b \in \mathbb{R}^m\)有唯一解的充要条件：矩阵\(A\)仅有一组\(m\)个线性不相关的列向量（\(n = m\)）。此时，矩阵\(A\)可逆。</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_3">范式Norms</h2>
+
+<ul>
+<li>向量的范式：用于测量一个向量的大小</li>
+<li>\(L^p\)范式：\(||x||_p=\sqrt[p]{\sum_i{|x_i|^p}}\) 将一个向量映射为一个非负实数
+
+<ul>
+<li>基本性质：
+
+<ol>
+<li>\(L^p(x)=0 \Rightarrow x=0\)</li>
+<li>\(L^p(x+y) \leq L^p(x) + L^p(y)\)</li>
+<li>\(\forall \alpha \in \mathbb{R}, L^p(\alpha x) = |\alpha| L^p(x)\)</li>
+</ol></li>
+</ul></li>
+<li>常见的几种范式：
+
+<ul>
+<li>\(L^2\)范式：\(||x||_2=\sqrt{\sum_i{x_i^2}}\) 又称欧几里得范式（度量了向量\(x\)到原点的欧氏距离）。在机器学习领域里更常用的是\(L^2\)范式的平方（即\(x^\top x\)）。其特点是易于对向量\(x\)的每个元素求偏导，缺陷是在原点附近平方值的变化曲率太小。</li>
+<li>\(L^1\)范式：\(||x||_1 = \sum_i{|x_i|}\) 在空间的任意点都有着相同的变化率，适用于对原点附近点的大小极为敏感的应用场景。</li>
+<li>\(L^\infty\)范式：\(||x||_\infty = \max_i{|x_i|}\)</li>
+<li>Frobenius Norm：\(||A||_F = \sqrt{\sum_{i,j}{A^2_{i,j}}}\) 矩阵的\(F\)范式，类似于向量的\(L^2\)范式，常用于在深度学习中测量一个矩阵的大小。</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_4">几种特殊矩阵和向量</h2>
+
+<ul>
+<li>Diagonal Matrices：对角矩阵。仅在对角元上的元素非零。对角矩阵的向量乘法和求逆都十分简单，因此常被用于通用算法中的假设以简化计算。</li>
+<li>Symmetric Maxtrix：对称矩阵。满足：\(A=A^\top\)。通常由一个接受双参数且对参数顺序不敏感的函数产生（例如距离函数）</li>
+<li>Unit Vector：单元向量。满足：\(||x||_2 = 1\)</li>
+<li>Orthogonal Vectors：正交向量。两个向量被称为正交当且仅当这两个向量满足：\(x^\top y = 0\)。在\(\mathbb{R}^n\)空间里，最多只能找到\(n\)个非零范式的相互正交的向量。如果两个向量不仅正交且\(L^2\)范式均为1，称之为正交归一化向量（orthonormal）</li>
+<li>Orthogonal Matrix：正交矩阵。是一个行向量相互<strong>正交归一</strong>且列向量相互<strong>正交归一</strong>的方阵：\(A^\top A = A A^\top = I\)（也即\(A^{-1} = A^\top\)）</li>
+</ul>
+
+<h2 id="toc_5">特征分解（Eigendecomposition）</h2>
+
+<ul>
+<li>特征向量（Eigenvector）：一个矩阵\(A\)的特征向量\(v\)是一个满足\(Av=\lambda v\)的非零向量（矩阵\(A\)作用在这个向量上仅改变其大小，不改变其方向）。其中，\(\lambda\)又被称为矩阵\(A\)的特征值（Eigenvalue）。显然，同一个特征值对应的特征向量有无数多个（如果\(v\)是矩阵\(A\)的特征向量，则\(sv, s \in \mathbb{R}, s \ne 0\)也是一个特征向量）。我们平时所说的特征向量通常是指\(L^2\)范式为\(1\)的单位向量。
+
+<ul>
+<li>矩阵与其特征向量的几何关系：矩阵的本质是对其特征向量构成空间的一个尺寸变换（scaling）。设若\(x=v\mu\)，其中\(v\)是矩阵\(A\)的特征向量构成的矩阵，则有：\[Ax=Av\mu=(\lambda v) \mu\]</li>
+</ul></li>
+<li>特征分解（Eigendecomposition）：将矩阵\(A\)分解为两个特征矩阵乘积的形式：\(A=V diag({\lambda}) V^{-1}\)。其中\(V=[v^{(1)},...,v^{(n)}]\)是由\(n \times n\)矩阵\(A\)的\(n\)个相互独立的特征向量（确保\(V^{-1}\)的存在）按列组成的特征矩阵；\(\lambda = [\lambda_1, ..., \lambda_n]^\top\)是对应的特征值组成的列向量。（这个等式的证明也很简单，只需在等式两边各自右乘一个矩阵\(V\)即可。）
+
+<ul>
+<li>并非所有矩阵都存在特征分解</li>
+</ul></li>
+<li><strong>实对称矩阵</strong>的特征分解：\(A=Q \Lambda Q^\top\)。其中，\(Q\)是一个由实对称矩阵\(A\)的特征向量组成的<strong>正交矩阵</strong>（不仅仅是linear independence）
+
+<ul>
+<li>应用： 二次型\(f(x) = x^\top A x\)的极值。其中\(||x||_2=1\)
+
+<ul>
+<li>极大值：最大特征值及其对应的特征向量</li>
+<li>极小值：最小特征值及其对应的特性向量</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h2 id="toc_6">奇异值分解（Singular Value Decomposition）</h2>
+
+<ul>
+<li>SVD分解：\(A=UDV^\top\)
+
+<ul>
+<li>更通用的矩阵分解方式</li>
+<li>\(U\)：\(m \times m\)的正交矩阵。其列向量被称为矩阵\(A\)的<em>左奇异向量</em>，同时也是矩阵\(AA^\top\)的特征向量</li>
+<li>\(D\)：\(m \times n\)的对角矩阵。对角元上的元素被称为矩阵\(A\)的<em>奇异值</em>，同时也是矩阵\(A^\top A\)和\(AA^\top\)的特征值的平方根</li>
+<li>\(V\)：\(n \times n\)的正交矩阵。其列向量被称为矩阵\(A\)的<em>右奇异向量</em>，同时也是矩阵\(A^\top A\)的特征向量</li>
+</ul></li>
+<li>应用：Moore-Penrose伪逆（对任意矩阵求其伪逆）
+
+<ul>
+<li>\(A^+ = V D^+ U^\top\)，其中对角矩阵\(D\)的伪逆是对其非零元素取倒数再转置得到的</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_7">迹（Trace）和行列式（Determinant）</h2>
+
+<ul>
+<li>Trace：\(Tr(A) = \sum_i{A_{i,i}}\)</li>
+<li>Determinant：\(det(A) = \prod_i{\lambda_i}\)</li>
+</ul>
+
+<h2 id="toc_8">例子：PCA主成分分析</h2>
+
+<ul>
+<li>动机：对于一组\(n\)维空间的向量点，找到一个低维的特征表达，并尽可能少地丢失信息：\(x \approx g(f(x))\)。其中\(f(x)\)是编码函数（将高维向量编码到低维空间）；\(g(x)\)是解码函数（将低维向量解码到高维空间）</li>
+<li>问题一：编码／解码函数长什么样？
+
+<ul>
+<li>假设（解码函数）：\(g(c) = Dc, D \in \mathbb{R}^{n \times l}\)。即用一个\(n \times l\)的矩阵对编码后的点\(c\)进行解码。其中，\(D\)是一个列向量正交且归一的矩阵（由于\(n &gt; l\)故行向量不可能正交）</li>
+<li>目标（编码函数）：寻求一个最优的低维空间编码\(c^*\)，使得由\(c^*\)在高维空间重建后的点\(g(c^*)\)与原始的点\(x\)最近，也即最小化\(L^2\)范式的解\(c\)：\[c^*=\arg\min_c{||x - g(c)||_2}\]</li>
+<li>最优解（编码函数）：\(f(x) = c^* =D^\top x\)</li>
+</ul></li>
+<li>问题二：如何找到解码矩阵\(D\)？
+
+<ul>
+<li>目标：寻求一个最优的矩阵\(D\)，使得在输入的所有数据上的重建误差最小（Frobenius范式最小）：\[D^* = \arg\min_D{\sqrt{\sum_{i,j}{(x^i_j - DD^\top x^i_j)^2}}}\]
+其中约束条件为：\(D^\top D = I_l\)</li>
+<li>结论：<strong>\(D\)是由矩阵\(X^\top X\)的\(l\)个最大的特征值对应的特征向量构成的矩阵</strong>（利用到了实对称矩阵对应二次型的极值）</li>
+</ul></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Deep Learning读书笔记（一）：导论]]></title>
+    <link href="tianwei.github.io/deeplearning_note1.html"/>
+    <updated>2017-03-23T15:15:41+08:00</updated>
+    <id>tianwei.github.io/deeplearning_note1.html</id>
+    <content type="html"><![CDATA[
+<h2 id="toc_0">什么是深度学习</h2>
+
+<ul>
+<li><p>背景：两类AI任务</p>
+
+<ul>
+<li>Formal Task：易于抽象和描述成计算机所能理解的表达，也因此在AI发展的早期就得到了很好的解决（例如国际象棋）</li>
+<li>Intuitive Task：依赖于人类的主观直觉，难于用计算机语言进行规范性描述的任务（例如语音和图像的识别）</li>
+</ul>
+
+<span id="more"></span><!-- more --></li>
+<li><p>Deep Learning的第一种解读：解决Intuitive Task的尝试</p>
+
+<ol>
+<li>Rule-based System：
+
+<ul>
+<li>基本思想：尝试人为地将知识“硬编码”为一种规则化语言。AI系统将基于庞大的人工规则库进行逻辑推断，从而解决Intuitive Task。</li>
+<li>缺陷：逻辑和知识的表达过于刻板，无法处理多样的任务</li>
+<li>代表作：Cyc</li>
+</ul></li>
+<li>Classical Machine Learning：
+
+<ul>
+<li>基本思想：尝试训练AI系统从原始数据中自主发现Pattern并获取对知识的编码。</li>
+<li>缺陷：机器学习算法的performance严重依赖于数据的特征表达；然而很多时候我们并不知道什么样的特征是有效的（这就需要特征工程）</li>
+<li>代表作：Logistic Regression；Naive Bayes</li>
+</ul></li>
+<li>Representation Learning：
+
+<ul>
+<li>基本思想：训练AI系统不仅可以学习到特征到目标的映射关系，同时还可以学习到特征的表达。</li>
+<li>优势：相对于人工设计的特征，机器自我学习到的特征表达有着更好的performance。同时，对于一个全新的task，系统也可以在较短的时间内和较少的人工干预下迅速进化。</li>
+<li>代表作：autoencoder</li>
+</ul></li>
+<li>Deep Learning：
+
+<ul>
+<li>基本思想：无论是人工设计特征还是自我学习特征，其核心目标都是尽可能分离出影响观测数据表层变化的底层因子（factors）。而直接抽取high-level的抽象因子的难度不亚于去解决原始问题本身。基于此，深度学习提出了概念层次化的网络结构（the hierarchy of concepts），将high-level的复杂特征用low-level的简单特征表达，从而解决这个问题。</li>
+<li>代表作：MLP（multilayer perceptron）</li>
+</ul></li>
+</ol></li>
+<li><p>Deep Learning的第二种解读：a multi-step computer program</p>
+
+<ul>
+<li>模型的每一层特征表达都对应着某种计算序列下的内存状态</li>
+<li>并非所有的特征都对应着输入数据的因子编码——也有可能是存储了某种计算机状态（例如指针或计数器）</li>
+</ul></li>
+<li><p>深度真的重要吗？</p>
+
+<ul>
+<li>模型深度的度量方法：
+
+<ol>
+<li>计算序列的深度（依赖于计算元单元的定义）</li>
+<li>概念层级的深度（网络层级中可能存在回路）</li>
+</ol></li>
+<li>深度学习的核心是用<strong>一组学习函数／概念的层次组合</strong>来表征这个世界</li>
+</ul></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PRML读书笔记（一）：概率论，决策论，与信息论]]></title>
+    <link href="tianwei.github.io/prml_note1.html"/>
+    <updated>2017-03-23T15:05:32+08:00</updated>
+    <id>tianwei.github.io/prml_note1.html</id>
+    <content type="html"><![CDATA[
+<p>什么是模式识别（Pattern Recognition）？</p>
+
+<p>按照Bishop的定义，模式识别就是用机器学习的算法从数据中挖掘出有用的pattern。</p>
+
+<p>人们很早就开始学习如何从大量的数据中发现隐藏在背后的pattern。例如，16世纪的Kepler从他的老师Tycho搜集的大量有关于行星运动的数据中发现了天体运行的规律，并直接导致了牛顿经典力学的诞生。然而，这种依赖于人类经验的、启发式的模式识别过程很难复制到其他的领域中。例如手写数字的识别。这就需要机器学习的技术了。（顺便提一下，开普勒定律在物理学中只是一种唯象的理论，它只对物理事实抽象出概括性的描述，而没有解释内在的原因，也就是牛顿的万有引力定律（其实在更高的层次上，万有引力也是一种唯象的理论，它的解释由量子引力理论给出）。这也意味着，在大数据的机器学习时代，我们挖掘出来的知识更多的也只是一种相关性的规律。）</p>
+
+<span id="more"></span><!-- more -->
+
+<p>在手写数字识别的问题中，一部分手写图片作为<strong>训练集（training set）</strong>，被用来学习一个事先给定的模型的参数。另一部分图片作为<strong>测试集（test set）</strong>，被用来评估学习到的模型在新数据上的<strong>泛化能力（generalization）</strong>。训练集与测试集里的手写图片对应的数字都是已知的。这些数字又被称之为<strong>目标向量（target vector）</strong>，是模型学习的分类目标。一个机器学习算法最终得到的结果，就是一个将输入变量\(x\)（这里的手写数字图片）映射到目标向量空间里的函数\(y(x)\)。</p>
+
+<p>一般来说，在模型训练之前，都有一个<strong>数据预处理（preprocess）</strong>的过程。例如，在识别手写数字的问题中，我们需要先将训练集里的图片变换到同一个尺寸下，从而使模型的训练更加统一。这个过程也被称之为<strong>特征提取（feature extraction）</strong>。同时，预处理后的特征往往也会使模型的计算更加高效。要注意的是，如果我们对训练集里的数据进行了预处理，那么对于测试集里的数据，我们也要进行同样的操作。</p>
+
+<p>对于那些训练样本中带有目标向量的机器学习问题，我们称之为<strong>有监督学习（supervised learning）</strong>。例如前面提到的手写数字识别问题。进一步地，如果目标向量是离散的，我们称之为<strong>分类（classification）</strong>问题；反之，如果目标向量是连续的，我们称之为<strong>回归（regression）</strong>问题。</p>
+
+<p>另一类机器学习问题的训练样本仅有输入变量的特征，我们称之为<strong>无监督学习</strong>。例如对数据中相似样本的归并（聚类）问题。</p>
+
+<p>最后一类机器学习问题被称之为<strong>强化学习（reinforcement learning）</strong>。它是寻求在一个给定状态下的行为决策，以最大化最终的收益。象棋AI就是一个典型的强化学习的例子。与有监督学习不同，强化学习要解决的问题没有标记好的输出；但往往会通过与环境的互动来改变自己的状态和收益，并因此而学习到什么是一个好的输出。注意，强化学习的每一步决策不仅会影响到当下的收益，还会影响未来的回报。这就涉及到一个<strong>信用分配（credit assignment）</strong>的问题：即如何将最终的回报分配到导致该回报的每一步的决策上？强化学习另一个特征是在<strong>exploration</strong>和<strong>exploitation</strong>之间的trade－off：对任意一个的过度偏向都会产生较差的结果。</p>
+
+<p>接下来，我们将从一个具体的例子入手展现机器学习过程里的一些基本概念；然后，我们将简单介绍机器学习理论的三大基础：<strong>概率论（probability theory）</strong>，<strong>决策论（decision theory）</strong>，和<strong>信息论（information theory）</strong>。</p>
+
+<h2 id="toc_0">一个例子：多项式拟合</h2>
+
+<p>作为例子，我们通过一个带随机噪声的产生函数\(sin(2{\pi}x)\)来构造训练数据，并期望一个机器学习算法能从有限的数据中学习到这个正弦函数。这种数据的构造方式暗合真实世界的法则：即数据在遵循一条潜在的规律同时也充满了不确定性。<em>（后面我们会看到，我们是如何在一个概率论的框架下描述这种不确定性，同时给出一个最好的预测。）</em></p>
+
+<p><img src="http://on8zjjnhp.bkt.clouddn.com/14902528277140.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>我们可以用一个多项式函数来拟合训练数据（这是因为任意一个连续可导的函数总可以通过多项式展开来逼近）：\[y(x,w)=w_0+w_1x+w_2x^2+...+w_Mx^M=\sum_{j=0}^{M}{w_jx^j}\]</p>
+
+<p>注意，尽管这个函数是关于\(x\)的非线性函数，但却是关于系数\(w\)的线性函数。类似多项式函数这种相对于未知参数是线性的模型，具有一些重要的性质，我们称之为<strong>线性模型（linear model）</strong>。</p>
+
+<p>我们通过最小化一个<strong>误差函数（error function）</strong>来求解模型的参数。误差函数是关于参数\(w\)的一个函数；它衡量我们的预测值\(y(x,w)\)与真实值\(t\)的差距。一个常用的误差函数是误差平方和，它的基本形式如下：\[E(w)=\frac{1}{2}\sum_{n=1}^{N}{\{y(x_n,w)-t_n\}^2}\]<br/>
+（<em>在后面介绍到最大似然法时，我们会看到误差函数为什么会取这种形式</em>）</p>
+
+<p>令这个函数对\(w\)的一阶偏导等于0，得到\(M＋1\)个一阶方程组，就可以求解出最优拟合参数\(w^*\)了。</p>
+
+<p>然而，我们还有一个问题：如何确定模型的阶数\(M\)？这也被称之为<strong>模型选择（model comparison or model selection）</strong>问题。我们可以通过评估模型在新数据集上的泛化能力来衡量模型的好坏。具体来说，我们从训练集中抽取一部分数据作为<strong>验证集（validation set）</strong>；对于\(M\)的每一种可能取值，我们先用余下的训练集找到最优的参数\(w^*\)，然后再在验证集上评估这个模型的误差\(E(w^*)\)（或者是root-mean-square error：\(E_{RMS}=\sqrt{{2E(w^*)}/{N}}\)）。我们将选择泛化误差最小的模型作为最终的模型。</p>
+
+<p>通过这种方式，我们发现，\(M\)取值过低，模型有可能会<strong>欠拟合（under-fitting）</strong>；而\(M\)取值过高，模型又有可能会<strong>过拟合（over-fitting）</strong>。</p>
+
+<p>这是为什么呢？</p>
+
+<p>理论上，一个低阶的多项式函数只是更高阶的多项式函数的一个特例；而一个高阶的多项式也更加逼近真实的产生函数\(sin(2{\pi}x)\)。因此，高阶的模型似乎没道理比低阶模型的表现更差。</p>
+
+<p>但是，如果我们仔细观察那些过拟合的高阶模型学习到的参数\(w\)，会发现它们的量纲往往异乎寻常的大。这使得模型虽然可以准确地预估训练集中的数据，但也展现出了巨大的波动性。换句话说，强大的高阶模型过多地学习了训练数据中的噪声。如果我们引入更多的训练数据，这种过拟合的问题会得到一定程度的缓解。</p>
+
+<p>简而言之，虽然模型越复杂，解释能力也越强，但我们往往需要更多的数据来训练一个复杂的模型。<em>（后面会发现，这种过拟合本质上是由于最大似然法这类对模型参数进行点估计的算法所带来的bias造成的。通过一种贝叶斯的方法，我们可以从根本上避免过拟合的问题。）</em></p>
+
+<p>一种在有限的数据集下也能训练一个高阶模型的技术是<strong>正则化（regularization）</strong>，即在传统的误差函数中引入一个对参数\(w\)量纲的惩罚项，以抑制\(w\)的过度发散：\[\tilde{E}(w)=\frac{1}{2}\sum_{n=1}^{N}{\{y(x_n,w)-t_n\}^2}+\frac{\lambda}{2}||w||^2\]<br/>
+其中，\(||w||^2=w_1^2+w_2^2+...+w_M^2\)，参数\(\lambda\)控制正则项和误差项的相对权重。对于一个合适的\(\lambda\)取值，我们用较少的数据也可以训练出一个泛化的高阶模型。</p>
+
+<p>然而，过低或过高的\(\lambda\)依然会导致过拟合或欠拟合的问题。本质上，<strong>正则化只是将对模型复杂度的控制由模型的阶数\(M\)转移到了惩罚因子\(\lambda\)上</strong>。我们依然需要一个验证集来优化模型的复杂度。</p>
+
+<h2 id="toc_1">概率论</h2>
+
+<p>在模式识别和机器学习的研究领域里，<strong>不确定性（uncertainty）</strong>是一个非常核心的概念。接下来要介绍的概率论为不确定性的量化提供了一个统一的框架，因此也构成了整个机器学习研究的理论基础。</p>
+
+<h3 id="toc_2">基本知识点</h3>
+
+<p>概率的基本定义由频率学派给出：在一系列试验中某一事件发生的频率称之为该事件发生的概率。从这个定义出发，我们很容易得到概率论的两个基本法则：<strong>sum rule</strong>和<strong>product rule</strong>：<br/>
+\[p(X)=\sum_{Y}{p(X,Y)}\]<br/>
+\[p(X,Y)=p(Y|X)p(X)\]<br/>
+其中，\(p(X)\)对应\(X\)发生的<strong>边际概率（marginal probability）</strong>；\(p(X,Y)\)对应\(X\)和\(Y\)同时发生的<strong>联合概率（joint probability）</strong>；\(p(Y|X)\)对应给定\(X\)下\(Y\)发生的<strong>条件概率（conditional probability）</strong>。这两个公式构成了我们将要用到的所有概率论知识的基础。</p>
+
+<p>由product rule出发，同时结合联合概率的对称性，我们立即得到一个十分重要的公式，<strong>贝叶斯定理（Bayes&#39; theorem）</strong>：<br/>
+\[p(Y|X)=\frac{p(X|Y)p(Y)}{p(X)}\]</p>
+
+<p>贝叶斯定理给出了<strong>后验概率（posterior probability）</strong>——\(p(Y|X)\)和<strong>先验概率（prior probability）</strong>——\(p(Y)\)之间的关系。</p>
+
+<h3 id="toc_3">贝叶斯概率</h3>
+
+<p>然而，并非所有随机事件的发生都是可重复的。因此，我们很难用频率学派的观点解释诸如明天有雨这类事件发生的概率。对这类事件的不确定性的衡量，就是概率的贝叶斯解释（Bayesian view）。</p>
+
+<p>回到之前的多项式拟合的例子。从频率学派的角度来看，我们将目标变量\(t\)视为一个随机变量似乎更加合理（可以通过固定输入变量\(x\)的值统计\(t\)的频率分布）。而从贝叶斯学派的观点来看，我们可以将模型的参数\(w\)（甚至是整个模型）视为一个随机变量，衡量它们的不确定性（尽管\(w\)是不可重复的）。</p>
+
+<p>具体来说，假设我们知道了\(w\)的先验概率分布\(p(w)\)，那么，通过贝叶斯公式，我们可以将这一先验概率转化为给定观测数据后的后验概率\(p(w|D)\)：<br/>
+\[p(w|D)=\frac{p(D|w)p(w)}{p(D)}\]<br/>
+从而，我们得到了一个已知数据\(D\)下关于模型参数\(w\)的不确定性的定量表达。</p>
+
+<p>在这个公式里，概率分布\(p(D|w)\)又被称为<strong>似然函数（likilihood function）</strong>，它给出了不同\(w\)下数据集\(D\)发生的概率。从而，贝叶斯定理又可以写成：\[posterior \propto likelihood \times prior\]</p>
+
+<p>无论是在频率学派还是贝叶斯学派的框架下，似然函数都扮演着重要的角色。不同的是，频率学派认为，模型的参数是固定的，观测到的数据则是给定参数下的一个随机事件。因此，他们通过一种叫做<strong>最大似然法（maximum likelihood）</strong>的方法来预估参数：即寻找使观测到的数据集\(D\)发生的概率最大的参数\(w\)（<em>后面我们将会看到最大似然法与前面提到的最小化误差函数的关系</em>）。而贝叶斯学派则认为模型的参数服从一个概率分布，因此，似然函数只是获取后验概率的桥梁。</p>
+
+<p><em>（关于频率学派和贝叶斯学派孰优孰劣的问题，各家各执一言，此处不做讨论。只需知道，PRML这本书更多的是介绍贝叶斯学派的观点，而Andrew在Coursera上的课则是频率学派的经典观点。）</em></p>
+
+<h3 id="toc_4">高斯分布</h3>
+
+<p>关于高斯分布的定义和性质，很多概率论的书上都有介绍，这里不再赘述。本小节主要介绍如何运用频率学派的最大似然法从一堆服从高斯分布的数据中拟合出分布的参数：\(\mu\)与\(\sigma^2\)。</p>
+
+<p>由独立同分布假定，我们的数据集\(\mathbf{x} = (x_1,...,x_D)^T\)在给定参数\(\mu\)和\(\sigma^2\)下的条件概率分布为：<br/>
+\[p(\mathbf{x}|\mu,\sigma^2)=\prod_{n=1}^N{\mathcal{N}(x_n|\mu,\sigma^2)}\]<br/>
+这就是高斯分布的似然函数。</p>
+
+<p><img src="http://on8zjjnhp.bkt.clouddn.com/14902528500482.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>对这个似然函数取对数（<em>后面我们会看到如何从信息熵的角度来解释这一行为</em>），我们得到：\[\ln{p(\mathbf{x}|\mu,\sigma^2)}=-\frac{1}{2\sigma^2}\sum_{n=1}^N{(x_n-\mu)^2}-\frac{N}{2}\ln{\sigma^2}-\frac{N}{2}\ln{2\pi}\]</p>
+
+<p>将上式分别对\(\mu\)和\(\sigma^2\)求导，并令其等于0，我们得到了\(\mu\)和\(\sigma^2\)的最大似然预估：<br/>
+\[\mu_{ML}=\frac{1}{N}\sum_{n=1}^N{x_n}\]<br/>
+\[\sigma^2_{ML}=\frac{1}{N}\sum_{n=1}^N{(x_n-\mu_{ML})^2}\]<br/>
+等式右边都是关于数据集\(\mathbf{x}\)的函数。</p>
+
+<p>可以证明，通过这种方法得到的参数预估是<strong>有偏（bias）</strong>的：<br/>
+\[E[\mu_{ML}]=\mu\]<br/>
+\[E[\sigma^2_{ML}]=(\frac{N-1}{N})\sigma^2\]<br/>
+也就是说，我们会<strong>低估（underestimate）</strong>真实的分布方差。一般来说，模型的参数越多（复杂度越高），由最大似然法预估出来的参数越不准确。而这种有偏的预估，是导致模型过拟合的根本原因（过度拟合了训练样本，而偏离了真实世界）。不过，注意到随着样本数\(N\)的增长，这种偏差会越来越小。这就解释了，为什么增大训练样本的容量可以一定程度上缓解过拟合的问题。</p>
+
+<h3 id="toc_5">回到多项式拟合</h3>
+
+<p>接下来，我们将回到多项式拟合的例子，看看在统计学的视角下，频率学派和贝叶斯学派各自是如何解决这个问题的。</p>
+
+<p>在多项式拟合的问题中，我们的目标是，<strong>在由\(N\)个输入变量\(\mathbf{x}=(x_1,...,x_N)^T\)及其对应的目标值\(\mathbf{t}=(t_1,...,t_N)^T\)构成的训练集的基础上，对新输入变量\(x\)的目标值\(t\)做出预测。</strong>用概率语言来描述，我们可以将目标变量\(t\)的这种不确定性用一个概率分布来表达。我们假定，<strong>\(t\)服从以\(y(x,w)\)为均值的高斯分布</strong>：<br/>
+\[p(t|x,w,\beta)=\mathcal{N}(t|y(x,w),\beta^{-1})\]</p>
+
+<p>有了\(t\)的概率分布，我们就可以用最大似然法在训练集上求解模型的参数（\(w\)和\(\beta\)）:<br/>
+\[\ln{p(\mathbf{t}|\mathbf{x},w,\beta)} = -\frac{\beta}{2}\sum_{n=1}^N{\{y(x_n,w)-t_n\}^2}+\frac{N}{2}\ln{\beta}-\frac{N}{2}\ln{2\pi}\]<br/>
+我们发现，略去与\(w\)无关的后两项后，我们得到了前文提到的误差函数！也就是说，对于\(w\)的求解而言，<strong>最大似然法等价于最小化误差平方和！我们的误差函数是在目标变量服从高斯分布的假定下用最大似然法推导出来的一个自然结果！（注意这一结论与\(y(x,w)\)的具体形式无关）</strong></p>
+
+<p>一旦得到了\(w\)和\(\beta\)的最大似然估计，我们就可以对新变量\(x\)的目标值做出预估。注意，这里是对\(t\)的分布预估（predictive distribution），而非点估计（point estimate）。<em>（在后面的decision theory章节中会介绍如何从预估的分布得到预测值）</em></p>
+
+<p>以上是频率学派对多项式拟合算法的解释。</p>
+
+<p>而在贝叶斯学派看来，参数\(w\)也是一个随机变量。假定\(w\)的先验分布是一个服从均值为0的多元高斯分布：<br/>
+\[p(w|\alpha)=\mathcal{N}(w|0,\alpha^{-1}I)\]<br/>
+其中，\(\alpha\)被称为模型的<strong>超验参数（hyperparameters）</strong>。<br/>
+则由贝叶斯定理，\(w\)在给定训练集上的后验分布为：<br/>
+\[p(w|\mathbf{x},\mathbf{t},\alpha,\beta) \propto p(\mathbf{t}|\mathbf{x},w,\alpha,\beta) \times p(w|\alpha)\]</p>
+
+<p>我们可以通过最大化这个后验概率来找出最合适的\(w\)。这个方法被称之为<strong>最大后验概率法（maximum posterior，简称MAP）</strong>。对上式取对数，并代入似然函数和先验概率的分布函数后，我们发现，最大后验概率等价于最小化带正则项的平方误差函数：<br/>
+\[\frac{1}{2}\sum_{n=1}^N{\{y(x_n,w)-t_n\}^2}+\frac{\alpha}{2\beta}w^Tw\]<br/>
+（这句话也可以这么理解：通过引入均值为0的高斯分布先验函数，我们对\(w\)的大小进行了限定。）</p>
+
+<p>也就是说，<strong>带正则项的误差函数，是在目标变量、模型参数均服从高斯分布的假定下，用最大后验概率法推导出来的一个自然结果！</strong>同样的，这个结论与\(y(x,w)\)的具体形式无关。</p>
+
+<p>不过，虽然我们引入了\(w\)的先验概率分布，MAP依然只是对\(w\)的点估计（类似最大似然法，这种方法最大的问题在于给出的估计值往往是有偏的，即\(E[w_{MAP}] \neq w\)）。而贝叶斯学派的精髓在于，从\(w\)的后验概率分布出发，我们可以进一步得到在给定训练集\(\mathbf{x}\)和\(\mathbf{t}\)的条件下，新变量\(x\)的目标值\(t\)的后验概率分布\(p(t|x,\mathbf{x},\mathbf{t})\)：<br/>
+\[p(t|x,\mathbf{x},\mathbf{t})=\int{p(t|x,w)p(w|\mathbf{x},\mathbf{t})dw}\]<br/>
+（假定\(\alpha\)和\(\beta\)都是模型的超验参数）</p>
+
+<p>总结一下频率学派和贝叶斯学派的区别：</p>
+
+<table>
+<thead>
+<tr>
+<th>----</th>
+<th>频率学派</th>
+<th>贝叶斯学派</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>目标变量\(t\)</td>
+<td>\(p(t\|x,w)\)</td>
+<td>\(p(t\|x,\mathbf{x},\mathbf{t})\)</td>
+</tr>
+<tr>
+<td>模型参数\(w\)</td>
+<td>显式；常量</td>
+<td>隐式；随机变量</td>
+</tr>
+<tr>
+<td>模型优化算法</td>
+<td>最大似然法</td>
+<td>最大后验概率法 <sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup></td>
+</tr>
+<tr>
+<td>优化目标函数</td>
+<td>\(\frac{1}{2}\sum_{n=1}^N{\{y(x_n,w)-t_n\}^2}\)</td>
+<td>\(\frac{1}{2}\sum_{n=1}^N{\{y(x_n,w)-t_n\}^2}+\frac{\alpha}{2\beta}w^Tw\)</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="toc_6">决策理论（Decision Theory）</h2>
+
+<p>一个具体的机器学习问题的解决包括两个过程：<strong>推断（inference）</strong>和<strong>决策（decision）</strong>。前者在概率学的框架下告诉我们\(p(\mathbf{x},t)\)的分布；后者则借助<strong>决策理论（decision theory）</strong>告诉我们在这个联合概率分布下的最优反应（例如对\(t\)的预估等）。</p>
+
+<p>一旦解决了推断的问题，决策的过程就显得异常简单。</p>
+
+<h3 id="toc_7">分类问题的决策</h3>
+
+<p>对于分类问题而言，我们寻求一个将输入变量\(\mathbf{x}\)映射到某一个分类上的法则。这个法则将\(\mathbf{x}\)的向量空间划分成了不同的区域\(\mathcal{R}_k\)：我们称之为<strong>decision region</strong>；位于\(\mathcal{R}_k\)里的点\(\mathbf{x}\)都被映射到类\(C_k\)上。相应的，decision region之间的边界我们称之为<strong>decision boundaries</strong>或<strong>decision surfaces</strong>。</p>
+
+<p>如何找到这个决策面呢？</p>
+
+<p>假定我们的决策目标是使得误分类的概率尽可能地小，借助概率论，我们有：<br/>
+\[p(mistake)=1-p(correct)=1-\sum_{k=1}^K{\int_{\mathcal{R}_k}}{p(\mathbf{x},C_k)d\mathbf{x}}\]<br/>
+显然，为了让\(p(mistake)\)尽可能地小，\(\mathcal{R}_k\)应是由那些使得\(p(\mathbf{x},C_k)\)最大的点构成的集合（即对于\(\mathbf{x} \in \mathcal{R}_k\)，满足\(p(\mathbf{x},C_k) \geq p(\mathbf{x},C_j)\)）。由于\(p(\mathbf{x},C_k)＝p(C_k|\mathbf{x})p(\mathbf{x})\)，也就是说我们应将\(\mathbf{x}\)映射到后验概率\(p(C_k|\mathbf{x})\)最大的类\(C_k\)上。</p>
+
+<p>但真实的问题也许要更复杂一些。例如对癌症患者的诊断：错误的将一个癌症患者诊断为健康，远比将一个健康的人误诊为癌症要严重的多。因此，就有了<strong>损失矩阵（loss function）</strong>的概念：损失矩阵\(L\)中的元素\(L_{kj}\)用来评估当类\(C_k\)被误分类为\(C_j\)时带来的损失。显然，对任意的类\(C_k\)，总有\(L_{kk}=0\)。</p>
+
+<p>此时，我们的决策目标是最小化期望损失函数。同样地借助概率论的知识，我们有：<br/>
+\[E[L] = \sum_k \sum_j \int_{\mathcal{R}_j}{L_{kj}p(\mathbf{x},C_k)d\mathbf{x}}\]<br/>
+类似地，我们选取那些使\(\sum_k L_{kj}p(\mathbf{x},C_k)\)最小的点\(\mathbf{x}\)构成的集合为类\(C_j\)的decision region \(\mathcal{R}_j\)（即对于\(\mathcal{R}_j\)里的\(\mathbf{x}\)，总有\(\sum_k L_{kj}p(\mathbf{x},C_k) \leq \sum_k L_{ki}p(\mathbf{x},C_k)\)）。</p>
+
+<h3 id="toc_8">再次回顾推断过程</h3>
+
+<p>在前面对分类问题决策阶段的讨论中，我们发现，我们可以在推断阶段预估\({\mathbf{x}}\)和\(C_k\)的联合概率分布\(p(\mathbf{x},C_k)\)，也可以预估\(C_k\)的后验条件概率\(p(C_k|\mathbf{x})\)。事实上，我们也可以将两个阶段整合为一个过程，直接学习\({\mathbf{x}}\)到\(C_k\)的映射。这三种不同的解决问题的思路，对应了三种不同的模型：</p>
+
+<ol>
+<li><strong>产生式模型（generative models）</strong>：产生式模型是指那些在推断阶段隐式或显式地对输入变量\(\mathbf{x}\)的分布进行了建模的模型。由贝叶斯公式，我们可以用\(\mathbf{x}\)的条件概率\(p(\mathbf{x}|C_k)\)和\(C_k\)的先验概率\(p(C_k)\)计算\(C_k\)的后验概率：\[p(C_k|\mathbf{x})=\frac{p(\mathbf{x}|C_k)p(C_k)}{p(\mathbf{x})}\]在得到\(C_k\)的后验概率后，进入决策阶段分类。这个过程等价于对联合概率分布\(p(\mathbf{x},C_k)\)进行建模（上式中的分子）。</li>
+<li><strong>判别式模型（discriminative models）</strong>：判别式模型是指那些在推断阶段直接对目标变量的后验概率进行建模的模型。例如前面提到的多项式拟合模型。</li>
+<li><strong>判别式函数（discriminant function）</strong>：通过一个判别式函数\(f(\mathbf{x})\)可以将输入变量\(\mathbf{x}\)直接映射到一个类标上；省去了对概率分布的预估。Andrew在Coursera上的课程里提到的假说（Hypothesis）就是这类函数。</li>
+</ol>
+
+<p>总的来说，三类模型各有利弊。相对来讲，产生式模型最为复杂，也需要最多的训练数据；但是由于可以对输入变量的分布进行预估，功能上也最为强大。而我们用的最多的一般是判别式模型。由于引入了对后验概率的预估，使得我们可以方便的处理非平衡样本问题，以及多模型的融合。这是简单的判别式函数所不具备的。</p>
+
+<h3 id="toc_9">回归问题的决策</h3>
+
+<p>与分类问题类似，回归问题的决策阶段也是要从目标变量的概率分布中选择一个特定的预估值，以最小化某个损失函数。回归问题的损失函数为：\[E[L] = \int\int L(t,y(\mathbf{x}))p(\mathbf{x},t)d\mathbf{x}dt\] 积分项的意思是，对于输入变量\(\mathbf{x}\)和真实目标值\(t\)，我们的预估目标值\(y(\mathbf{x})\)带来的期望损失。一般\(L(t,y(\mathbf{x}))\)被定义为平方误差和的形式。</p>
+
+<p>最小化这个损失函数我们得到解：\(y(\mathbf{x})=E_t[t|\mathbf{x}]\)。这个条件期望也被称之为<strong>回归函数（regression function）</strong>。在前面的多项式拟合的问题中，我们假定了目标变量\(t\)服从一个高斯分布，并用最大似然法（或Bayesian的方法）估计出了模型的参数；而通过这里的回归函数，我们才最终得到了\(t\)的一个预估值。</p>
+
+<p>类似地，回归问题也有三种建模方式：产生式模型，判别式模型，和判别式函数。这里不再赘述。</p>
+
+<h2 id="toc_10">信息论（Information Theory）</h2>
+
+<p>如果说概率论给出了对不确定性的一个描述，信息论则给出了对不确定性程度的一种度量。这种度量就是信息熵。</p>
+
+<h3 id="toc_11">信息熵</h3>
+
+<p>我们可以从三种不同的角度理解信息熵的定义。</p>
+
+<ol>
+<li>概率学。如果我们问一个随机事件的发生会传递多少信息量？显然，一个确定事件的发生传递的信息量为0，而一个小概率事件的发生会传递更多的信息量。因此，我们对信息量（记作\(h(x)\)）的定义应该与随机事件发生的概率\(p(x)\)有关。另一方面，两个独立事件同时发生所传递的信息量应该是这两个事件各自发生的信息量之和，即\(h(x,y)=h(x)+h(y)\)。由这两个性质出发，我们可以证明，信息量\(h(x)\)必然遵循\(p(x)\)的对数形式：\[h(x) ＝ -log_{2}p(x)\] 进一步地，我们定义一个随机变量\(x\)的信息熵为其传递的信息量的期望值：\[H[x]=-\sum p(x)log_{2}p(x)\]</li>
+<li>信息学。在对信息熵的第一种解读中，我们并没有解释为什么对信息量的定义采用了以自然数2为底的对数。Shannon给出了一个信息学的解释：信息熵等价于编码一个随机变量的状态所需的最短位数（bits）。对于一个均匀分布的随机变量，这是显而易见的；而对于非均匀分布的随机变量，我们可以通过对高频事件采用短编码，低频事件采用长编码的方式，来缩短平均编码长度。</li>
+<li>物理学。在热力学中我们也接触到熵的定义：一种对系统无序程度的度量。熵越大，系统的无序程度越高。这里，熵被定义为一个宏观态对应微观态个数的对数。与热力学熵类似，信息熵度量了一个随机变量的不确定程度。信息熵越大，随机变量的不确定性越高。</li>
+</ol>
+
+<p>我们也可以将信息熵的定义拓展到连续型的随机变量，定义为<strong>微分熵（differential entropy）</strong>：\[H[x]=-\int{p(x)\ln{p(x)}}dx\] （如果从信息熵的原始定义出发，我们会发现微分熵的定义和信息熵相差了一个极大项：\(-\ln{\Delta}\)；这意味着连续变量本质上不可能做到精确的编码。）</p>
+
+<p>结合拉格朗日法，我们可以推导出信息熵和微分熵最大时对应的分布：对于离散的随机变量，信息熵最大时对应着一个均匀分布；对于连续的随机变量，微分熵最大时对应着一个高斯分布（注意对于微分熵的最大值求解需要增加一阶矩和二阶矩两个约束条件）。</p>
+
+<h3 id="toc_12">条件熵，交叉熵，与互信息</h3>
+
+<p>从信息熵的第一定义，我们很容易写出<strong>条件信息熵</strong>的计算公式：\[H[y|x]=-\int\int p(y,x)\ln{p(y|x)}dydx\]<br/>
+容易证明，\(H[x,y]=H[y|x]+H[x]\)。也就是说，\(x\)、\(y\)联合分布的不确定度，等于\(x\)的不确定度与知道\(x\)后\(y\)的不确定度之和。</p>
+
+<p><strong>交叉熵（relative entropy）</strong>，又被称为<strong>KL divergence</strong>，衡量了两个分布的不相似性。它定义了用一个预估分布\(q(x)\)近似一个未知分布\(p(x)\)时，对\(x\)进行编码所需要的额外期望信息量：\[KL[p\|q]=-\int p(x)\ln{q(x)}dx-(-\int p(x)\ln{p(x)}dx)=-\int p(x)\ln{\{\frac{q(x)}{p(x)}\}dx}\]</p>
+
+<p>交叉熵越大，两个分布越不相似。可以证明，交叉熵不满足对称性（\(KL[p\|q] \neq KL[q\|p]\)）；且\(KL[p\|q]\geq 0\)（当且仅当\(q(x) = p(x)\)时等号成立）。</p>
+
+<p>我们可以用交叉熵的概念来对一个机器学习模型的参数进行预估。假设我们有一堆抽样自某未知分布\(p(x)\)的数据，我们试图用一个带参数的模型\(q(x|\theta)\)去拟合它。一条可行的思路是选择使\(p(x)\)和\(q(x|\theta)\)的交叉熵尽可能小的参数\(\theta\)。虽然我们不知道\(p(x)\)的真实分布，但由蒙特卡洛方法，我们可以从抽样数据中得到\(KL(p\|q)\)的近似值：<br/>
+\[KL(p\|q) \simeq \sum_{n=1}^{N}\{-\ln{q(x_n|\theta)}+\ln{p(x_n)}\}\]<br/>
+略去与\(\theta\)无关项，我们发现，我们得到的是一个似然函数的负对数！也就是说，<strong>最小化模型预估分布与真实分布的交叉熵等价于前面提到的最大似然法！</strong>这也从信息熵的角度解释了为什么要对似然函数取对数的原因。</p>
+
+<p>另一个重要的概念是<strong>互信息（mutual information）</strong>，用来衡量两个随机变量\(x\)、\(y\)的相关性。互信息有两种定义方式：<br/>
+1. \(p(x,y)\)和\(p(x)p(y)\)的交叉熵定义：\[I[x,y]=KL(p(x,y)\|p(x)p(y))=-\int\int{p(x,y)\ln{(\frac{p(x)p(y)}{p(x,y)})}}dxdy\] 当\(x\)、\(y\)相互独立时，\(p(x,y)=p(x)p(y)\)；此时，\(I[x,y]=0\)。<br/>
+2. 由KL定义出发，我们可以推导出互信息的条件熵定义：\[I[x,y]=H[x]-H[x|y]=H[y]-H[y|x]\] 因此，\(x\)、\(y\)的互信息可以理解为知道其中一个随机变量的取值后，另一个随机变量的不确定度的降低（当\(I[x,y]=H[x]\)时意味着\(y\)的发生确定了\(x\)的发生，即两个随机变量完全相关）。</p>
+
+<div class="footnotes">
+<hr/>
+<ol>
+
+<li id="fn1">
+<p>通常，贝叶斯学派不会对模型的参数进行点估计，因此也不会用MAP算法优化模型。把最大后验概率算法和下面的优化目标函数放在这里，只是为了和频率学派的最大似然法进行对比。&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[word2vec前世今生]]></title>
-    <link href="tianwei.github.io/14902453987041.html"/>
+    <link href="tianwei.github.io/word2vec.html"/>
     <updated>2017-03-23T13:03:18+08:00</updated>
-    <id>tianwei.github.io/14902453987041.html</id>
+    <id>tianwei.github.io/word2vec.html</id>
     <content type="html"><![CDATA[
 <p>2013年，Google开源了一款用于词向量计算的工具——word2vec，引起了工业界和学术界的关注。首先，word2vec可以在百万数量级的词典和上亿的数据集上进行高效地训练；其次，该工具得到的训练结果——词向量（word embedding），可以很好地度量词与词之间的相似性。随着深度学习（Deep Learning）在自然语言处理中应用的普及，很多人误以为word2vec是一种深度学习算法。其实word2vec算法的背后是一个浅层神经网络。另外需要强调的一点是，word2vec是一个计算word vector的开源工具。当我们在说word2vec算法或模型的时候，其实指的是其背后用于计算word vector的CBoW模型和Skip-gram模型。很多人以为word2vec指的是一个算法或模型，这也是一种谬误。接下来，本文将从统计语言模型出发，尽可能详细地介绍word2vec工具背后的算法模型的来龙去脉。</p>
 

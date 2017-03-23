@@ -1,0 +1,437 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  Deep Learning读书笔记（二）：线性代数 - 公子天的博客
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="公子天的博客" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:tianwei.github.io ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="http://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 公子天的博客</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+       
+       <li><a href="index.html">HOME</a></li>
+    <li><a href="archives.html">Archives</a></li>
+    <li><a href="about.html">ABOUT</a></li>
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="ReadingNotes.html">读书笔记</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>Deep Learning读书笔记（二）：线性代数</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/3/23</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='deeplearning.html'>Deep Learning</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h2 id="toc_0">基本术语</h2>
+
+<ul>
+<li>Scalars：标量。通常是一个实数。</li>
+<li>Vectors：向量。由一组标量组成的一维有序数组；若无特殊说明通常是指列向量。通过下标索引可以找到其对应的元素。对应的几何意义是笛卡尔空间的一个点。</li>
+<li>Matrices：矩阵（特指二维矩阵）。由一组标量组成的二维数组。</li>
+<li>Tensors：张量。一个高维矩阵（\(D \geq 3\)）</li>
+</ul>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_1">基本运算</h2>
+
+<ul>
+<li>Transpose：\((A^\top)_{i, j} = A_{j, i}\)</li>
+<li>Broadcasting：将向量的元素按行或按列广播为一个矩阵，从而与另一个矩阵进行计算</li>
+<li>Multiplying：
+
+<ol>
+<li>matrix product：\((AB)_{i,j}=\sum_k{A_{i,k}B_{k,j}}\)</li>
+<li>element-wise product：\((A \odot B)_{i,j}=A_{i,j}B_{i,j}\)</li>
+<li>dot product：\(x^\top y\)</li>
+<li>matrix-vector product：\(Ax=b\) 对应着一组线性方程组。</li>
+</ol></li>
+<li>Inverse Matrices：\(A^{-1}A=I_n\) （逆矩阵主要被用于理论分析的工具）</li>
+</ul>
+
+<h2 id="toc_2">线性相关和矩阵的Span</h2>
+
+<ul>
+<li>线性方程组\(Ax=b, A \in \mathbb{R}^{m \times n}\)的解的可能性：
+
+<ul>
+<li>唯一解（对于任意向量\(b \in \mathbb{R}^m\)）</li>
+<li>无穷解</li>
+<li>无解</li>
+</ul></li>
+<li>Linear Combination：一组向量的线性组合被定义为是将每一个向量都乘以一个标量系数并求和的结果：\(\sum_i{c_iv^{(i)}}\)
+
+<ul>
+<li>矩阵-向量乘积\(Ax\)的意义：\(Ax=\sum_i{x_i A_{:, i}}\) 矩阵列向量的一种线性组合（linear combination）</li>
+</ul></li>
+<li>Span：一组向量的Span被定义为这组向量所有可能的线性组合所构成的向量的集合。
+
+<ul>
+<li>矩阵的列空间（column space）：矩阵列向量的span</li>
+<li>判断线性方程组\(Ax=b\)有无解等价于判断向量\(b\)是否在矩阵\(A\)的列空间里</li>
+</ul></li>
+<li>Linear Dependence：对于一组向量的集合，如果其中存在一个向量是其他向量的线性组合，则称这组向量是线性相关的。
+
+<ul>
+<li>线性方程组\(Ax=b\)对任意\(b \in \mathbb{R}^m\)至少有一个解（矩阵\(A \in \mathbb{R}^{m \times n}\)的列空间等于\(\mathbb{R}^m\)）的充要条件：矩阵\(A\)至少有一组\(m\)个线性不相关的列向量</li>
+<li>线性方程组\(Ax=b\)对任意\(b \in \mathbb{R}^m\)有唯一解的充要条件：矩阵\(A\)仅有一组\(m\)个线性不相关的列向量（\(n = m\)）。此时，矩阵\(A\)可逆。</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_3">范式Norms</h2>
+
+<ul>
+<li>向量的范式：用于测量一个向量的大小</li>
+<li>\(L^p\)范式：\(||x||_p=\sqrt[p]{\sum_i{|x_i|^p}}\) 将一个向量映射为一个非负实数
+
+<ul>
+<li>基本性质：
+
+<ol>
+<li>\(L^p(x)=0 \Rightarrow x=0\)</li>
+<li>\(L^p(x+y) \leq L^p(x) + L^p(y)\)</li>
+<li>\(\forall \alpha \in \mathbb{R}, L^p(\alpha x) = |\alpha| L^p(x)\)</li>
+</ol></li>
+</ul></li>
+<li>常见的几种范式：
+
+<ul>
+<li>\(L^2\)范式：\(||x||_2=\sqrt{\sum_i{x_i^2}}\) 又称欧几里得范式（度量了向量\(x\)到原点的欧氏距离）。在机器学习领域里更常用的是\(L^2\)范式的平方（即\(x^\top x\)）。其特点是易于对向量\(x\)的每个元素求偏导，缺陷是在原点附近平方值的变化曲率太小。</li>
+<li>\(L^1\)范式：\(||x||_1 = \sum_i{|x_i|}\) 在空间的任意点都有着相同的变化率，适用于对原点附近点的大小极为敏感的应用场景。</li>
+<li>\(L^\infty\)范式：\(||x||_\infty = \max_i{|x_i|}\)</li>
+<li>Frobenius Norm：\(||A||_F = \sqrt{\sum_{i,j}{A^2_{i,j}}}\) 矩阵的\(F\)范式，类似于向量的\(L^2\)范式，常用于在深度学习中测量一个矩阵的大小。</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_4">几种特殊矩阵和向量</h2>
+
+<ul>
+<li>Diagonal Matrices：对角矩阵。仅在对角元上的元素非零。对角矩阵的向量乘法和求逆都十分简单，因此常被用于通用算法中的假设以简化计算。</li>
+<li>Symmetric Maxtrix：对称矩阵。满足：\(A=A^\top\)。通常由一个接受双参数且对参数顺序不敏感的函数产生（例如距离函数）</li>
+<li>Unit Vector：单元向量。满足：\(||x||_2 = 1\)</li>
+<li>Orthogonal Vectors：正交向量。两个向量被称为正交当且仅当这两个向量满足：\(x^\top y = 0\)。在\(\mathbb{R}^n\)空间里，最多只能找到\(n\)个非零范式的相互正交的向量。如果两个向量不仅正交且\(L^2\)范式均为1，称之为正交归一化向量（orthonormal）</li>
+<li>Orthogonal Matrix：正交矩阵。是一个行向量相互<strong>正交归一</strong>且列向量相互<strong>正交归一</strong>的方阵：\(A^\top A = A A^\top = I\)（也即\(A^{-1} = A^\top\)）</li>
+</ul>
+
+<h2 id="toc_5">特征分解（Eigendecomposition）</h2>
+
+<ul>
+<li>特征向量（Eigenvector）：一个矩阵\(A\)的特征向量\(v\)是一个满足\(Av=\lambda v\)的非零向量（矩阵\(A\)作用在这个向量上仅改变其大小，不改变其方向）。其中，\(\lambda\)又被称为矩阵\(A\)的特征值（Eigenvalue）。显然，同一个特征值对应的特征向量有无数多个（如果\(v\)是矩阵\(A\)的特征向量，则\(sv, s \in \mathbb{R}, s \ne 0\)也是一个特征向量）。我们平时所说的特征向量通常是指\(L^2\)范式为\(1\)的单位向量。
+
+<ul>
+<li>矩阵与其特征向量的几何关系：矩阵的本质是对其特征向量构成空间的一个尺寸变换（scaling）。设若\(x=v\mu\)，其中\(v\)是矩阵\(A\)的特征向量构成的矩阵，则有：\[Ax=Av\mu=(\lambda v) \mu\]</li>
+</ul></li>
+<li>特征分解（Eigendecomposition）：将矩阵\(A\)分解为两个特征矩阵乘积的形式：\(A=V diag({\lambda}) V^{-1}\)。其中\(V=[v^{(1)},...,v^{(n)}]\)是由\(n \times n\)矩阵\(A\)的\(n\)个相互独立的特征向量（确保\(V^{-1}\)的存在）按列组成的特征矩阵；\(\lambda = [\lambda_1, ..., \lambda_n]^\top\)是对应的特征值组成的列向量。（这个等式的证明也很简单，只需在等式两边各自右乘一个矩阵\(V\)即可。）
+
+<ul>
+<li>并非所有矩阵都存在特征分解</li>
+</ul></li>
+<li><strong>实对称矩阵</strong>的特征分解：\(A=Q \Lambda Q^\top\)。其中，\(Q\)是一个由实对称矩阵\(A\)的特征向量组成的<strong>正交矩阵</strong>（不仅仅是linear independence）
+
+<ul>
+<li>应用： 二次型\(f(x) = x^\top A x\)的极值。其中\(||x||_2=1\)
+
+<ul>
+<li>极大值：最大特征值及其对应的特征向量</li>
+<li>极小值：最小特征值及其对应的特性向量</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h2 id="toc_6">奇异值分解（Singular Value Decomposition）</h2>
+
+<ul>
+<li>SVD分解：\(A=UDV^\top\)
+
+<ul>
+<li>更通用的矩阵分解方式</li>
+<li>\(U\)：\(m \times m\)的正交矩阵。其列向量被称为矩阵\(A\)的<em>左奇异向量</em>，同时也是矩阵\(AA^\top\)的特征向量</li>
+<li>\(D\)：\(m \times n\)的对角矩阵。对角元上的元素被称为矩阵\(A\)的<em>奇异值</em>，同时也是矩阵\(A^\top A\)和\(AA^\top\)的特征值的平方根</li>
+<li>\(V\)：\(n \times n\)的正交矩阵。其列向量被称为矩阵\(A\)的<em>右奇异向量</em>，同时也是矩阵\(A^\top A\)的特征向量</li>
+</ul></li>
+<li>应用：Moore-Penrose伪逆（对任意矩阵求其伪逆）
+
+<ul>
+<li>\(A^+ = V D^+ U^\top\)，其中对角矩阵\(D\)的伪逆是对其非零元素取倒数再转置得到的</li>
+</ul></li>
+</ul>
+
+<h2 id="toc_7">迹（Trace）和行列式（Determinant）</h2>
+
+<ul>
+<li>Trace：\(Tr(A) = \sum_i{A_{i,i}}\)</li>
+<li>Determinant：\(det(A) = \prod_i{\lambda_i}\)</li>
+</ul>
+
+<h2 id="toc_8">例子：PCA主成分分析</h2>
+
+<ul>
+<li>动机：对于一组\(n\)维空间的向量点，找到一个低维的特征表达，并尽可能少地丢失信息：\(x \approx g(f(x))\)。其中\(f(x)\)是编码函数（将高维向量编码到低维空间）；\(g(x)\)是解码函数（将低维向量解码到高维空间）</li>
+<li>问题一：编码／解码函数长什么样？
+
+<ul>
+<li>假设（解码函数）：\(g(c) = Dc, D \in \mathbb{R}^{n \times l}\)。即用一个\(n \times l\)的矩阵对编码后的点\(c\)进行解码。其中，\(D\)是一个列向量正交且归一的矩阵（由于\(n &gt; l\)故行向量不可能正交）</li>
+<li>目标（编码函数）：寻求一个最优的低维空间编码\(c^*\)，使得由\(c^*\)在高维空间重建后的点\(g(c^*)\)与原始的点\(x\)最近，也即最小化\(L^2\)范式的解\(c\)：\[c^*=\arg\min_c{||x - g(c)||_2}\]</li>
+<li>最优解（编码函数）：\(f(x) = c^* =D^\top x\)</li>
+</ul></li>
+<li>问题二：如何找到解码矩阵\(D\)？
+
+<ul>
+<li>目标：寻求一个最优的矩阵\(D\)，使得在输入的所有数据上的重建误差最小（Frobenius范式最小）：\[D^* = \arg\min_D{\sqrt{\sum_{i,j}{(x^i_j - DD^\top x^i_j)^2}}}\]
+其中约束条件为：\(D^\top D = I_l\)</li>
+<li>结论：<strong>\(D\)是由矩阵\(X^\top X\)的\(l\)个最大的特征值对应的特征向量构成的矩阵</strong>（利用到了实对称矩阵对应二次型的极值）</li>
+</ul></li>
+</ul>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="deeplearning_note1.html" 
+          title="Next Post: Deep Learning读书笔记（一）：导论">Deep Learning读书笔记（一）：导论 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>公子天的博客</h1>
+                <div class="site-des"></div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="ReadingNotes.html"><strong>读书笔记</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="deeplearning_note2.html">Deep Learning读书笔记（二）：线性代数</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="deeplearning_note1.html">Deep Learning读书笔记（一）：导论</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="prml_note1.html">PRML读书笔记（一）：概率论，决策论，与信息论</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="word2vec.html">word2vec前世今生</a>
+			      </li>
+		     
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    <script src="asset/chart/all-min.js"></script><script type="text/javascript">$(function(){    var mwebii=0;    var mwebChartEleId = 'mweb-chart-ele-';    $('pre>code').each(function(){        mwebii++;        var eleiid = mwebChartEleId+mwebii;        if($(this).hasClass('language-sequence')){            var ele = $(this).addClass('nohighlight').parent();            $('<div id="'+eleiid+'"></div>').insertAfter(ele);            ele.hide();            var diagram = Diagram.parse($(this).text());            diagram.drawSVG(eleiid,{theme: 'simple'});        }else if($(this).hasClass('language-flow')){            var ele = $(this).addClass('nohighlight').parent();            $('<div id="'+eleiid+'"></div>').insertAfter(ele);            ele.hide();            var diagram = flowchart.parse($(this).text());            diagram.drawSVG(eleiid);        }    });});</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({TeX: { equationNumbers: { autoNumber: "AMS" } }});</script>
+
+
+  </body>
+</html>

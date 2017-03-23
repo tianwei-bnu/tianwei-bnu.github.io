@@ -2,18 +2,45 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
   <loc>tianwei.github.io/</loc>
-  <lastmod>2017-03-23T14:45:53+08:00</lastmod>
+  <lastmod>2017-03-23T15:20:34+08:00</lastmod>
 </url>
 
 <url>
-  <loc>tianwei.github.io/14902453987041.html</loc>
+  <loc>tianwei.github.io/deeplearning_note2.html</loc>
+  <lastmod>2017-03-23T15:17:46+08:00</lastmod>
+</url>
+
+<url>
+  <loc>tianwei.github.io/deeplearning_note1.html</loc>
+  <lastmod>2017-03-23T15:15:41+08:00</lastmod>
+</url>
+
+<url>
+  <loc>tianwei.github.io/prml_note1.html</loc>
+  <lastmod>2017-03-23T15:05:32+08:00</lastmod>
+</url>
+
+<url>
+  <loc>tianwei.github.io/word2vec.html</loc>
   <lastmod>2017-03-23T13:03:18+08:00</lastmod>
 </url>
 
 
 
 <url>
-  <loc>tianwei.github.io/Reading%20Notes.html</loc>
+  <loc>tianwei.github.io/ReadingNotes.html</loc>
+</url>
+
+<url>
+  <loc>tianwei.github.io/papers.html</loc>
+</url>
+
+<url>
+  <loc>tianwei.github.io/PRML.html</loc>
+</url>
+
+<url>
+  <loc>tianwei.github.io/deeplearning.html</loc>
 </url>
 
 
