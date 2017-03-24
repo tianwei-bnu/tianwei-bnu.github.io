@@ -4,7 +4,7 @@
   <title><![CDATA[公子天的网络日志]]></title>
   <link href="whiskytina.github.io/atom.xml" rel="self"/>
   <link href="whiskytina.github.io/"/>
-  <updated>2017-03-24T23:24:56+08:00</updated>
+  <updated>2017-03-24T23:31:48+08:00</updated>
   <id>whiskytina.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -467,6 +467,8 @@ index = similarities.MatrixSimilarity.load(&#39;/tmp/deerwester.index&#39;)
     <updated>2017-03-23T17:50:30+08:00</updated>
     <id>whiskytina.github.io/14902626300821.html</id>
     <content type="html"><![CDATA[
+<p>在特征选择中，有三类常用的指标：信息增益；信息增益率；和基尼系数。这些指标也是决策树算法的基础。现摘录这三个指标的定义如下：</p>
+
 <ol>
 <li><p>信息增益（Information Gain）<br/>
 特征\(T\)为分类系统\(C\)带来的信息增益为：<br/>
@@ -1756,7 +1758,7 @@ docker load --input myanaconda.tar
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Markdown 语法和 MWeb 写作使用说明]]></title>
+    <title type="html"><![CDATA[（转自MWeb官方文档）Markdown 语法和 MWeb 写作使用说明]]></title>
     <link href="whiskytina.github.io/14902751600359.html"/>
     <updated>2017-03-23T21:19:20+08:00</updated>
     <id>whiskytina.github.io/14902751600359.html</id>
