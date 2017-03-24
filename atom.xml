@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[公子天的博客]]></title>
-  <link href="tianwei.github.io/atom.xml" rel="self"/>
-  <link href="tianwei.github.io/"/>
-  <updated>2017-03-23T21:22:04+08:00</updated>
-  <id>tianwei.github.io/</id>
+  <title><![CDATA[公子天的网络日志]]></title>
+  <link href="whiskytina.github.io/atom.xml" rel="self"/>
+  <link href="whiskytina.github.io/"/>
+  <updated>2017-03-23T22:39:39+08:00</updated>
+  <id>whiskytina.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
     
@@ -14,9 +14,9 @@
   
   <entry>
     <title type="html"><![CDATA[Deep Learning读书笔记（二）：线性代数]]></title>
-    <link href="tianwei.github.io/14902534668711.html"/>
+    <link href="whiskytina.github.io/14902534668711.html"/>
     <updated>2017-03-23T15:17:46+08:00</updated>
-    <id>tianwei.github.io/14902534668711.html</id>
+    <id>whiskytina.github.io/14902534668711.html</id>
     <content type="html"><![CDATA[
 <h2 id="toc_0">基本术语</h2>
 
@@ -184,9 +184,9 @@
   
   <entry>
     <title type="html"><![CDATA[Deep Learning读书笔记（一）：导论]]></title>
-    <link href="tianwei.github.io/14902533416687.html"/>
+    <link href="whiskytina.github.io/14902533416687.html"/>
     <updated>2017-03-23T15:15:41+08:00</updated>
-    <id>tianwei.github.io/14902533416687.html</id>
+    <id>whiskytina.github.io/14902533416687.html</id>
     <content type="html"><![CDATA[
 <h2 id="toc_0">什么是深度学习</h2>
 
@@ -254,9 +254,9 @@
   
   <entry>
     <title type="html"><![CDATA[Gensim进阶教程：训练word2vec与doc2vec模型]]></title>
-    <link href="tianwei.github.io/14902628595488.html"/>
+    <link href="whiskytina.github.io/14902628595488.html"/>
     <updated>2017-03-23T17:54:19+08:00</updated>
-    <id>tianwei.github.io/14902628595488.html</id>
+    <id>whiskytina.github.io/14902628595488.html</id>
     <content type="html"><![CDATA[
 <p>本篇博客是Gensim的进阶教程，主要介绍用于词向量建模的word2vec模型和用于长文本向量建模的doc2vec模型在Gensim中的实现。</p>
 
@@ -336,9 +336,9 @@ model = Doc2Vec(dm=1, size=100, window=5, negative=5, hs=0, min_count=2, workers
   
   <entry>
     <title type="html"><![CDATA[Gensim入门教程]]></title>
-    <link href="tianwei.github.io/14902627439324.html"/>
+    <link href="whiskytina.github.io/14902627439324.html"/>
     <updated>2017-03-23T17:52:23+08:00</updated>
-    <id>tianwei.github.io/14902627439324.html</id>
+    <id>whiskytina.github.io/14902627439324.html</id>
     <content type="html"><![CDATA[
 <h2 id="toc_0">What is Gensim?</h2>
 
@@ -463,9 +463,9 @@ index = similarities.MatrixSimilarity.load(&#39;/tmp/deerwester.index&#39;)
   
   <entry>
     <title type="html"><![CDATA[特征选择中的常用指标]]></title>
-    <link href="tianwei.github.io/14902626300821.html"/>
+    <link href="whiskytina.github.io/14902626300821.html"/>
     <updated>2017-03-23T17:50:30+08:00</updated>
-    <id>tianwei.github.io/14902626300821.html</id>
+    <id>whiskytina.github.io/14902626300821.html</id>
     <content type="html"><![CDATA[
 <ol>
 <li><p>信息增益（Information Gain）<br/>
@@ -500,9 +500,9 @@ GainEntropy(T) &amp;= Entropy(C) − Entropy(C|T) \\<br/>
   
   <entry>
     <title type="html"><![CDATA[iTerms2结合Expect实现SSH自动登录]]></title>
-    <link href="tianwei.github.io/14902607196341.html"/>
+    <link href="whiskytina.github.io/14902607196341.html"/>
     <updated>2017-03-23T17:18:39+08:00</updated>
-    <id>tianwei.github.io/14902607196341.html</id>
+    <id>whiskytina.github.io/14902607196341.html</id>
     <content type="html"><![CDATA[
 <p>iTerm2是Mac上一款十分强大的终端，然而与Windows上常用的SecureCRT或是XShell相比，iTerm2本身无法记录SSH登录名和密码，在实际使用中颇有不便。不过我们可以在iTerm2的Profiles中结合Expect脚本实现类似的功能。</p>
 
@@ -567,9 +567,9 @@ interact
   
   <entry>
     <title type="html"><![CDATA[word2vec前世今生]]></title>
-    <link href="tianwei.github.io/14902453987041.html"/>
+    <link href="whiskytina.github.io/14902453987041.html"/>
     <updated>2017-03-23T13:03:18+08:00</updated>
-    <id>tianwei.github.io/14902453987041.html</id>
+    <id>whiskytina.github.io/14902453987041.html</id>
     <content type="html"><![CDATA[
 <p>2013年，Google开源了一款用于词向量计算的工具——word2vec，引起了工业界和学术界的关注。首先，word2vec可以在百万数量级的词典和上亿的数据集上进行高效地训练；其次，该工具得到的训练结果——词向量（word embedding），可以很好地度量词与词之间的相似性。随着深度学习（Deep Learning）在自然语言处理中应用的普及，很多人误以为word2vec是一种深度学习算法。其实word2vec算法的背后是一个浅层神经网络。另外需要强调的一点是，word2vec是一个计算word vector的开源工具。当我们在说word2vec算法或模型的时候，其实指的是其背后用于计算word vector的CBoW模型和Skip-gram模型。很多人以为word2vec指的是一个算法或模型，这也是一种谬误。接下来，本文将从统计语言模型出发，尽可能详细地介绍word2vec工具背后的算法模型的来龙去脉。</p>
 
@@ -842,9 +842,9 @@ interact
   
   <entry>
     <title type="html"><![CDATA[用Docker部署Jupyter Notebook]]></title>
-    <link href="tianwei.github.io/14902606130831.html"/>
+    <link href="whiskytina.github.io/14902606130831.html"/>
     <updated>2017-03-23T17:16:53+08:00</updated>
-    <id>tianwei.github.io/14902606130831.html</id>
+    <id>whiskytina.github.io/14902606130831.html</id>
     <content type="html"><![CDATA[
 <p>想在公司的服务器上搭建一套Jupyter Notebook的开发环境，这样无论走到哪里都可以打开浏览器敲代码了（有木有很屌丝）。然而公司的服务器各种不给力。于是想到了run it anywhere的Docker。</p>
 
@@ -939,9 +939,9 @@ docker load --input myanaconda.tar
   
   <entry>
     <title type="html"><![CDATA[恋在Sri Lanka]]></title>
-    <link href="tianwei.github.io/14902633244327.html"/>
+    <link href="whiskytina.github.io/14902633244327.html"/>
     <updated>2017-03-23T18:02:04+08:00</updated>
-    <id>tianwei.github.io/14902633244327.html</id>
+    <id>whiskytina.github.io/14902633244327.html</id>
     <content type="html"><![CDATA[
 <p>Sri Lanka，古称锡兰，一个带有浓郁的热带风情的名字，一个被誉为印度洋上的眼泪的国家。也正是因着这两个因素，我第一眼就被这个神秘的海上岛国吸引住了，不能自拔。</p>
 
@@ -1258,9 +1258,9 @@ docker load --input myanaconda.tar
   
   <entry>
     <title type="html"><![CDATA[AlphaGo原理解读（Mastering the game of Go with deep neural networks and tree search)]]></title>
-    <link href="tianwei.github.io/14902595540843.html"/>
+    <link href="whiskytina.github.io/14902595540843.html"/>
     <updated>2017-03-23T16:59:14+08:00</updated>
-    <id>tianwei.github.io/14902595540843.html</id>
+    <id>whiskytina.github.io/14902595540843.html</id>
     <content type="html"><![CDATA[
 <h2 id="toc_0">背景：完全信息博弈与MCTS算法</h2>
 
@@ -1371,9 +1371,9 @@ docker load --input myanaconda.tar
   
   <entry>
     <title type="html"><![CDATA[PRML读书笔记（一）：概率论，决策论，与信息论]]></title>
-    <link href="tianwei.github.io/14902527326377.html"/>
+    <link href="whiskytina.github.io/14902527326377.html"/>
     <updated>2017-03-23T15:05:32+08:00</updated>
-    <id>tianwei.github.io/14902527326377.html</id>
+    <id>whiskytina.github.io/14902527326377.html</id>
     <content type="html"><![CDATA[
 <p>什么是模式识别（Pattern Recognition）？</p>
 
@@ -1640,9 +1640,9 @@ docker load --input myanaconda.tar
   
   <entry>
     <title type="html"><![CDATA[Markdown 语法和 MWeb 写作使用说明]]></title>
-    <link href="tianwei.github.io/14902751600359.html"/>
+    <link href="whiskytina.github.io/14902751600359.html"/>
     <updated>2017-03-23T21:19:20+08:00</updated>
-    <id>tianwei.github.io/14902751600359.html</id>
+    <id>whiskytina.github.io/14902751600359.html</id>
     <content type="html"><![CDATA[
 <h2 id="toc_0">Markdown 的设计哲学</h2>
 
