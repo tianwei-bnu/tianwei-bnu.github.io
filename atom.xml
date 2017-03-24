@@ -4,7 +4,7 @@
   <title><![CDATA[公子天的网络日志]]></title>
   <link href="whiskytina.github.io/atom.xml" rel="self"/>
   <link href="whiskytina.github.io/"/>
-  <updated>2017-03-24T23:31:48+08:00</updated>
+  <updated>2017-03-25T00:01:53+08:00</updated>
   <id>whiskytina.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -569,9 +569,9 @@ interact
   
   <entry>
     <title type="html"><![CDATA[word2vec前世今生]]></title>
-    <link href="whiskytina.github.io/14902453987041.html"/>
+    <link href="whiskytina.github.io/word2vec.html"/>
     <updated>2017-03-23T13:03:18+08:00</updated>
-    <id>whiskytina.github.io/14902453987041.html</id>
+    <id>whiskytina.github.io/word2vec.html</id>
     <content type="html"><![CDATA[
 <p>2013年，Google开源了一款用于词向量计算的工具——word2vec，引起了工业界和学术界的关注。首先，word2vec可以在百万数量级的词典和上亿的数据集上进行高效地训练；其次，该工具得到的训练结果——词向量（word embedding），可以很好地度量词与词之间的相似性。随着深度学习（Deep Learning）在自然语言处理中应用的普及，很多人误以为word2vec是一种深度学习算法。其实word2vec算法的背后是一个浅层神经网络。另外需要强调的一点是，word2vec是一个计算word vector的开源工具。当我们在说word2vec算法或模型的时候，其实指的是其背后用于计算word vector的CBoW模型和Skip-gram模型。很多人以为word2vec指的是一个算法或模型，这也是一种谬误。接下来，本文将从统计语言模型出发，尽可能详细地介绍word2vec工具背后的算法模型的来龙去脉。</p>
 
@@ -1259,10 +1259,10 @@ docker load --input myanaconda.tar
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[AlphaGo原理解读（Mastering the game of Go with deep neural networks and tree search)]]></title>
-    <link href="whiskytina.github.io/14902595540843.html"/>
+    <title type="html"><![CDATA[AlphaGo原理解读]]></title>
+    <link href="whiskytina.github.io/alphago.html"/>
     <updated>2017-03-23T16:59:14+08:00</updated>
-    <id>whiskytina.github.io/14902595540843.html</id>
+    <id>whiskytina.github.io/alphago.html</id>
     <content type="html"><![CDATA[
 <h2 id="toc_0">背景：完全信息博弈与MCTS算法</h2>
 
