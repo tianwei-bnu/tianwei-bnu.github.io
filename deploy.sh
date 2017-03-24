@@ -5,5 +5,5 @@ git remote add gitcafe https://git.coding.net/whiskytina/whiskytina.git >> /dev/
 git add .
 git commit -m "update"
 
-git push -u github master
-git push -u gitcafe master
+git push --force github master
+git push --force gitcafe master
