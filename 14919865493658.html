@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  用Docker部署Jupyter Notebook - 公子天的网络日志
+  我的时间管理系统：OmniFocus与GTD实践之路 - 公子天的网络日志
   
   </title>
   
@@ -111,10 +111,10 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>用Docker部署Jupyter Notebook</h1>
+          <h1>我的时间管理系统：OmniFocus与GTD实践之路</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2016/6/26</span>
+          <span class="date">2017/4/12</span>
 
           <span>posted in&nbsp;</span> 
           
@@ -131,93 +131,54 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>想在公司的服务器上搭建一套Jupyter Notebook的开发环境，这样无论走到哪里都可以打开浏览器敲代码了（有木有很屌丝）。然而公司的服务器各种不给力。于是想到了run it anywhere的Docker。</p>
+      <p>受小时候上学的影响，在相当长的一段时间里，我一直是用课程表的方式来管理我的时间：每天24小时从早到晚划分成N个坑，每到一个时间点该做什么事都是事先计划好的。这种时间管理方式的弊端也是极其明显的：缺乏灵活性。如果计划被临时的任务打断了怎么办？如果在预期的时间内计划没有完成或是提前完成了又怎么办？凡此种种，导致课程表式的时间管理方式总是在坚持了一两周后不了了之。</p>
+
+<p>所以，我开始寻求新的时间管理方式。</p>
 
 <span id="more"></span><!-- more -->
 
-<p>采用Docker部署Jupyter Notebook还有一个优势：一次生成镜像后，可以很方便地二次部署到其他服务器上（比如Amazon的AWS），省去了很多重复性的工作。</p>
+<h2 id="toc_0">GTD是什么</h2>
 
-<p>由于是第一次使用Docker，踩了不少坑。所以这里记录下了Docker的一些主要使用方法。</p>
+<p>GTD（Getting Things Done）源自一本书的名字，是一套将繁重超负荷的工作生活方式变成无压高效的时间管理系统。Allen在《Getting Things Done》这本小册子里洋洋洒洒下笔千言，很是详尽地描述了如何运用这个系统帮助自己搞定一切任务。然而这本书实在太啰嗦，里面提到的很多辅助工具在现代社会又早已不再实用（比如文件夹档案袋。毕竟我们有一整套的数字化解决方案）。因此，很多人也对GTD这套系统望而生畏。</p>
 
-<p>下面进入正题。</p>
+<p>其实GTD系统的原理很简单。只需要牢记住它的五个环节。这五个环节是：</p>
 
-<p>首先，创建一个anaconda镜像的容器：</p>
+<ol>
+<li>收集：GTD的核心理念在于将大脑中不断涌现出的idea清空出去，放到一个可靠的收集系统中。这样，你的大脑才可以专注于眼前的事务，而不会为将来的Todo感到焦虑。收集就是清空自己大脑的过程。</li>
+<li><p>理清：在这个环节里，你需要对收件箱里的idea进行拆分。这个idea是否可执行？如果是，那么它的下一步行动是？下图是理清过程的一个详细的流程图。经过这个环节，收件箱里的idea被拆分成了有着一系列可执行操作的具体项目。个人认为，这个环节和下面的组织环节，是GTD系统的核心。<br/>
+<img src="media/14919865493658/14919946813148.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p></li>
+<li><p>组织：在这个环节里，你需要把上一步中理清的项目通过设置合适的Context放入不同的清单里。在Allen的GTD手册里，Context原指达成某项任务必须具备的前置条件，例如给朋友打电话这个动作需要一个“Phone”的Context。清单和Context设置的一个基本原则是，能够方便地聚焦到自己当前可做的任务上。</p></li>
+<li><p>回顾：回顾是GTD系统里极易被忽视的一个环节。在这个环节里，你要做的是：检查“下一步清单”里是否有未完成的任务；审视“项目清单”里的项目进度；拆分“将来／也许“清单里的项目到”项目清单“里；清空收件箱。</p></li>
+<li><p>执行：这一点毋庸多说。缺少执行力，再好的系统也是白搭。</p></li>
+</ol>
 
-<pre><code>docker run -itd -p 8888:8888 -v /your/local/dir:/docker/dir --name anaconda continuumio/anaconda /bin/bash
-</code></pre>
+<p>GTD是一套TODO类的时间管理系统。它帮助我们记录了还有哪些事情等待着我们去处理（这些事情对完成时间有一定的要求）。作为比较，日历类的时间管理系统帮助我们规划到在某个时间段要做哪些事情（这些事情对任务开始时间和完成时间都有一定的要求）；提醒类的时间管理系统则精确地告诉我们在某个时间点要做什么事情（这些事情对任务的开始时间有硬性的要求）。个人认为，GTD的任务备忘，日历的时间规划，提醒事项的精确提醒，三者相辅相成，才能打造出一个高效率的时间管理系统。</p>
 
-<p>简单解释一下这行代码：<br/>
-- <code>run</code>: 创建一个容器<br/>
-- <code>-i</code>: 打开容器的标准输入<br/>
-- <code>-t</code>: 分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上<br/>
-- <code>-d</code>: 让容器后台运行<br/>
-- <code>-p hostPort:containerPort</code>: 将本地的hostPort端口映射到容器的containerPort端口上。此处是对8888端口进行绑定（8888端口也是Jupyter Notebook的默认端口）<br/>
-- <code>-v /your/local/dir:/docker/dir</code>: 挂载一个本地目录到容器中去，以实现本地和容器的文件共享。<br/>
-- <code>--name</code>: 指定容器的名字，方便后面对容器的管理<br/>
-- <code>continuumio/anaconda</code>: 要加载的镜像仓库地址<br/>
-- <code>/bin/bash</code>: 默认容器创建完成后的执行命令。这里为了对容器进行进一步的修改，启动了bash应用。（这也是很常用的一个命令）</p>
+<h2 id="toc_1">OmniFocus的GTD实践之路</h2>
 
-<p>如果是第一次创建，docker会首先从服务器上获取镜像（相当于执行命令：<code>docker pull continuumio/anaconda</code>）。</p>
+<p>TODO类的时间管理应用有很多，例如Clear，Things。而OmniFocus是其中最符合GTD时间管理理念的一款应用。</p>
 
-<p>创建完成后，可以用<code>docker ps</code>查看正在运行的容器（<code>docker ps -a</code>查看创建过的所有容器；<code>docker images</code>查看所有下载到本地的镜像）。</p>
+<p>为什么这么说？我想这很大一部分要归功于OmniFocus独有的透视功能吧。</p>
 
-<p>以下是几个与容器（镜像）有关的常用命令：<br/>
-- <code>docker rm [container]</code>: 删除一个已经停止的容器<br/>
-- <code>docker rmi [image]</code>: 删除一个本地的镜像<br/>
-- <code>docker start [container]</code>: 启动一个容器<br/>
-- <code>docker stop [container]</code>: 停止一个容器<br/>
-- <code>docker inspect [container]</code>: 列出容器的相关信息<br/>
-- <code>docker attach [container]</code>: 进入一个容器</p>
+<p>很多人在初学OmniFocus的时候，都会对Context、项目、文件夹、透视这些概念感到一头雾水。而如果对GTD的工作流程有一定的了解之后，就会明白：<strong>OmniFocus里的透视本质上是一个清单，而项目文件夹和Context的设置，则是为了方便组合出你想要的透视（清单）</strong>。</p>
 
-<p>接下来，我们将用最后一个命令进入到容器里面，并安装Google的深度学习工具包：Tensorflow。</p>
+<p>明确了这一点，我们就可以开始自己的OmniFocus设置了。</p>
 
-<pre><code>docker attach anaconda
-</code></pre>
+<p>我建立了7个透视清单。它们是：</p>
 
-<p>首先安装pip：</p>
+<ul>
+<li><em>Ritual清单</em>：所有周期性的事项。例如每周的项目回顾，每月还信用卡等。</li>
+<li><em>Work清单</em>：所有正在进行的，工作相关的事项。例如xx项目的策略调研等</li>
+<li><em>Research清单</em>：所有正在进行的，个人学习或研究相关的事项。例如学习阅读xx论文。</li>
+<li><em>Private清单</em>：所有正在进行的，私人的（包括家庭的）事项。例如购物清单，家庭旅行计划等。</li>
+<li><em>下一步行动清单</em>：当天要处理的事项。包括重要的（有旗标）和紧急的（due time即将到期）。</li>
+<li><em>将来／也许清单</em>：暂时不考虑，但是未来可能要做的事项。</li>
+<li><em>Hold On清单</em>：所有状态为Hold On的事项。主要用于追踪回顾，排查问题。</li>
+</ul>
 
-<pre><code>apt-get update
-apt-get install python-pip python-dev
-</code></pre>
+<p>为此，我按照Ritual，Work，Research，Private四个主题建立了四个项目文件夹，并在不同的透视中设置相应的聚焦（Focus）。在Context的设置上，我采用了Oceangirl的做法，按照“地点+状态”的方式设置上下文。</p>
 
-<p>用pip安装Tensorflow：</p>
-
-<pre><code>export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.9.0-cp27-none-linux_x86_64.whl
-pip install --upgrade $TF_BINARY_URL
-</code></pre>
-
-<p>你也可以继续定制属于你自己的Jupyter（<a href="https://github.com/ipython/ipython/wiki/IPython-kernels-for-other-languages">让Jupyter支持更多的语言</a>）。笔者就安装了R和Octave两种语言的kernel。</p>
-
-<p>最后，开启Notebook服务：</p>
-
-<pre><code>jupyter notebook --notebook_dir=your_working_dir --port=8888 --ip=* --no-browser
-</code></pre>
-
-<p>至此，打开浏览器，开启你的Jupyter之旅吧！</p>
-
-<p>对容器进行更改后，我们需要将其保存为镜像，方便日后的使用。</p>
-
-<p>退出刚才进入的容器（快捷键：Ctrl+P+Q），并执行命令：</p>
-
-<pre><code>docker commit anaconda weitian/myanaconda
-</code></pre>
-
-<p>即生成了一个名为weitian/myanaconda的镜像（可以用images命令查看）。</p>
-
-<p>我们可以将这个镜像push到docker hub上：</p>
-
-<pre><code>docker login #首次上传需要先登录docker hub
-docker push weitian/myanaconda
-</code></pre>
-
-<p>也可以导出到本地：</p>
-
-<pre><code>docker save -o myanaconda.tar weitian/myanaconda
-# 本地加载
-docker load --input myanaconda.tar
-</code></pre>
-
-<p>更多关于Docker的使用介绍可以参见Gitbook上的一本书：<a href="https://yeasy.gitbooks.io/docker_practice/content/">Docker —— 从入门到实践</a>。</p>
+<p>不过，GTD系统的搭建很难一蹴而就。我现在的使用方式也或多或少地存在着一定的问题。而这，就需要在日常的使用中去一点点的磨合了。</p>
 
 
     
@@ -228,16 +189,16 @@ docker load --input myanaconda.tar
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="word2vec.html" 
-          title="Previous Post: word2vec前世今生">&laquo; word2vec前世今生</a>
+          <a href="14920539913358.html" 
+          title="Previous Post: 四月份目标规划">&laquo; 四月份目标规划</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="14902633244327.html" 
-          title="Next Post: 恋在Sri Lanka">恋在Sri Lanka &raquo;</a>
+          <a  href="14919266343641.html" 
+          title="Next Post: 我的碎片化信息管理系统：印象笔记">我的碎片化信息管理系统：印象笔记 &raquo;</a>
       
       </p>
         </div>

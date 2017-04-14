@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  用Docker部署Jupyter Notebook - 公子天的网络日志
+  四月份目标规划 - 公子天的网络日志
   
   </title>
   
@@ -111,14 +111,14 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>用Docker部署Jupyter Notebook</h1>
+          <h1>四月份目标规划</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2016/6/26</span>
+          <span class="date">2017/4/13</span>
 
           <span>posted in&nbsp;</span> 
           
-              <span class="posted-in"><a href='geeks_note.html'>Geek心得</a></span>
+              <span class="posted-in"><a href='life_note.html'>生活日志</a></span>
            
          
           <span class="comments">
@@ -131,93 +131,44 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>想在公司的服务器上搭建一套Jupyter Notebook的开发环境，这样无论走到哪里都可以打开浏览器敲代码了（有木有很屌丝）。然而公司的服务器各种不给力。于是想到了run it anywhere的Docker。</p>
+      <p>Allen在他的GTD小册子里提出了“人生六个高度”理论。这六个高度分别是：原则（五万米），愿景（四万米），目标（三万米），责任范围（两万米），任务（一万米），下一步行动（跑道）。大部分的GTD实践软件（例如OmniFocus）仅仅覆盖了两万米以下的高度（也就是短期的任务和行动）。因此，我打算在博客中记录下自己中长期的目标和规划，这样才不会在日常的行动中舍本逐末，迷失了自我。</p>
 
 <span id="more"></span><!-- more -->
 
-<p>采用Docker部署Jupyter Notebook还有一个优势：一次生成镜像后，可以很方便地二次部署到其他服务器上（比如Amazon的AWS），省去了很多重复性的工作。</p>
+<p>站在四万米的高度上，我的第一愿景是成为一名AI研究员。我希望自己能够在这波深度学习的AI浪潮中留下自己的足迹，而不只是满足于复制别人的代码做一些工程上的修修补补。因此，我希望自己将来能够留在高校——至不济也是在工业界的研究院——做学术研究。</p>
 
-<p>由于是第一次使用Docker，踩了不少坑。所以这里记录下了Docker的一些主要使用方法。</p>
+<p>我的第二愿景是移居海外生活，哪怕是生活一段时间。我想体验异国的民主和自由，感受那没有雾霾的困扰，没有高房价的压迫，没有GFW的枷锁，的生活。</p>
 
-<p>下面进入正题。</p>
+<p>然而，我现在的处境——国内大厂的一名普通码农——和我的愿景相差太远。</p>
 
-<p>首先，创建一个anaconda镜像的容器：</p>
+<p>那么，我该如何改变自己的现状？站在三万米的高度上，我给自己定了三个小目标：</p>
 
-<pre><code>docker run -itd -p 8888:8888 -v /your/local/dir:/docker/dir --name anaconda continuumio/anaconda /bin/bash
-</code></pre>
+<ol>
+<li>留学读博。这无疑是朝着自己的两个愿景迈出了一大步。然而其风险在于，如果去了一个不知名的实验室或者跟错了导师，我至少要承担五年的时间和经济损失。此外，在申请学校的过程中需要付出的精力，读博期间家庭的经济压力和父母的牵挂，也是需要我考虑权衡的因素。</li>
+<li>跳槽去外企研究院。相比上一个目标，这一个目标更为现实，也更为迂回。在企业研究院里做研究，本也是我的一个小愿景；而外企更是提供了transfer到总部的机会——虽然难度一定不小，但总是有希望。目前在国内，微软研究院似乎是一个不错的选择——尤其是微软小冰的研发团队。</li>
+<li>转岗去内部研究院。这是一个最小的目标——如果前两个目标都未能实现的话，转岗去IDL，或者是度秘的研发团队，似乎是自己最不济的选择了。在这些岗位上历练一番，积累了一定的经验和背景后再择机跳槽去外企或是国外的实验室。</li>
+</ol>
 
-<p>简单解释一下这行代码：<br/>
-- <code>run</code>: 创建一个容器<br/>
-- <code>-i</code>: 打开容器的标准输入<br/>
-- <code>-t</code>: 分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上<br/>
-- <code>-d</code>: 让容器后台运行<br/>
-- <code>-p hostPort:containerPort</code>: 将本地的hostPort端口映射到容器的containerPort端口上。此处是对8888端口进行绑定（8888端口也是Jupyter Notebook的默认端口）<br/>
-- <code>-v /your/local/dir:/docker/dir</code>: 挂载一个本地目录到容器中去，以实现本地和容器的文件共享。<br/>
-- <code>--name</code>: 指定容器的名字，方便后面对容器的管理<br/>
-- <code>continuumio/anaconda</code>: 要加载的镜像仓库地址<br/>
-- <code>/bin/bash</code>: 默认容器创建完成后的执行命令。这里为了对容器进行进一步的修改，启动了bash应用。（这也是很常用的一个命令）</p>
+<p>然而，无论是哪个目标，以我目前的实力背景，实现的难度都不会太小。所以，站在三万米以下的高度上，我需要在理论和工程上迅速充实自己的深度学习背景。具体到研究方向上，我暂时会以NLP和强化学习为突破口。一是因着工作原因，我对深度学习在NLP中的应用已有了一定的了解，再系统地学习一遍比较容易上手；二是因为我相信，深度强化学习会是未来引导AI发展的核心。</p>
 
-<p>如果是第一次创建，docker会首先从服务器上获取镜像（相当于执行命令：<code>docker pull continuumio/anaconda</code>）。</p>
+<p>在接下来的四月份，我计划从基础理论和工程实践两个维度规划自己的深度学习学习目标：</p>
 
-<p>创建完成后，可以用<code>docker ps</code>查看正在运行的容器（<code>docker ps -a</code>查看创建过的所有容器；<code>docker images</code>查看所有下载到本地的镜像）。</p>
+<ul>
+<li><p>基础理论：</p>
 
-<p>以下是几个与容器（镜像）有关的常用命令：<br/>
-- <code>docker rm [container]</code>: 删除一个已经停止的容器<br/>
-- <code>docker rmi [image]</code>: 删除一个本地的镜像<br/>
-- <code>docker start [container]</code>: 启动一个容器<br/>
-- <code>docker stop [container]</code>: 停止一个容器<br/>
-- <code>docker inspect [container]</code>: 列出容器的相关信息<br/>
-- <code>docker attach [container]</code>: 进入一个容器</p>
+<ol>
+<li>阅读Bengio大神巨作：Deep Learning的第一部分（深度学习理论基础）</li>
+<li>阅读Nielson的在线书籍：Neural Networks and Deep Learning</li>
+<li>完成几篇综述性Paper的学习调研</li>
+</ol></li>
+<li><p>工程实践：</p>
 
-<p>接下来，我们将用最后一个命令进入到容器里面，并安装Google的深度学习工具包：Tensorflow。</p>
+<ol>
+<li>学习fast.ai上的实践课程</li>
+</ol></li>
+</ul>
 
-<pre><code>docker attach anaconda
-</code></pre>
-
-<p>首先安装pip：</p>
-
-<pre><code>apt-get update
-apt-get install python-pip python-dev
-</code></pre>
-
-<p>用pip安装Tensorflow：</p>
-
-<pre><code>export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.9.0-cp27-none-linux_x86_64.whl
-pip install --upgrade $TF_BINARY_URL
-</code></pre>
-
-<p>你也可以继续定制属于你自己的Jupyter（<a href="https://github.com/ipython/ipython/wiki/IPython-kernels-for-other-languages">让Jupyter支持更多的语言</a>）。笔者就安装了R和Octave两种语言的kernel。</p>
-
-<p>最后，开启Notebook服务：</p>
-
-<pre><code>jupyter notebook --notebook_dir=your_working_dir --port=8888 --ip=* --no-browser
-</code></pre>
-
-<p>至此，打开浏览器，开启你的Jupyter之旅吧！</p>
-
-<p>对容器进行更改后，我们需要将其保存为镜像，方便日后的使用。</p>
-
-<p>退出刚才进入的容器（快捷键：Ctrl+P+Q），并执行命令：</p>
-
-<pre><code>docker commit anaconda weitian/myanaconda
-</code></pre>
-
-<p>即生成了一个名为weitian/myanaconda的镜像（可以用images命令查看）。</p>
-
-<p>我们可以将这个镜像push到docker hub上：</p>
-
-<pre><code>docker login #首次上传需要先登录docker hub
-docker push weitian/myanaconda
-</code></pre>
-
-<p>也可以导出到本地：</p>
-
-<pre><code>docker save -o myanaconda.tar weitian/myanaconda
-# 本地加载
-docker load --input myanaconda.tar
-</code></pre>
-
-<p>更多关于Docker的使用介绍可以参见Gitbook上的一本书：<a href="https://yeasy.gitbooks.io/docker_practice/content/">Docker —— 从入门到实践</a>。</p>
+<p>最后，时常总结自己的学习心得并挂在博客上。在这个时代，Github和博客也是证明一个人能力的名片。</p>
 
 
     
@@ -228,16 +179,13 @@ docker load --input myanaconda.tar
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="word2vec.html" 
-          title="Previous Post: word2vec前世今生">&laquo; word2vec前世今生</a>
-      
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="14902633244327.html" 
-          title="Next Post: 恋在Sri Lanka">恋在Sri Lanka &raquo;</a>
+          <a  href="14919865493658.html" 
+          title="Next Post: 我的时间管理系统：OmniFocus与GTD实践之路">我的时间管理系统：OmniFocus与GTD实践之路 &raquo;</a>
       
       </p>
         </div>

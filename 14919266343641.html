@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  用Docker部署Jupyter Notebook - 公子天的网络日志
+  我的碎片化信息管理系统：印象笔记 - 公子天的网络日志
   
   </title>
   
@@ -111,10 +111,10 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>用Docker部署Jupyter Notebook</h1>
+          <h1>我的碎片化信息管理系统：印象笔记</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2016/6/26</span>
+          <span class="date">2017/4/12</span>
 
           <span>posted in&nbsp;</span> 
           
@@ -131,93 +131,19 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>想在公司的服务器上搭建一套Jupyter Notebook的开发环境，这样无论走到哪里都可以打开浏览器敲代码了（有木有很屌丝）。然而公司的服务器各种不给力。于是想到了run it anywhere的Docker。</p>
+      <p>信息即知识。一个完整的知识管理系统至少要满足两个需求：首先，它需要有一条收集原始信息的输入流，并能够对原始信息进行处理和归档；其次，它需要有一条加工原始信息的输出流，并能够对加工后的信息进行整理和存储。在我的知识管理体系里，后者藉由MWeb搭建的笔记博客系统完成。前者则分为了两部分：一部分是论文书籍等非碎片化信息的管理，采用Zotero搭建的文献管理系统完成；另一部分就是这里提到的用印象笔记实现的碎片化信息管理。</p>
 
 <span id="more"></span><!-- more -->
 
-<p>采用Docker部署Jupyter Notebook还有一个优势：一次生成镜像后，可以很方便地二次部署到其他服务器上（比如Amazon的AWS），省去了很多重复性的工作。</p>
+<p>其实在早些的时候，我并没有将知识管理系统划分的那么细——无论是原始的网摘或是加工后的笔记，碎片化的博客或是完整的教程，我都会统一的放到印象笔记里进行收集，加工，和归档。然而印象笔记毕竟不是一款专业的文献管理软件，也不支持Markdown的写作（虽然有马克飞象，但毕竟不够方便），种种不便让我下定决心把一些核心功能从印象笔记中剥离了出来单独管理，将印象笔记只做为碎片化信息的收集和处理中心。</p>
 
-<p>由于是第一次使用Docker，踩了不少坑。所以这里记录下了Docker的一些主要使用方法。</p>
+<p>在使用细节上，我并没有像大多数人那样通过建立多个笔记本（组）来对信息分类管理。在印象笔记里，我只有三个笔记本：Inbox，Archive，和Star。这是因为，我在建立自己的知识管理体系时有一个基本理念：<strong>轻类目，重搜索</strong>。尤其是对于本身就是零散的难成体系的碎片化信息来说，与其费心费力把这些信息归类到不同的笔记本里，不如通过标签和全文关键词进行检索来的方便。更遑论印象笔记与搜索引擎的紧密结合了。</p>
 
-<p>下面进入正题。</p>
+<p>而这仅留的三个笔记本，则对应着一般“稍后读”应用里的“收件箱”，“归档”，和“星标”。</p>
 
-<p>首先，创建一个anaconda镜像的容器：</p>
+<p>其实最早在为碎片化信息寻找一个管理系统的时候，我瞄准的是Instapaper之类的专业应用。毕竟这一类应用在收集网页上的信息时有着更加专业的体验。然而遗憾的是，国内的网络环境使得Instapaper原本优雅的阅读体验变得异常尴尬——内容无法加载的情况时有发生。此外，与印象笔记的剪藏相比，只能剪切内容的Instapaper在功能上也略显单薄。事实上，我不仅仅是把印象笔记作为一个“Read it later”的应用，更多的时候，我是把它作为“Do it later”的收件箱。</p>
 
-<pre><code>docker run -itd -p 8888:8888 -v /your/local/dir:/docker/dir --name anaconda continuumio/anaconda /bin/bash
-</code></pre>
-
-<p>简单解释一下这行代码：<br/>
-- <code>run</code>: 创建一个容器<br/>
-- <code>-i</code>: 打开容器的标准输入<br/>
-- <code>-t</code>: 分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上<br/>
-- <code>-d</code>: 让容器后台运行<br/>
-- <code>-p hostPort:containerPort</code>: 将本地的hostPort端口映射到容器的containerPort端口上。此处是对8888端口进行绑定（8888端口也是Jupyter Notebook的默认端口）<br/>
-- <code>-v /your/local/dir:/docker/dir</code>: 挂载一个本地目录到容器中去，以实现本地和容器的文件共享。<br/>
-- <code>--name</code>: 指定容器的名字，方便后面对容器的管理<br/>
-- <code>continuumio/anaconda</code>: 要加载的镜像仓库地址<br/>
-- <code>/bin/bash</code>: 默认容器创建完成后的执行命令。这里为了对容器进行进一步的修改，启动了bash应用。（这也是很常用的一个命令）</p>
-
-<p>如果是第一次创建，docker会首先从服务器上获取镜像（相当于执行命令：<code>docker pull continuumio/anaconda</code>）。</p>
-
-<p>创建完成后，可以用<code>docker ps</code>查看正在运行的容器（<code>docker ps -a</code>查看创建过的所有容器；<code>docker images</code>查看所有下载到本地的镜像）。</p>
-
-<p>以下是几个与容器（镜像）有关的常用命令：<br/>
-- <code>docker rm [container]</code>: 删除一个已经停止的容器<br/>
-- <code>docker rmi [image]</code>: 删除一个本地的镜像<br/>
-- <code>docker start [container]</code>: 启动一个容器<br/>
-- <code>docker stop [container]</code>: 停止一个容器<br/>
-- <code>docker inspect [container]</code>: 列出容器的相关信息<br/>
-- <code>docker attach [container]</code>: 进入一个容器</p>
-
-<p>接下来，我们将用最后一个命令进入到容器里面，并安装Google的深度学习工具包：Tensorflow。</p>
-
-<pre><code>docker attach anaconda
-</code></pre>
-
-<p>首先安装pip：</p>
-
-<pre><code>apt-get update
-apt-get install python-pip python-dev
-</code></pre>
-
-<p>用pip安装Tensorflow：</p>
-
-<pre><code>export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.9.0-cp27-none-linux_x86_64.whl
-pip install --upgrade $TF_BINARY_URL
-</code></pre>
-
-<p>你也可以继续定制属于你自己的Jupyter（<a href="https://github.com/ipython/ipython/wiki/IPython-kernels-for-other-languages">让Jupyter支持更多的语言</a>）。笔者就安装了R和Octave两种语言的kernel。</p>
-
-<p>最后，开启Notebook服务：</p>
-
-<pre><code>jupyter notebook --notebook_dir=your_working_dir --port=8888 --ip=* --no-browser
-</code></pre>
-
-<p>至此，打开浏览器，开启你的Jupyter之旅吧！</p>
-
-<p>对容器进行更改后，我们需要将其保存为镜像，方便日后的使用。</p>
-
-<p>退出刚才进入的容器（快捷键：Ctrl+P+Q），并执行命令：</p>
-
-<pre><code>docker commit anaconda weitian/myanaconda
-</code></pre>
-
-<p>即生成了一个名为weitian/myanaconda的镜像（可以用images命令查看）。</p>
-
-<p>我们可以将这个镜像push到docker hub上：</p>
-
-<pre><code>docker login #首次上传需要先登录docker hub
-docker push weitian/myanaconda
-</code></pre>
-
-<p>也可以导出到本地：</p>
-
-<pre><code>docker save -o myanaconda.tar weitian/myanaconda
-# 本地加载
-docker load --input myanaconda.tar
-</code></pre>
-
-<p>更多关于Docker的使用介绍可以参见Gitbook上的一本书：<a href="https://yeasy.gitbooks.io/docker_practice/content/">Docker —— 从入门到实践</a>。</p>
+<p>在这个收件箱里，我会收集所有来自外部的，需要稍后处理的信息——微信公众号，博客，视频，甚至是一段视频的链接。然后，我会根据这些信息的内容将收件箱里的信息分发到不同的系统里：对于那些能够立即处理的信息，我会在处理完成后将其发送到印象笔记的Archive笔记本里归档（类似Instapaper的稍后读）；而对于那些需要进一步处理的信息，则会将其转化为Omnifocus里的项目等待下一步的行动安排（类似Omnifocus的收件箱）。</p>
 
 
     
@@ -228,16 +154,16 @@ docker load --input myanaconda.tar
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="word2vec.html" 
-          title="Previous Post: word2vec前世今生">&laquo; word2vec前世今生</a>
+          <a href="14919865493658.html" 
+          title="Previous Post: 我的时间管理系统：OmniFocus与GTD实践之路">&laquo; 我的时间管理系统：OmniFocus与GTD实践之路</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="14902633244327.html" 
-          title="Next Post: 恋在Sri Lanka">恋在Sri Lanka &raquo;</a>
+          <a  href="14918796737549.html" 
+          title="Next Post: 我的笔记&博客管理系统：MWeb + Github">我的笔记&博客管理系统：MWeb + Github &raquo;</a>
       
       </p>
         </div>

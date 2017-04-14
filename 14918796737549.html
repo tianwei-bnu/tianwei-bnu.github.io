@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  用Docker部署Jupyter Notebook - 公子天的网络日志
+  我的笔记&博客管理系统：MWeb + Github - 公子天的网络日志
   
   </title>
   
@@ -111,10 +111,10 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>用Docker部署Jupyter Notebook</h1>
+          <h1>我的笔记&博客管理系统：MWeb + Github</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2016/6/26</span>
+          <span class="date">2017/4/11</span>
 
           <span>posted in&nbsp;</span> 
           
@@ -131,93 +131,61 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>想在公司的服务器上搭建一套Jupyter Notebook的开发环境，这样无论走到哪里都可以打开浏览器敲代码了（有木有很屌丝）。然而公司的服务器各种不给力。于是想到了run it anywhere的Docker。</p>
+      <p>俗话说，不动笔墨不读书。我的记性不好，更需要笔记来辅助我消化和吸收书本上的知识。最早在大学读书的时候，一直是用的纸质的笔记本。然而在后来某一次搬家的时候这些笔记本不慎丢失，甚是可惜。这也是纸质笔记的弊端，不易保管。因此，我开始寻找一款可靠的电子版的笔记系统。</p>
 
 <span id="more"></span><!-- more -->
 
-<p>采用Docker部署Jupyter Notebook还有一个优势：一次生成镜像后，可以很方便地二次部署到其他服务器上（比如Amazon的AWS），省去了很多重复性的工作。</p>
+<p>我对电子笔记系统有这么几点要求：</p>
 
-<p>由于是第一次使用Docker，踩了不少坑。所以这里记录下了Docker的一些主要使用方法。</p>
+<ol>
+<li>支持Markdown标记语言。由于专业原因需要大量的公式书写，更要兼容数学公式的Latex语法。</li>
+<li>支持多机同步。这样，我在公司的电脑上对笔记所做的修改，在家里的笔记本上也能够看到。同时，多机同步也降低了数据丢失的风险。</li>
+<li>界面简洁颜值高。在一个花里胡哨的系统上谁也做不到沉浸式的书写吧。</li>
+<li>提供完善的阅读模式。毕竟笔记是用来回顾的。不支持阅读模式的笔记系统都是在耍流氓。</li>
+<li>能够随时随地方便快捷地将笔记分享给他人观看。毕竟知识的分享也是一种乐趣。（博客就是一种很好的分享方式。）</li>
+</ol>
 
-<p>下面进入正题。</p>
+<p>尝试过一段时间的印象笔记+马克飞象的组合。作为一款专业的笔记应用，给我的感觉是操作过于复杂。比如，我想对之前做的笔记做一些修改，我需要打开印象笔记，然后点击右上角的红色书签，切换到马克飞象里进行操作。此外，印象笔记的阅读体验也一直为人所诟病。</p>
 
-<p>首先，创建一个anaconda镜像的容器：</p>
+<p>直到有一天，我遇到了MWeb。感谢MWeb的作者开发了这么一款良心的作品，完美解决了我对笔记系统的所有需求。目前，MWeb是我唯一还在使用的笔记&amp;博客管理软件。</p>
 
-<pre><code>docker run -itd -p 8888:8888 -v /your/local/dir:/docker/dir --name anaconda continuumio/anaconda /bin/bash
+<p>先看下MWeb官网上对自己的定义吧：<em>一款专业的Markdown写作、记笔记、静态博客生成软件</em>。在实际使用中，MWeb完美地诠释了什么叫做专业。</p>
+
+<p>首先，MWeb天生就是一款Markdown写作软件，支持包括Latex公式和流程图在内的多种扩展标记。黑色主题更是极大地提升了用户的写作体验。MWeb包括外部和文档库两种模式。二者的区别在官网上有详细的描述。简单来说，外部模式是以外部文件夹的形式对文档进行管理，而文档模式则是通过内部的一个数据库来对文档进行管理，也因此有着更强的管理能力。我采用的是后者。</p>
+
+<p>其次，MWeb的文档库模式支持一键生成静态博客，配合Github Pages就可以部署自己的个人博客站点。搭建个人博客有很多好处。首先，博客舒适的阅读体验可以帮助你更好的回顾你的学习历程；其次，博客也是你向外界展示自己学习能力的名片；最后，通过博客，你可以认识更多志同道合的人。我曾经试过在CSDN、博客园等专业站点上发布自己的博客，然而我觉得有一个自己的独一无二的个人站点更加酷炫。顺便插一句，MWeb也支持一键发布文章到博客园等站点，以及图片上传图床等功能。</p>
+
+<p>简单说一下MWeb上静态网站部署的过程。</p>
+
+<p>首先，右键选中你要发布的目录，点击“编辑-&gt;设置为静态网站”，便可以设置生成网站时要用到的一些基本属性（例如模板，网站名称，每页显示文章数等）。这些设置会存储在文档库里，利用后面提到的同步方法，可以在多台机器之间共享。值得注意的是，生成网站的位置是在偏好设置里修改，独立于文档库。因此，不同机器上生成网站的绝对路径可以并不相同。</p>
+
+<p><img src="media/14918796737549/14918888782057.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>这里有一个小trick。每篇文档在生成网站时都可以指定一个HTML文档名。如果同时勾选了“Is Page”选项，就可以在网站的高级设置里插入顶层菜单。如下图所示：</p>
+
+<p><img src="media/14918796737549/14918890482835.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/><br/>
+<img src="media/14918796737549/14918890956923.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>点击生成网站按钮，切入到事先设定的网站生成目录下，接下来，便是将生成的静态网站上传到Github Pages上展示。</p>
+
+<p>首先是Github Pages的配置。新建一个repository，名称为<code>username.github.io</code>。然后在网站的生成目录下执行下面的命令：</p>
+
+<pre><code class="language-bash">git init
+git add .
+git commit -m &quot;first commit&quot;
+git remote add origin https://github.com/username/username.github.io.git
+git push --force origin master
 </code></pre>
 
-<p>简单解释一下这行代码：<br/>
-- <code>run</code>: 创建一个容器<br/>
-- <code>-i</code>: 打开容器的标准输入<br/>
-- <code>-t</code>: 分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上<br/>
-- <code>-d</code>: 让容器后台运行<br/>
-- <code>-p hostPort:containerPort</code>: 将本地的hostPort端口映射到容器的containerPort端口上。此处是对8888端口进行绑定（8888端口也是Jupyter Notebook的默认端口）<br/>
-- <code>-v /your/local/dir:/docker/dir</code>: 挂载一个本地目录到容器中去，以实现本地和容器的文件共享。<br/>
-- <code>--name</code>: 指定容器的名字，方便后面对容器的管理<br/>
-- <code>continuumio/anaconda</code>: 要加载的镜像仓库地址<br/>
-- <code>/bin/bash</code>: 默认容器创建完成后的执行命令。这里为了对容器进行进一步的修改，启动了bash应用。（这也是很常用的一个命令）</p>
+<p>稍等片刻，打开浏览器，输入你设定的网址，便可以进行浏览了。</p>
 
-<p>如果是第一次创建，docker会首先从服务器上获取镜像（相当于执行命令：<code>docker pull continuumio/anaconda</code>）。</p>
+<p>以后若有文档的更新，只需键入<code>add</code>、<code>commit</code>、<code>push</code>这三行命令即可。</p>
 
-<p>创建完成后，可以用<code>docker ps</code>查看正在运行的容器（<code>docker ps -a</code>查看创建过的所有容器；<code>docker images</code>查看所有下载到本地的镜像）。</p>
+<p>MWeb也支持多机同步。这个功能比较隐蔽，事实上要结合第三方同步盘才能够实现。打开MWeb的偏好设置，将文档库位置设置成某个第三方网盘的同步盘路径下（我选择的是支持WebDav的<a href="https://www.jianguoyun.com/">坚果云</a>），即可实现在多台机器上文档的无缝编辑。</p>
 
-<p>以下是几个与容器（镜像）有关的常用命令：<br/>
-- <code>docker rm [container]</code>: 删除一个已经停止的容器<br/>
-- <code>docker rmi [image]</code>: 删除一个本地的镜像<br/>
-- <code>docker start [container]</code>: 启动一个容器<br/>
-- <code>docker stop [container]</code>: 停止一个容器<br/>
-- <code>docker inspect [container]</code>: 列出容器的相关信息<br/>
-- <code>docker attach [container]</code>: 进入一个容器</p>
+<p>最后，MWeb超高的颜值（尤其是Dark主题），流畅的快捷操作，让人可以专注于写作之中不受界面的干扰。</p>
 
-<p>接下来，我们将用最后一个命令进入到容器里面，并安装Google的深度学习工具包：Tensorflow。</p>
-
-<pre><code>docker attach anaconda
-</code></pre>
-
-<p>首先安装pip：</p>
-
-<pre><code>apt-get update
-apt-get install python-pip python-dev
-</code></pre>
-
-<p>用pip安装Tensorflow：</p>
-
-<pre><code>export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.9.0-cp27-none-linux_x86_64.whl
-pip install --upgrade $TF_BINARY_URL
-</code></pre>
-
-<p>你也可以继续定制属于你自己的Jupyter（<a href="https://github.com/ipython/ipython/wiki/IPython-kernels-for-other-languages">让Jupyter支持更多的语言</a>）。笔者就安装了R和Octave两种语言的kernel。</p>
-
-<p>最后，开启Notebook服务：</p>
-
-<pre><code>jupyter notebook --notebook_dir=your_working_dir --port=8888 --ip=* --no-browser
-</code></pre>
-
-<p>至此，打开浏览器，开启你的Jupyter之旅吧！</p>
-
-<p>对容器进行更改后，我们需要将其保存为镜像，方便日后的使用。</p>
-
-<p>退出刚才进入的容器（快捷键：Ctrl+P+Q），并执行命令：</p>
-
-<pre><code>docker commit anaconda weitian/myanaconda
-</code></pre>
-
-<p>即生成了一个名为weitian/myanaconda的镜像（可以用images命令查看）。</p>
-
-<p>我们可以将这个镜像push到docker hub上：</p>
-
-<pre><code>docker login #首次上传需要先登录docker hub
-docker push weitian/myanaconda
-</code></pre>
-
-<p>也可以导出到本地：</p>
-
-<pre><code>docker save -o myanaconda.tar weitian/myanaconda
-# 本地加载
-docker load --input myanaconda.tar
-</code></pre>
-
-<p>更多关于Docker的使用介绍可以参见Gitbook上的一本书：<a href="https://yeasy.gitbooks.io/docker_practice/content/">Docker —— 从入门到实践</a>。</p>
+<p>唯一遗憾的是，MWeb的IOS客户端目前尚不支持通过WebDav的方式打开文档库，这使得移动端的写作同步目前只能通过iCloud实现（然而考虑到国内龟速的网络环境……）。不过，作者已经承诺在将来的版本中实现这一功能。且拭目以待吧！</p>
 
 
     
@@ -228,16 +196,16 @@ docker load --input myanaconda.tar
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="word2vec.html" 
-          title="Previous Post: word2vec前世今生">&laquo; word2vec前世今生</a>
+          <a href="14919266343641.html" 
+          title="Previous Post: 我的碎片化信息管理系统：印象笔记">&laquo; 我的碎片化信息管理系统：印象笔记</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="14902633244327.html" 
-          title="Next Post: 恋在Sri Lanka">恋在Sri Lanka &raquo;</a>
+          <a  href="zotero.html" 
+          title="Next Post: 我的文献管理系统：Zotero + DPT S1">我的文献管理系统：Zotero + DPT S1 &raquo;</a>
       
       </p>
         </div>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  论文 - 公子天的网络日志
+  研究笔记-论文 - 公子天的网络日志
   
   </title>
   
@@ -20,7 +20,7 @@
   <script>hljs.initHighlightingOnLoad();</script>
 <script type="text/javascript">
   function before_search(){
-    var searchVal = 'site:whiskytina.github.io ' + document.getElementById('search_input').value;
+    var searchVal = 'site:whiskytina.coding.me ' + document.getElementById('search_input').value;
     document.getElementById('search_q').value = searchVal;
     return true;
   }
@@ -82,11 +82,11 @@
     <li><label>Categories</label></li>
 
         
-            <li><a href="reading_note.html">读书笔记</a></li>
+            <li><a href="research_note.html">研究笔记</a></li>
         
-            <li><a href="research_note.html">研究心得</a></li>
+            <li><a href="coding_note.html">技术手册</a></li>
         
-            <li><a href="geeks_note.html">Geek手册</a></li>
+            <li><a href="geeks_note.html">Geek心得</a></li>
         
             <li><a href="life_note.html">生活日志</a></li>
          
@@ -111,6 +111,78 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
+                <a class="clearlink" href="word2vec.html">
+                
+                  <h1>word2vec前世今生</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>2013年，Google开源了一款用于词向量计算的工具——word2vec，引起了工业界和学术界的关注。首先，word2vec可以在百万数量级的词典和上亿的数据集上进行高效地训练；其次，该工具得到的训练结果——词向量（word embedding），可以很好地度量词与词之间的相似性。随着深度学习（Deep Learning）在自然语言处理中应用的普及，很多人误以为word2vec是一种深度学习算法。其实word2vec算法的背后是一个浅层神经网络。另外需要强调的一点是，word2vec是一个计算word vector的开源工具。当我们在说word2vec算法或模型的时候，其实指的是其背后用于计算word vector的CBoW模型和Skip-gram模型。很多人以为word2vec指的是一个算法或模型，这也是一种谬误。接下来，本文将从统计语言模型出发，尽可能详细地介绍word2vec工具背后的算法模型的来龙去脉。</p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="word2vec.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/7/17</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='papers.html'>研究笔记-论文</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="alphago.html">
+                
+                  <h1>AlphaGo原理解读</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h2 id="toc_0">背景：完全信息博弈与MCTS算法</h2>
+
+<p>要完全弄清AlphaGo背后的原理，首先需要了解一下AI在博弈游戏中常用到的蒙特卡洛树搜索算法——MCTS。</p>
+
+<p>在一个完全信息下的博弈游戏中，如果所有参与者都采取最优策略，那么对于游戏中的任意一个局面\(s\)，总有一个确定性的估值函数\(v^*(s)\)可以直接计算出最终的博弈结果。理论上，我们可以通过构建一棵博弈树，递归地求解出\(v^*(s)\)。这就是<a href="https://en.wikipedia.org/wiki/Minimax">Minimax</a>算法。然而在有些问题中，这棵搜索树往往十分巨大（例如在围棋游戏中达到了\(250^{150}\)的搜索空间），以至于穷举的算法并不可行。</p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="alphago.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2016/5/16</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='papers.html'>研究笔记-论文</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
                 <a class="clearlink" href="14903538616912.html">
                 
                   <h1>Nature Review： Deep Learning</h1>
@@ -131,7 +203,7 @@
                     <span class="date">2016/5/14</span>
                     <span>posted in&nbsp;</span> 
           				  
-          					    <span class="posted-in"><a href='papers.html'>论文</a></span>
+          					    <span class="posted-in"><a href='papers.html'>研究笔记-论文</a></span>
           				   
                   </div>
                   <div class="more-right right">
@@ -196,11 +268,11 @@
 
       	<p class="cat-list">
         
-            <a href="reading_note.html"><strong>读书笔记</strong></a>
+            <a href="research_note.html"><strong>研究笔记</strong></a>
         
-            <a href="research_note.html"><strong>研究心得</strong></a>
+            <a href="coding_note.html"><strong>技术手册</strong></a>
         
-            <a href="geeks_note.html"><strong>Geek手册</strong></a>
+            <a href="geeks_note.html"><strong>Geek心得</strong></a>
         
             <a href="life_note.html"><strong>生活日志</strong></a>
          
@@ -219,33 +291,39 @@
 	      
 		      
 			      <li class="post">
-			        <a href="14902534668711.html">Deep Learning读书笔记（二）：线性代数</a>
+			        <a href="14920539913358.html">四月份目标规划</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="14902533416687.html">Deep Learning读书笔记（一）：导论</a>
+			        <a href="14919865493658.html">我的时间管理系统：OmniFocus与GTD实践之路</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="14902628595488.html">Gensim进阶教程：训练word2vec与doc2vec模型</a>
+			        <a href="14919266343641.html">我的碎片化信息管理系统：印象笔记</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="14902627439324.html">Gensim入门教程</a>
+			        <a href="14918796737549.html">我的笔记&博客管理系统：MWeb + Github</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="14902626300821.html">特征选择中的常用指标</a>
+			        <a href="zotero.html">我的文献管理系统：Zotero + DPT S1</a>
 			      </li>
 		     
+		  
+		      
+		  
+		      
+		  
+		      
 		  
 		      
 		  

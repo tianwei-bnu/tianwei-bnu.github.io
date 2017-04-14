@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  用Docker部署Jupyter Notebook - 公子天的网络日志
+  我的文献管理系统：Zotero + DPT S1 - 公子天的网络日志
   
   </title>
   
@@ -111,10 +111,10 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>用Docker部署Jupyter Notebook</h1>
+          <h1>我的文献管理系统：Zotero + DPT S1</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2016/6/26</span>
+          <span class="date">2017/4/4</span>
 
           <span>posted in&nbsp;</span> 
           
@@ -131,93 +131,74 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>想在公司的服务器上搭建一套Jupyter Notebook的开发环境，这样无论走到哪里都可以打开浏览器敲代码了（有木有很屌丝）。然而公司的服务器各种不给力。于是想到了run it anywhere的Docker。</p>
+      <p>前两天狠了狠心花高价买了一个二手DPT S1。在学校的时候就对这款神器心水许久，一直未舍得也无力购买。工作后有了点闲钱，考虑到自己的工作性质需要阅读大量的文献，有一款电纸书不仅携带方便不伤眼，笔记什么的也更易于保存，便打算除一除草。孰料去年年底Sony宣布DPT无限期停产，S1的价格更是不降反升，全新品的价格涨幅直接飙过了100%！（Sony大法果然是最佳的理财神器。）然而架不住心里欲求不得的碎碎念，只好在一家淘宝店铺花了9000大洋购入一台二手机器。所幸机器成色较好，几乎看不出使用的痕迹。</p>
+
+<p>既然入了这台“Paper”神器，便要善于利用，尽最大可能发挥它的便捷和长处。这篇博客就是介绍如何用DPT S1结合文献管理软件Zotero打造自己阅读文献的WorkFlow。</p>
 
 <span id="more"></span><!-- more -->
 
-<p>采用Docker部署Jupyter Notebook还有一个优势：一次生成镜像后，可以很方便地二次部署到其他服务器上（比如Amazon的AWS），省去了很多重复性的工作。</p>
+<h2 id="toc_0">Zotero的基本设置</h2>
 
-<p>由于是第一次使用Docker，踩了不少坑。所以这里记录下了Docker的一些主要使用方法。</p>
+<p>Mac上可选择的文献管理软件有很多。商业软件有Papers，免费软件有Mendeley。而我之所以选用Zotero这款轻量级的开源软件，是被其丰富的第三方插件库以及开放的WebDav同步接口所吸引。</p>
 
-<p>下面进入正题。</p>
+<p>简单说一下Zotero的基本设置。</p>
 
-<p>首先，创建一个anaconda镜像的容器：</p>
+<p>打开Zotero（Mac客户端）的首选项，首先是常规界面的设置。这里没有什么好说的，选择默认的设置即可。我一般会取消勾选“从Web页面创建条目时自动生成快照”的选项。</p>
 
-<pre><code>docker run -itd -p 8888:8888 -v /your/local/dir:/docker/dir --name anaconda continuumio/anaconda /bin/bash
-</code></pre>
+<p><img src="media/14913075415128/14917947184884.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
 
-<p>简单解释一下这行代码：<br/>
-- <code>run</code>: 创建一个容器<br/>
-- <code>-i</code>: 打开容器的标准输入<br/>
-- <code>-t</code>: 分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上<br/>
-- <code>-d</code>: 让容器后台运行<br/>
-- <code>-p hostPort:containerPort</code>: 将本地的hostPort端口映射到容器的containerPort端口上。此处是对8888端口进行绑定（8888端口也是Jupyter Notebook的默认端口）<br/>
-- <code>-v /your/local/dir:/docker/dir</code>: 挂载一个本地目录到容器中去，以实现本地和容器的文件共享。<br/>
-- <code>--name</code>: 指定容器的名字，方便后面对容器的管理<br/>
-- <code>continuumio/anaconda</code>: 要加载的镜像仓库地址<br/>
-- <code>/bin/bash</code>: 默认容器创建完成后的执行命令。这里为了对容器进行进一步的修改，启动了bash应用。（这也是很常用的一个命令）</p>
+<p>接下来是同步的设置。Zotero的同步机制分为独立的两部分：Data Syncing和File Syncing。其中，前者负责文献库里除附件以外所有元数据的同步，例如文献条目，添加的笔记和标签等。借助于该同步机制，用户可以在任何一台装有Zotero客户端或是浏览器的电脑访问和管理自己的文献库。更值得称赞的是，Zotero的官方服务器为这部分数据的同步提供了免费的无限制的稳定可靠的服务。你只需要在<a href="https://www.zotero.org/user/register/">zotero.org</a>上注册一个账号，然后在首选项的同步面板里做好相应的设置即可。</p>
 
-<p>如果是第一次创建，docker会首先从服务器上获取镜像（相当于执行命令：<code>docker pull continuumio/anaconda</code>）。</p>
+<p><img src="media/14913075415128/14917957558304.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
 
-<p>创建完成后，可以用<code>docker ps</code>查看正在运行的容器（<code>docker ps -a</code>查看创建过的所有容器；<code>docker images</code>查看所有下载到本地的镜像）。</p>
+<p>文献库中附件的同步则需要单独的配置。Zotero默认提供了300MB大小的文件存储空间——你也可以通过付费升级这个空间的大小。此外，Zotero还提供了WebDav的同步接口。国内用户推荐使用<a href="https://www.jianguoyun.com">坚果云</a>进行文件同步。</p>
 
-<p>以下是几个与容器（镜像）有关的常用命令：<br/>
-- <code>docker rm [container]</code>: 删除一个已经停止的容器<br/>
-- <code>docker rmi [image]</code>: 删除一个本地的镜像<br/>
-- <code>docker start [container]</code>: 启动一个容器<br/>
-- <code>docker stop [container]</code>: 停止一个容器<br/>
-- <code>docker inspect [container]</code>: 列出容器的相关信息<br/>
-- <code>docker attach [container]</code>: 进入一个容器</p>
+<p>注册一个坚果云账号，然后在同步面板填入相应的账号信息：</p>
 
-<p>接下来，我们将用最后一个命令进入到容器里面，并安装Google的深度学习工具包：Tensorflow。</p>
+<p><img src="media/14913075415128/14918017010700.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
 
-<pre><code>docker attach anaconda
-</code></pre>
+<p>Zotero会在第一次同步时在坚果云的根目录下建立一个zotero的目录存储文献库里的附件。如果出现同步冲突，用户可以手动选择接受本地或是远程的数据库。</p>
 
-<p>首先安装pip：</p>
+<p>关于Zotero的基本设置就介绍这么多。更多高级的使用（例如将Zotero作为一个统一的知识管理工具），可以参考<a href="http://www.yangzhiping.com/tech/zotero.html">阳志平的博客</a>上的介绍。</p>
 
-<pre><code>apt-get update
-apt-get install python-pip python-dev
-</code></pre>
+<h2 id="toc_1">Zotfile插件和DPT S1的基本设置</h2>
 
-<p>用pip安装Tensorflow：</p>
+<p><a href="https://github.com/jlegewie/zotfile">Zotfile</a>是一款开源的用于管理Zotero PDF附件的插件。它提供了包括同步Zotero文献库和移动阅读器（例如DPT S1），提取在移动阅读器上标注的文献笔记信息等在内的多种扩展功能。这个插件极大地提升了DPT S1的使用体验，更成为了我选择Zotero作为我的文献管理软件的主要原因。</p>
 
-<pre><code>export TF_BINARY_URL=https://storage.googleapis.com/tensorflow/linux/cpu/tensorflow-0.9.0-cp27-none-linux_x86_64.whl
-pip install --upgrade $TF_BINARY_URL
-</code></pre>
+<p>Zotfile的安装很简单。下载并压缩Github上Zotfile的最新源码，重命名为xpi文件，导入到Zotero里即可。</p>
 
-<p>你也可以继续定制属于你自己的Jupyter（<a href="https://github.com/ipython/ipython/wiki/IPython-kernels-for-other-languages">让Jupyter支持更多的语言</a>）。笔者就安装了R和Octave两种语言的kernel。</p>
+<p>下面简单介绍一下Zotfile的基本设置。</p>
 
-<p>最后，开启Notebook服务：</p>
+<p>打开Zotfile的控制面板，里面有四个tab页面。我们主要关心第二个tab页面：Tablet Settings。首先勾选上“Use ZotFile to send and get files from tablet”选项，此时Zotfile会提示你将建立两个检索条件以跟踪发送到tablet上的文件。点击“OK”确认即可。然后，在下面的“Base Folder”里选择一个<strong>同步盘</strong>目录（注意路径里不要包含中文字符）。这个目录也是要在DPT S1上能够访问的目录。因此，我再次选择了支持WebDav的坚果云作为同步盘的服务商。关于DPT S1上WebDav的设置，这里就不再赘述。</p>
 
-<pre><code>jupyter notebook --notebook_dir=your_working_dir --port=8888 --ip=* --no-browser
-</code></pre>
+<p><img src="media/14913075415128/14918054724050.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
 
-<p>至此，打开浏览器，开启你的Jupyter之旅吧！</p>
+<p>Zotfile实现Zotero与DPT S1同步的流程如下。右键选中文献库里的一个条目，单击“Manage Attachments -&gt; Send to Tablet”后，Zotfile会给该条目打上一个“_tablet”的标签，同时对该条目对应的附件按预设好的规则重命名，并复制到之前设置的坚果云同步目录下。此时，在DPT S1上打开这个同步路径，便可以进行文献的阅读了。</p>
 
-<p>对容器进行更改后，我们需要将其保存为镜像，方便日后的使用。</p>
+<p><img src="media/14913075415128/14918036108291.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
 
-<p>退出刚才进入的容器（快捷键：Ctrl+P+Q），并执行命令：</p>
+<p>取回文件时，依然右键选中要取回的条目，单击“Manage Attachemnts -&gt; Get from Tablet”，此时，Zotfile会用同步盘里的文件覆盖Zotero里的附件，提取文件里的标记到对应条目的note里，并给该条目打上一个_modified的标签。关于标签的作用后面会有说明。</p>
 
-<pre><code>docker commit anaconda weitian/myanaconda
-</code></pre>
+<p><img src="media/14913075415128/14918040486352.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p>
 
-<p>即生成了一个名为weitian/myanaconda的镜像（可以用images命令查看）。</p>
+<h2 id="toc_2">打造自己的文献管理库</h2>
 
-<p>我们可以将这个镜像push到docker hub上：</p>
+<p>最后，简单介绍一下自己是如何使用Zotero进行文献管理的。</p>
 
-<pre><code>docker login #首次上传需要先登录docker hub
-docker push weitian/myanaconda
-</code></pre>
+<p>文献的管理也是我的知识管理体系的一部分。因此，<strong>轻类目，重检索</strong>，是我在管理文献时的一个基本理念。我没有按照文献的Topic将文献划分到不同的类目下，而是建立了四个智能检索：</p>
 
-<p>也可以导出到本地：</p>
+<ul>
+<li><p>Archive：归档所有读过的文献，也即带有“_modified”标签的文献。<br/>
+<img src="media/14913075415128/14918061956559.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p></li>
+<li><p>Reading：发送到DPT S1上正在阅读的文献，也即带有“_tablet”标签的文献。<br/>
+<img src="media/14913075415128/14918063286779.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p></li>
+<li><p>Star：打上&quot;_star&quot;标签的高质量文献。<br/>
+<img src="media/14913075415128/14918063460931.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p></li>
+<li><p>UnRead：所有待读的文献。<br/>
+<img src="media/14913075415128/14918063725644.jpg" alt="" class="mw_img_center" style="width:400px;display: block; clear:both; margin: 0 auto;"/></p></li>
+</ul>
 
-<pre><code>docker save -o myanaconda.tar weitian/myanaconda
-# 本地加载
-docker load --input myanaconda.tar
-</code></pre>
-
-<p>更多关于Docker的使用介绍可以参见Gitbook上的一本书：<a href="https://yeasy.gitbooks.io/docker_practice/content/">Docker —— 从入门到实践</a>。</p>
+<p>这样，我不必过多的去考虑一篇文献应该被归类在哪个主题类目下。使用时，也主要通过标签和全文检索来快速定位到目标文献。</p>
 
 
     
@@ -228,16 +209,16 @@ docker load --input myanaconda.tar
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="word2vec.html" 
-          title="Previous Post: word2vec前世今生">&laquo; word2vec前世今生</a>
+          <a href="14918796737549.html" 
+          title="Previous Post: 我的笔记&博客管理系统：MWeb + Github">&laquo; 我的笔记&博客管理系统：MWeb + Github</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="14902633244327.html" 
-          title="Next Post: 恋在Sri Lanka">恋在Sri Lanka &raquo;</a>
+          <a  href="14902628595488.html" 
+          title="Next Post: Gensim进阶教程：训练word2vec与doc2vec模型">Gensim进阶教程：训练word2vec与doc2vec模型 &raquo;</a>
       
       </p>
         </div>
