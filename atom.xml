@@ -4,7 +4,7 @@
   <title><![CDATA[公子天的网络日志]]></title>
   <link href="whiskytina.coding.me/atom.xml" rel="self"/>
   <link href="whiskytina.coding.me/"/>
-  <updated>2017-04-16T16:38:23+08:00</updated>
+  <updated>2017-04-16T16:38:39+08:00</updated>
   <id>whiskytina.coding.me/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -1052,7 +1052,7 @@ pip install --upgrade $TF_BINARY_URL
 
 <p>最后，开启Notebook服务：</p>
 
-<pre><code>jupyter notebook --notebook_dir=your_working_dir --port=8888 --ip=* --no-browser
+<pre><code>jupyter notebook --notebook-dir=your_working_dir --port=8888 --ip=* --no-browser
 </code></pre>
 
 <p>至此，打开浏览器，开启你的Jupyter之旅吧！</p>
