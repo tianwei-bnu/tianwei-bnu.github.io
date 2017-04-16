@@ -111,6 +111,139 @@
 		<div class="markdown-body home-categories">
 		
 			<div class="article">
+                <a class="clearlink" href="14923205660148.html">
+                
+                  <h1>深度学习开发环境搭建教程（Mac篇）</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>本文将指导你如何在自己的Mac上部署Theano + Keras的深度学习开发环境。</p>
+
+<p>如果你的Mac不自带NVIDIA的独立显卡（例如15寸以下或者17年新款的Macbook。具体可以在“关于本机-&gt;系统报告-&gt;图形卡／显示器”里查看），那么你可能无法在这台Mac上使用GPU训练深度学习模型。不过这并不值得遗憾。事实上，我在自己的Macbook上（15-inch，Early 2013，NVIDIA GeForce GT 650M 1024 MB）做了一个简单的测试：在mnist数据集上训练CNN模型时，GPU模式相对于CPU模式仅节省了1/3的时间。这可能要归咎于Mac上赢弱的显卡。相比之下，我更推荐购买一台有着强劲性能的显卡的PC本（比如某些游戏本）来搭建深度学习的开发环境，或者是直接租赁AWS的Instance服务。</p>
+
+<p>下面步入正题。</p>
+
+<h2 id="toc_0">安装GPU开发环境</h2>
+
+<p>几乎所有的主流深度学习框架在使用GPU进行模型训练时都依赖于两个底层环境：CUDA和cuDNN。前者是一个使用GPU进行并行计算的平台，后者是一个封装了使用GPU加速神经网络计算的library。</p>
+
+<h3 id="toc_1">安装CUDA</h3>
+
+<ol>
+<li><p>确保你的显卡被CUDA所兼容。前往<a href="http://developer.nvidia.com/cuda-gpus">CUDA-capable GPU</a>检查可用的显卡型号。</p></li>
+<li><p>接下来，安装xcode（通过App Store）和命令行工具：<code>xcode-select --install</code>。这一步会自动安装clang编译器，可以在命令行里输入：<code>/usr/bin/cc --version</code>进行验证。<br/>
+clang编译器也是安装Theano的预备环境之一。</p></li>
+<li><p>前往<a href="https://developer.nvidia.com/cuda-downloads">官网</a>下载并安装CUDA8.0（dmg安装包）。注意选择相应的平台。这一步会同时安装CUDA driver和CUDA toolkit。</p></li>
+<li><p>配置环境变量。打开<code>~/.bash_profile</code>，输入四行命令：</p>
+
+<pre><code class="language-bash">export CUDA_ROOT=/Developer/NVIDIA/CUDA-8.0
+export PATH=$CUDA_ROOT/bin${PATH:+:${PATH}}
+export DYLD_LIBRARY_PATH=$CUDA_ROOT/lib${DYLD_LIBRARY_PATH:+:${DYLD_LIBRARY_PATH}}
+export LD_LIBRARY_PATH=$CUDA_ROOT/lib:$LD_LIBRARY_PATH
+</code></pre>
+
+<p>其中，环境变量CUDA_ROOT给Theano指定了CUDA的安装目录，也可以被设置为<code>/usr/local/cuda</code>（这两个路径下的文件均通过软链接被link到了一起）。</p>
+
+<p>配置完成后，退出编辑器，<code>source ~/.bash_profile</code>并执行<code>nvcc -V</code>验证CUDA的安装是否正常。</p></li>
+</ol>
+
+<h3 id="toc_2">安装cuDNN</h3>
+
+<ol>
+<li><p>前往<a href="https://developer.nvidia.com/cudnn">官网</a>下载cuDNN压缩包。注意选择合适的平台。我下载的是cuDNN5.1 for CUDA8.0（截止到17年4月，Theano尚不支持cuDNN6.0）。</p></li>
+<li><p>解压缩下载的文件，将<code>include</code>目录下的<code>*.h</code>文件复制到<code>$CUDA_ROOT/include</code>目录下；将<code>lib</code>目录下的<code>*.so</code>文件复制到<code>$CUDA_ROOT/lib</code>目录下。</p></li>
+</ol>
+
+<p>至此，完成了GPU开发环境的基本部署。</p>
+
+<h2 id="toc_3">安装Theano</h2>
+
+<p>Theano的安装极其简单：</p>
+
+<ol>
+<li><p>首先，前往<a href="https://conda.io/miniconda.html">Miniconda</a>安装Conda</p></li>
+<li><p>使用Conda安装第三方依赖（“&lt;&gt;”里为可选包）：</p>
+
+<pre><code class="language-shell">conda install numpy scipy mkl &lt;nose&gt; &lt;sphinx&gt; &lt;pydot-ng&gt;
+</code></pre></li>
+<li><p>使用Conda安装Theano（如果出现网络连接异常，也可以使用pip进行安装。参见<a href="http://deeplearning.net/software/theano/install_macos.html#stable-installation">官网安装指南</a>）：</p>
+
+<pre><code class="language-shell">conda install theano pygpu
+</code></pre></li>
+</ol>
+
+<h2 id="toc_4">安装Keras</h2>
+
+<p>Keras是一个建立在Theano和TensorFlow基础上，封装了大量底层接口，方便研究人员快速搭建模型原型的深度学习开发框架。它提供了pip和从源码直接安装两种方式。</p>
+
+<p>使用pip安装：</p>
+
+<pre><code class="language-shell">sudo pip install keras
+</code></pre>
+
+<p>从源码直接安装：</p>
+
+<pre><code class="language-shell">git clone https://github.com/fchollet/keras.git
+cd keras
+sudo python setup.py install
+</code></pre>
+
+<p>Keras默认以TensorFlow为底层计算引擎。第一次执行<code>import keras</code>命令后，会生成<code>~/.keras/keras.json</code>文件。打开这个文件，将<code>&quot;backend&quot;: &quot;tensorflow&quot;</code>修改为<code>&quot;backend&quot;: &quot;theano&quot;</code>，即完成了后端计算引擎到Theano的切换。</p>
+
+<p>至此，一个基本的深度学习开发环境已搭建完成。重启电脑以确保所有配置均已生效。</p>
+
+<h2 id="toc_5">环境测试</h2>
+
+<p>我们可以运行一些demo来测试环境的安装是否正常。</p>
+
+<p>从Github上下载Keras的源码，进入<code>examples</code>子目录，输入命令：</p>
+
+<pre><code>THEANO_FLAGS=mode=FAST_RUN python mnist_cnn.py
+</code></pre>
+
+<p>该命令将以CPU模式在mnist数据集上训练CNN模型。</p>
+
+<p>输入命令：</p>
+
+<pre><code>THEANO_FLAGS=&#39;mode=FAST_RUN,device=cuda,floatX=float32,optimizer_including=cudnn&#39; python mnist_cnn.py
+</code></pre>
+
+<p>该命令将以GPU模式（并使用cudnn加速）在mnist数据集上训练CNN模型。</p>
+
+<p>如果一切正常，你将看到类似下图的屏幕输出：<br/>
+<img src="media/14923205660148/14923288562143.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>我在自己的Macbbok Pro（15寸，13年初，GT 650M的1024MB显卡）上分别测试了CPU，GPU，GPU with cuDNN三种模式下CNN模型（mnist数据集）的训练性能，其结果如下（单位：秒）：</p>
+
+<p><img src="media/14923205660148/14923298107593.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>出乎意料的是，如果没有cuDNN的加速，Mac上GPU的计算性能远不如CPU！而即便使用了cuDNN的加速，模型的训练也只不过缩短了1/3的时间。因此，如果想认真地玩一玩深度学习模型，还是建议上高性能的显卡，或者直接用AWS的GPU服务吧！</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2017/4/16</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='geeks_note.html'>Geek心得</a></span>
+          				   
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
                 <a class="clearlink" href="14920539913358.html">
                 
                   <h1>四月份目标规划</h1>
@@ -248,42 +381,6 @@
                 </div>
               </div><!-- article -->
         
-			<div class="article">
-                <a class="clearlink" href="zotero.html">
-                
-                  <h1>我的文献管理系统：Zotero + DPT S1</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>前两天狠了狠心花高价买了一个二手DPT S1。在学校的时候就对这款神器心水许久，一直未舍得也无力购买。工作后有了点闲钱，考虑到自己的工作性质需要阅读大量的文献，有一款电纸书不仅携带方便不伤眼，笔记什么的也更易于保存，便打算除一除草。孰料去年年底Sony宣布DPT无限期停产，S1的价格更是不降反升，全新品的价格涨幅直接飙过了100%！（Sony大法果然是最佳的理财神器。）然而架不住心里欲求不得的碎碎念，只好在一家淘宝店铺花了9000大洋购入一台二手机器。所幸机器成色较好，几乎看不出使用的痕迹。</p>
-
-<p>既然入了这台“Paper”神器，便要善于利用，尽最大可能发挥它的便捷和长处。这篇博客就是介绍如何用DPT S1结合文献管理软件Zotero打造自己阅读文献的WorkFlow。</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="zotero.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/4/4</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='geeks_note.html'>Geek心得</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
               
 
 
@@ -359,6 +456,12 @@
 	      
 		      
 			      <li class="post">
+			        <a href="14923205660148.html">深度学习开发环境搭建教程（Mac篇）</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
 			        <a href="14920539913358.html">四月份目标规划</a>
 			      </li>
 		     
@@ -382,10 +485,6 @@
 		     
 		  
 		      
-			      <li class="post">
-			        <a href="zotero.html">我的文献管理系统：Zotero + DPT S1</a>
-			      </li>
-		     
 		  
 		      
 		  
