@@ -4,7 +4,7 @@
   <title><![CDATA[公子天的网络日志]]></title>
   <link href="whiskytina.coding.me/atom.xml" rel="self"/>
   <link href="whiskytina.coding.me/"/>
-  <updated>2017-04-16T16:17:04+08:00</updated>
+  <updated>2017-04-16T16:38:23+08:00</updated>
   <id>whiskytina.coding.me/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -23,6 +23,8 @@
 <p>如果你的Mac不自带NVIDIA的独立显卡（例如15寸以下或者17年新款的Macbook。具体可以在“关于本机-&gt;系统报告-&gt;图形卡／显示器”里查看），那么你可能无法在这台Mac上使用GPU训练深度学习模型。不过这并不值得遗憾。事实上，我在自己的Macbook上（15-inch，Early 2013，NVIDIA GeForce GT 650M 1024 MB）做了一个简单的测试：在mnist数据集上训练CNN模型时，GPU模式相对于CPU模式仅节省了1/3的时间。这可能要归咎于Mac上赢弱的显卡。相比之下，我更推荐购买一台有着强劲性能的显卡的PC本（比如某些游戏本）来搭建深度学习的开发环境，或者是直接租赁AWS的Instance服务。</p>
 
 <p>下面步入正题。</p>
+
+<span id="more"></span><!-- more -->
 
 <h2 id="toc_0">安装GPU开发环境</h2>
 
@@ -112,11 +114,11 @@ sudo python setup.py install
 <p>该命令将以GPU模式（并使用cudnn加速）在mnist数据集上训练CNN模型。</p>
 
 <p>如果一切正常，你将看到类似下图的屏幕输出：<br/>
-<img src="media/14923205660148/14923288562143.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+<img src="http://on8zjjnhp.bkt.clouddn.com/2017-04-16-14923288562143.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
 
 <p>我在自己的Macbbok Pro（15寸，13年初，GT 650M的1024MB显卡）上分别测试了CPU，GPU，GPU with cuDNN三种模式下CNN模型（mnist数据集）的训练性能，其结果如下（单位：秒）：</p>
 
-<p><img src="media/14923205660148/14923298107593.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+<p><img src="http://on8zjjnhp.bkt.clouddn.com/2017-04-16-14923298107593.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
 
 <p>出乎意料的是，如果没有cuDNN的加速，Mac上GPU的计算性能远不如CPU！而即便使用了cuDNN的加速，模型的训练也只不过缩短了1/3的时间。因此，如果想认真地玩一玩深度学习模型，还是建议上高性能的显卡，或者直接用AWS的GPU服务吧！</p>
 
