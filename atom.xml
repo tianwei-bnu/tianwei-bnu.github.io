@@ -4,7 +4,7 @@
   <title><![CDATA[公子天的网络日志]]></title>
   <link href="whiskytina.coding.me/atom.xml" rel="self"/>
   <link href="whiskytina.coding.me/"/>
-  <updated>2017-04-17T15:45:48+08:00</updated>
+  <updated>2017-04-21T11:33:06+08:00</updated>
   <id>whiskytina.coding.me/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -20,7 +20,7 @@
     <content type="html"><![CDATA[
 <p>本文将指导你如何在自己的Mac上部署Theano + Keras的深度学习开发环境。</p>
 
-<p>如果你的Mac不自带NVIDIA的独立显卡（例如15寸以下或者17年新款的Macbook。具体可以在“关于本机-&gt;系统报告-&gt;图形卡／显示器”里查看），那么你可能无法在这台Mac上使用GPU训练深度学习模型。不过这并不值得遗憾。事实上，我在自己的Macbook上（15-inch，Early 2013，NVIDIA GeForce GT 650M 1024 MB）做了一个简单的测试：在mnist数据集上训练CNN模型时，GPU模式相对于CPU模式仅节省了1/3的时间。这可能要归咎于Mac上赢弱的显卡。相比之下，我更推荐购买一台有着强劲性能的显卡的PC本（比如某些游戏本）来搭建深度学习的开发环境，或者是直接租赁AWS的Instance服务。</p>
+<p>如果你的Mac不自带NVIDIA的独立显卡（例如15寸以下或者17年新款的Macbook。具体可以在“关于本机-&gt;系统报告-&gt;图形卡／显示器”里查看），那么你可能无法在这台Mac上使用GPU训练深度学习模型。不过这并不遗憾。事实上，我在自己的Macbook上（15-inch，Early 2013，NVIDIA GeForce GT 650M 1024 MB）做了一个简单的测试：在mnist数据集上训练CNN模型时，使用GPU仅比使用CPU快了1.7倍——在更专业的Tesla K80显卡上，这个数字是5倍。因此，我更推荐购买一台有着强劲性能的显卡的PC本（比如某些游戏本）来搭建深度学习的开发环境，或者是直接租赁AWS的Instance服务。</p>
 
 <p>下面步入正题。</p>
 
@@ -116,11 +116,13 @@ sudo python setup.py install
 <p>如果一切正常，你将看到类似下图的屏幕输出：<br/>
 <img src="http://on8zjjnhp.bkt.clouddn.com/2017-04-16-14923288562143.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
 
-<p>我在自己的Macbbok Pro（15寸，13年初，GT 650M的1024MB显卡）上分别测试了CPU，GPU，GPU with cuDNN三种模式下CNN模型（mnist数据集）的训练性能，其结果如下（单位：秒）：</p>
+<p>为了对MacBook上GPU的计算性能有进一步的了解，我对比了这块GPU（GeForce GT 650M）和同一台电脑上的CPU（Intel Core i7）以及AWS上p2.xlarge实例的Tesla K80显卡在MNIST数据集上训练一个CNN模型所消耗的时间（one epoch）：</p>
 
-<p><img src="http://on8zjjnhp.bkt.clouddn.com/2017-04-16-14923298107593.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+<p><img src="media/14923205660148/14926981655136.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
 
-<p>出乎意料的是，如果没有cuDNN的加速，Mac上GPU的计算性能远不如CPU！而即便使用了cuDNN的加速，模型的训练也只不过缩短了1/3的时间。因此，如果想认真地玩一玩深度学习模型，还是建议上高性能的显卡，或者直接用AWS的GPU服务吧！</p>
+<p>可见，与专业级的Tesla显卡相比，MacBook上的GeForce显卡足足慢了三倍——不过这也比i7处理器快了1.7倍。而在更一般的CPU处理器上，一个epoch的训练时间更是达到了250秒以上，使用一块Tesla K80显卡至少节省了8倍的时间！这也是为什么很多人认为GPU的技术变革是深度学习得以快速发展的幕后因素之一。</p>
+
+<p>PS. 在测试GPU的计算性能时发现Theano的一个“bug”：使用新的gpuarray backend（device=cuda）要比旧的cuda backend（device=gpu）慢上十几秒。尚不清楚这是不是gpuarray背后的优化问题。</p>
 
 ]]></content>
   </entry>
