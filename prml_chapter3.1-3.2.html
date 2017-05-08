@@ -1,0 +1,476 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  PRML读书笔记——线性回归模型（上） - 公子天的网络日志
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="公子天的网络日志" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+  <script src="asset/highlightjs/highlight.pack.js"></script>
+  <link href="asset/highlightjs/styles/github.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:whiskytina.coding.me ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="navigate.html">Navigate</a></li>
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="resource.html">Resources</a></li>
+        
+        <li id=""><a target="_self" href="about.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="http://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; 公子天的网络日志</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+       
+       <li><a href="index.html">HOME</a></li>
+    <li><a href="archives.html">Archives</a></li>
+    <li><a href="about.html">ABOUT</a></li>
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="research_note.html">研究笔记</a></li>
+        
+            <li><a href="coding_note.html">技术手册</a></li>
+        
+            <li><a href="geeks_note.html">Geek心得</a></li>
+        
+            <li><a href="life_note.html">生活日志</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>PRML读书笔记——线性回归模型（上）</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/5/7</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='prml.html'>Pattern Recognition and Machine Learning</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <p>本章开始学习第一个有监督学习模型——线性回归模型。&quot;线性&quot;在这里的含义仅限定了模型必须是<strong>参数</strong>的线性函数。而正如我们接下来要看到的，线性回归模型可以是输入变量\(x\)的非线性函数。</p>
+
+<p>书中首先对回归问题给出了一个简短的不那么正式的定义：</p>
+
+<blockquote>
+<p>Given a training data set comprising \(N\) observations \(\{x_n\}\), where \(n = 1, ... , N\), together with corresponding target values \(\{t_n\}\), the goal is to predict the value of \(t\) for a new value of \(x\).</p>
+</blockquote>
+
+<p>而解决这个问题有两种思路：一种是直接对\(x \rightarrow t\)的映射\(y(x)\)进行建模，类似判别式模型的建模思路；另一种则从概率的角度出发，首先建模预测变量\(t\)的条件概率分布\(p(t|x)\)，然后通过最小化一个损失函数——对于实数变量通常是均方误差（squared loss）——给出\(t\)的一个最优估计：\(y(x)=E_t[t|x]\)。（注意区分这里的损失函数和用于参数回归的损失函数。）</p>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_0">线性基函数模型（Linear Basis Function Models）</h2>
+
+<p>一个最简单的线性回归模型是将预测变量表示为输入变量的一组线性组合：<br/>
+\[y(\mathbf{x}, \mathbf{w}) = w_o + w_1 x_1 + ... + w_D x_D\]<br/>
+其中，\(\mathbf{x} = (x_1, ..., x_D)^T\)。</p>
+
+<p>这个模型的特点是，它不仅是参数\(w\)，也是输入变量\(x\)的线性函数，因此也有着极大的局限性。</p>
+
+<p>因此，我们将这个简单模型扩展为对输入变量进行非线性变换后的线性组合：<br/>
+\[y(\mathbf{x}, \mathbf{w}) = w_0 + \sum_{j=1}^{M-1}{w_j \phi_j(\mathbf{x})}\]<br/>
+这个模型被称为线性基函数模型。其中，\(\phi_j(\mathbf{x})\)被称为模型的基函数，是一个\(\mathbb{R}^D \rightarrow \mathbb{R}\)的映射，也可以被理解为是对原始输入特征\(\mathbf{x}\)的预处理函数。参数\(w_0\)被称为模型的bias（区别于统计学意义上的bias），代表数据中的&quot;偏移量&quot;。</p>
+
+<p>如果我们定义\(\phi_0(\mathbf{x})=1\)，则可以用一个紧凑的矢量运算来表示这个模型：<br/>
+\[y(\mathbf{x}, \mathbf{w}) = \sum_{j=0}^{M-1}{w_j \phi_j(\mathbf{x})} = \mathbf{w}^T \mathbf{\phi(x)}\]</p>
+
+<p>显然，线性基函数模型可以是输入变量\(\mathbf{x}\)的非线性函数（如果我们选定一组非线性的基函数）。而我们之所以仍称其为&quot;线性&quot;的模型，是因为它始终是参数\(\mathbf{w}\)的线性函数。</p>
+
+<p>对于单变量的输入\(x\)，常见的基函数有四种：</p>
+
+<ol>
+<li>Power basis：\(\phi_j(x) = x^j\)</li>
+<li>Gaussian basis：\(\phi_j(x) = \exp\{-\frac{(x-\mu_j)^2}{2s^2}\}\)</li>
+<li>Sigmoidal basis：\(\phi_j(x) = \sigma(\frac{x-\mu_j}{s})\)，其中：\(\sigma(x) = \frac{1}{1+\exp(-x)}\)</li>
+<li>Fourier basis：类似于信号处理里的小波变换</li>
+</ol>
+
+<h3 id="toc_1">最大似然和最小二乘法</h3>
+
+<p>我们可以从概率角度出发进一步理解这个模型。</p>
+
+<p>假定目标变量\(t\)服从以\(y(\mathbf{x}, \mathbf{w})\)为均值的高斯分布：<br/>
+\[t \sim p(t|\mathbf{x}, \mathbf{w}, \beta)=\mathcal{N}(t|y(\mathbf{x}, \mathbf{w}), \beta^{-1})\]</p>
+
+<p>根据决策理论（decision theory），当我们选择最小化均方误差函数：<br/>
+\[E[L]=\int\int{\{y(x)-t\}^2p(x, t)dxdt}\]<br/>
+做为优化目标时，得到\(t\)的最优估计量为：<br/>
+\[y(\mathbf{x})=E[t|\mathbf{x}]=\int{tp(t|\mathbf{x})}dt=y(\mathbf{x}, \mathbf{w})\]</p>
+
+<p>那么，如何得到函数\(y(\mathbf{x}, \mathbf{w})\)的具体形式呢？换言之，我们该如何计算出\(t\)的条件概率分布参数\(\mathbf{w}\)和\(\beta\)呢？频率学派的最大似然法给出了一个可行解。</p>
+
+<p>在频率学派眼里，模型的参数\(\mathbf{w}\)和\(\beta\)是一个确定值，而数据集\(\mathcal{D}\)是一个随机变量。具体地，我们假定数据集\(\mathcal{D}\)里的每一对样本\((\mathbf{x}, t)\)都是独立同分布的随机变量。而对于一般的有监督学习问题，我们通常不考虑输入变量\(\mathbf{x}\)的分布。因此，我们可以直接用样本里目标变量\(t\)的条件概率分布的乘积来表示这个样本集合\(\mathcal{D}\)的概率分布：<br/>
+\[p(\mathbf{t}|\mathbf{w}, \beta) = \prod_{n=1}^N{\mathcal{N}(t_n|\mathbf{w}^T\mathbf{\phi(x_n)}, \beta^{-1})}\]</p>
+
+<p>对于一个给定的数据集\(\mathcal{D}\)和对应的目标变量\(\mathbf{t} = (t_1, ..., t_N)^T\)，上面这个概率分布又被称为这个数据集的似然函数（注意，与以\(\mathbf{t}\)为变量的概率分布函数不同，有着相同表达式的似然函数是以模型参数\(\mathbf{w}\)和\(\beta\)为变量的函数）。通常，我们取其对数形式：<br/>
+\[\begin{align*}<br/>
+\ln{p(\mathbf{t}|\mathbf{w}, \beta)} &amp; = \sum_{n=1}^N{\ln\mathcal{N}(t_n|\mathbf{w}^T\mathbf{\phi(x_n)}, \beta^{-1})} \\<br/>
+&amp; = \frac{N}{2}\ln\beta - \frac{N}{2}\ln(2\pi) - \beta E_D(\mathbf{w})<br/>
+\end{align*}\]</p>
+
+<p>其中，\(E_D(\mathbf{w})=\frac{1}{2}\sum_{n=1}^N{\{t_n-\mathbf{w}^T\mathbf{\phi(x_n)}\}^2}\)又被称为平方误差和（sum-of-squares error）。</p>
+
+<p>最大似然法假定对\(\mathbf{w}\)和\(\beta\)的点估计应使得在当前数据集上的似然函数最大。注意到对于高斯分布的似然函数，求解\(\mathbf{w}\)的过程等价于最小化平方误差和\(E_D(\mathbf{w})\)。</p>
+
+<p>我们可以通过令似然函数对\(\mathbf{w}\)和\(\beta\)的偏导为\(0\)直接得到参数估计的解析解：<br/>
+\[\begin{align*}<br/>
+\mathbf{w}_{ML} &amp; = (\mathbf{\Phi}^T\mathbf{\Phi})^{-1}\mathbf{\Phi}^T\mathbf{t} \\<br/>
+\beta_{ML}^{-1} &amp; = \frac{1}{N}\sum_{n=1}^N{\{t_n-\mathbf{w}_{ML}^T\mathbf{\phi(x_n)}\}^2}<br/>
+\end{align*}\]</p>
+
+<p>其中，\(\mathbf{\Phi}\)（\(\mathbf{\Phi}_{nj}=\phi_j(\mathbf{x}_n)\)）被称为<em>设计矩阵（design matrix）</em>，\(\mathbf{\Phi}^\dagger = (\mathbf{\Phi}^T\mathbf{\Phi})^{-1}\mathbf{\Phi}^T\)是矩阵\(\mathbf{\Phi}\)的伪逆（<em>Moore-Penrose pseudo-inverse</em>）。这两个等式又被称为是线性回归模型的正则方程解。</p>
+
+<h3 id="toc_2">最小二乘法的几何解释</h3>
+
+<p>对于一个大小为\(N\)的数据集，我们可以将其目标变量\(\mathbf{t}=(t_1,...,t_N)^T\)看作是\(N\)维空间里的一个向量。同时，模型的每一个基函数作用在这个数据集上得到的\(N\)个输入变换也可以被视为是一个\(N\)维向量。假设我们有\(M\)个基函数，则对应着\(M\)个\(N\)维向量。这些向量构成了\(N\)维空间里的一个\(M\)维子空间\(\mathcal{S}\)。我们对目标变量\(\mathbf{t}\)作出的预估\(\mathbf{y}\)则对应着这个\(M\)维子空间上的一个向量。</p>
+
+<p>最小二乘法告诉我们，我们应选择使得目标向量\(\mathbf{t}\)和预估向量\(\mathbf{y}\)的（欧式）距离尽可能短的\(\mathbf{y}\)。这等价于将\(\mathbf{y}\)设置为\(\mathbf{t}\)在\(M\)维子空间\(\mathcal{S}\)上的投影向量。这就是最小二乘法的几何意义。</p>
+
+<p><img src="http://on8zjjnhp.bkt.clouddn.com/14941421594288.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<h3 id="toc_3">序列学习算法</h3>
+
+<p>在实际应用中，由于对整个数据集进行矩阵运算的代价太大，正则方程解并不可行。事实上，我们通常采用一种序列学习的算法，例如SGD，批量地处理数据并学习到模型的参数。</p>
+
+<p>SGD应用在线性回归模型时的更新法则如下：<br/>
+\[\mathbf{w}^{(\tau+1)}=\mathbf{w}^{(\tau)}+\eta(t_n-\mathbf{w}^{(\tau)T}\mathbf{\phi_n})\mathbf{\phi_n}\]</p>
+
+<h3 id="toc_4">正则化的最小二乘法</h3>
+
+<p>通过在误差函数中引入正则项，正则化提供了一种控制模型过拟合程度的能力。最常见的正则项为L2正则：<br/>
+\[E_W(\mathbf{w}) = \frac{1}{2}\mathbf{w^Tw}\]</p>
+
+<p>对于线性回归模型，采用L2正则修正后的误差函数为：<br/>
+\[E(\mathbf{w})=\frac{1}{2}\sum_{n=1}^N\{t_n-\mathbf{w}^T\mathbf{\phi(x_n)}\}^2+\frac{\lambda}{2}\mathbf{w^Tw}\]<br/>
+其中\(\lambda\)为正则系数，用于控制正则项在计算误差时的重要性，进而调节模型的复杂度和过拟合的程度。</p>
+
+<p>L2正则又被称为<em>weight decay</em>技术，这是因为如果将上式对\(\mathbf{w}\)求导，我们将得到一个与\(\mathbf{w}\)成正比的衰减项。更一般的正则项具有如下的形式：<br/>
+\[E_W(\mathbf{w}) = \frac{1}{2}\sum_{j=1}^M|w_j|^q\]</p>
+
+<p>例如，当\(q=1\)时，误差函数对\(\mathbf{w}\)的梯度存在一个常数衰减项，使得\(\mathbf{w}\)更加稀疏（存在大量\(0\)元素）。该正则项被称为L1正则，在一些统计学文献里也被称为<em>lasso</em>技术。</p>
+
+<p>我们可以用一个带约束的优化问题来理解正则项对模型参数的影响。此时，正则化项等价于约束条件：\(\sum_{j=1}^M|w_j|^q \leq \eta\)。下图给出了二维空间里的一个图例。<br/>
+<img src="http://on8zjjnhp.bkt.clouddn.com/14941534902322.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>正则化项的本质是通过限制模型的有效复杂度使得那些表面上看起来很复杂的模型可以在小数据集上也取得不错的泛化效果。然而，模型过拟合的问题并没有在这个框架下得到根本性的解决——我们只不过是将控制模型复杂度的参数从基函数的个数\(M\)转移到了正则化系数\(\lambda\)上。我们依然需要Validation Set帮助我们找到合适的超参数\(\lambda\)。</p>
+
+<h2 id="toc_5">Bias-Variance分解</h2>
+
+<p>在这一节里，我们将从频率学派的角度分析模型过拟合的成因。</p>
+
+<p>我们讨论的出发点依然是目标变量的条件概率分布\(p(t|\mathbf{x})\)。假设我们知道了这个概率分布的具体形式，我们该如何对一个新的输入变量\(\mathbf{x}\)给出预估的\(t\)呢？</p>
+
+<p>决策理论告诉我们，通过最小化一个均方损失函数（区分于最大似然法里的均方误差函数）\(E[L]\)，我们可以对任意输入\(\mathbf{x}\)给出一个最优的估计值\(y(\mathbf{x})\)：<br/>
+\[E[L]=\int\int{\{y(\mathbf{x})-t\}^2p(\mathbf{x}, t)d\mathbf{x}dt}\]</p>
+
+<p>进一步地对\(E[L]\)进行分解，我们得到：<br/>
+\[E[L] = \int{\{y(\mathbf{x})-h(\mathbf{x})\}^2p(\mathbf{x})}d\mathbf{x} + \int{\{h(\mathbf{x})-t\}^2p(\mathbf{x}, t)}d\mathbf{x}dt\]</p>
+
+<p>其中，\(h(\mathbf{x})\)是目标变量\(t\)的条件概率期望，也被称为回归函数：<br/>
+\[h(\mathbf{x})=E[t|\mathbf{x}]=\int{tp(t|\mathbf{x})}dt\]</p>
+
+<p>上式右边的第二项来源于数据分布内在的噪声，我们无法改变。因此，对\(E[L]\)的最小化等价于对上式的第一项：\(\{y(\mathbf{x})-h(\mathbf{x})\}^2\)的最小化。显然，当\(y(\mathbf{x})=h(\mathbf{x})\)时\(E[L]\)达到最小值。</p>
+
+<p>然而，我们并不知道回归函数\(h(\mathbf{x})\)的具体形式。如果我们有足够多的数据以及计算资源，理论上，我们可以以任意精度逼近回归函数\(h(\mathbf{x})\)（非参估计），从而给出\(y(\mathbf{x})\)的一个最佳估计。遗憾的是，在实际中我们往往只有一个有限大小的数据集。</p>
+
+<p>因此，我们只能用一个含参的函数猜想\(y(\mathbf{x}, \mathbf{w})\)对\(h(\mathbf{x})\)进行建模，然后在给定的数据集\(\mathcal{D}\)上用最大似然法找到参数\(\mathbf{w}\)的点估计。最后，我们用这个拟合模型\(y(\mathbf{x}, \mathcal{D})\)近似真实的条件期望\(h(\mathbf{x})\)，作为\(y(\mathbf{x})\)的一个最佳估计。这一切，正是造成模型存在泛化误差的幕后根源。下面给出更深入的分析。</p>
+
+<p>按照频率学派的观点，数据集\(\mathcal{D}\)是一个随机变量，因此，我们在这个数据集上对\(h(\mathbf{x})\)的近似\(y(\mathbf{x}, \mathcal{D})\)也是一个随机变量——采样自同一分布的不同数据集将得到不同参数的回归函数和回归误差。也因此，对于上式中\(E[L]\)分解的第一项：\(\int{\{y(\mathbf{x})-h(\mathbf{x})\}^2p(\mathbf{x})}d\mathbf{x}\)，我们可以用一个期望：\(E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-h(\mathbf{x})\}^2]\)替代。</p>
+
+<p>进一步对\(E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-h(\mathbf{x})\}^2]\)进行分解，我们得到一个十分重要的公式，也就是本小节的主角——Bias-Variance分解：</p>
+
+<p>\[E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-h(\mathbf{x})\}^2] = \{E_{\mathcal{D}}[y(\mathbf{x}, \mathcal{D})]-h(\mathbf{x})\}^2 + E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-E_{\mathcal{D}}[y(\mathbf{x}, \mathcal{D})]\}^2]\]</p>
+
+<p>这个等式的第一项是模型的Bias——它衡量了我们的回归模型\(y(\mathbf{x}, \mathbf{w})\)与真实的回归函数\(h(\mathbf{x})\)之间的差异；第二项是模型的Variance——它衡量了在不同数据集上模型拟合的方差。</p>
+
+<p>直觉上来看，模型的Bias和Variance均与模型的复杂度有着密切的联系。显然，简单的模型可能会过于偏离真实的\(h(\mathbf{x})\)而使得模型的bias过高；而在同一份数据集上，复杂的模型的拟合往往具有更高的波动性。进一步的实验证实了这一猜想。我们使用正则系数\(\lambda\)控制回归模型的有效复杂度，并在抽样自同一分布的多个数据集上拟合模型，得到的结果如下图：<br/>
+<img src="http://on8zjjnhp.bkt.clouddn.com/14941649159181.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>图中自上而下模型的复杂度由低到高；左边一列绘出了每个数据集上的拟合曲线；右边一列则汇出了所有拟合曲线的均值（\(E_{\mathcal{D}}[y(\mathbf{x}, \mathcal{D})]\)的无偏估计）；绿色曲线是真实的分布。可见，随着模型复杂度的提高，模型的Variance也越来越高；而对于较低的模型复杂度，虽然模型有着较低的Variance，但也有着极高的Bias。</p>
+
+<p>我们也可以直接汇出模型Bias和Variance随着正则系数\(\lambda\)的变化曲线：<br/>
+<img src="http://on8zjjnhp.bkt.clouddn.com/14941656246145.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>可见，模型的Bias和Variance存在一个trade-off——我们无法使得一个模型有着低Bias的同时也有着较低的Variance。在实际的应用中，我们往往需要通过一个验证集来调节模型的复杂度（例如调节正则化系数\(\lambda\)）从而寻求Bias和Variance的某种平衡。事实上，高Bias正对应着一个欠拟合的模型；而高Variance则对应着一个过拟合的模型。</p>
+
+<p>最后，在上面的实验中，我们也看到对在不同数据集上拟合的复杂模型取平均，可以得到一个最佳的拟合曲线。这种平均模型的思想在后面提到的Bayesian方法和在神经网络上风靡的Dropout正则化方法均有所体现。然而在实际应用中，我们很少会对同一个模型在不同数据集上拟合的结果取平均——如果我们有那么多的数据集，一个更自然的想法是将这些数据集合并为一个更大的数据集来训练一个模型。</p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="14938645527134.html" 
+          title="Next Post: 五月份目标规划">五月份目标规划 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>公子天的网络日志</h1>
+                <div class="site-des">Make a Difference</div>
+                <div class="social">
+
+
+
+<a target="_blank" class="linkedin" href="http://www.linkedin.com/in/tianweibnu/" title="LinkedIn">LinkedIn</a>
+
+
+
+
+<a target="_blank" class="twitter" target="_blank" href="https://twitter.com/BnuTian" title="Twitter">Twitter</a>
+<a target="_blank" class="github" target="_blank" href="https://github.com/whiskytina" title="GitHub">GitHub</a>
+
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="research_note.html"><strong>研究笔记</strong></a>
+        
+            <a href="coding_note.html"><strong>技术手册</strong></a>
+        
+            <a href="geeks_note.html"><strong>Geek心得</strong></a>
+        
+            <a href="life_note.html"><strong>生活日志</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="prml_chapter3.1-3.2.html">PRML读书笔记——线性回归模型（上）</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14938645527134.html">五月份目标规划</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14923205660148.html">深度学习开发环境搭建教程（Mac篇）</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14920539913358.html">四月份目标规划</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="14919865493658.html">我的时间管理系统：OmniFocus与GTD实践之路</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+    <script src="asset/chart/all-min.js"></script><script type="text/javascript">$(function(){    var mwebii=0;    var mwebChartEleId = 'mweb-chart-ele-';    $('pre>code').each(function(){        mwebii++;        var eleiid = mwebChartEleId+mwebii;        if($(this).hasClass('language-sequence')){            var ele = $(this).addClass('nohighlight').parent();            $('<div id="'+eleiid+'"></div>').insertAfter(ele);            ele.hide();            var diagram = Diagram.parse($(this).text());            diagram.drawSVG(eleiid,{theme: 'simple'});        }else if($(this).hasClass('language-flow')){            var ele = $(this).addClass('nohighlight').parent();            $('<div id="'+eleiid+'"></div>').insertAfter(ele);            ele.hide();            var diagram = flowchart.parse($(this).text());            diagram.drawSVG(eleiid);        }    });});</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/x-mathjax-config">MathJax.Hub.Config({TeX: { equationNumbers: { autoNumber: "AMS" } }});</script>
+
+
+  </body>
+</html>

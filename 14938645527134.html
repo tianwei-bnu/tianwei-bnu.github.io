@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  特征选择中的常用指标 - 公子天的网络日志
+  五月份目标规划 - 公子天的网络日志
   
   </title>
   
@@ -111,14 +111,14 @@
       <div class="markdown-body article-wrap">
        <div class="article">
           
-          <h1>特征选择中的常用指标</h1>
+          <h1>五月份目标规划</h1>
      
         <div class="read-more clearfix">
-          <span class="date">2016/9/14</span>
+          <span class="date">2017/5/4</span>
 
           <span>posted in&nbsp;</span> 
           
-              <span class="posted-in"><a href='others.html'>研究笔记-其他</a></span>
+              <span class="posted-in"><a href='life_note.html'>生活日志</a></span>
            
          
           <span class="comments">
@@ -131,35 +131,82 @@
       </div><!-- article -->
 
       <div class="article-content">
-      <p>在特征选择中，有三类常用的指标：信息增益；信息增益率；和基尼系数。这些指标也是决策树算法的基础。现摘录这三个指标的定义如下：</p>
+      <p>四月份给自己制定了四个学习任务：阅读<em>Deep Learning</em>的第一部分；学习Nielson的Online Book <em>Neural Network and Deep Learning</em>；调研1-2篇深度学习的综述性文献；以及学习fast.ai上的深度学习实践课程。目前来看，只有第一个任务顺利完成。第二个任务正在进行中，而后两个任务甚至还未启动。</p>
+
+<p>然而，2017年的四月终究还是毫不留情地离去，这堆未完成的任务只好留给了如期而至的五月。</p>
+
+<span id="more"></span><!-- more -->
+
+<p>在制定五月份的学习计划之前，首先回顾下自己的三万米目标：</p>
 
 <ol>
-<li><p>信息增益（Information Gain）<br/>
-特征\(T\)为分类系统\(C\)带来的信息增益为：<br/>
-\[\begin{aligned}<br/>
-GainEntropy(T) &amp;= Entropy(C) − Entropy(C|T) \\<br/>
-&amp;= Entropy(C) − \sum_i{p(T_i)Entropy(C|T_i)} \\<br/>
-\end{aligned}\]<br/>
-其中，\(Entropy(C)\)为系统关于分类属性\(C\)的信息熵，定义了系统描述某一个分类所需要的平均信息量。计算公式为：<br/>
-\[Entropy(C) = -\sum_i{p(C_i)\log_2{p(C_i)}}\]<br/>
-\(Entropy(C|T_i )\)为固定特征\(T=T_i\)下系统关于分类属性\(C\)的条件信息熵，计算公式为：<br/>
-\[Entropy(C|T_i) = -\sum_j{p(C_j|T_i)\log_2{p(C_j|T_i)}}\]</p>
-
-<span id="more"></span><!-- more --></li>
-<li><p>信息增益率（Information Gain Ratio）<br/>
-特征\(T\)的信息增益是与特征\(T\)的取值个数有着密切联系的。一般来说，特征的取值个数越多，信息增益往往也会越大（极端的例子如用户ID特征）。为了避免这种特征取值个数的不同对特征选择时泛化能力的影响，考虑对信息增益进行一定程度的归一化。这就是信息增益率。<br/>
-\[GainEntropyRatio(T)=\frac{GainEntropy(T)}{SplitInformation(T)}\]<br/>
-其中，\(SplitInformation(T)\)为系统关于特征\(T\)的信息熵：<br/>
-\[SplitInformation(T) = Entropy(T) = -\sum_i{p(T_i)\log_2{p(T_i)}}\]<br/>
-也就是说，系统描述一个特征所需的信息量越大（表现为特征的分布越分散越平均），这个特征的泛化能力被认为越弱，也就不适合作为模型的特征被选择进来。</p></li>
-<li><p>基尼系数（Gini coefficient）<br/>
-我们定义一个\(K\)分类系统\(C\)的基尼系数为：<br/>
-\[Gini(C) = \sum_{i=1}^K{p(C_i)(1-p(C_i))} = 1 - \sum_{i=1}^K{p^2(C_i)}\]<br/>
-类似信息熵，基尼系数衡量了一个系统的不确定性。高基尼系数意味着一个不确定性高的系统：更加分散和平均的类别分布，和更高的信息量需求（来确定某一个类别）。<br/>
-我们可以类似的定义基尼系数增益来进行特征选择：<br/>
-\[GainGini(T) = Gini(C) - \sum_i{p(T_i)Gini(C|T_i)}\]<br/>
-也可以从基尼系数出发定义基尼系数增益率。这里不再赘述。</p></li>
+<li>申请去海外实验室读博；</li>
+<li>跳槽去外企研究院；</li>
+<li>转岗至内部研究院。</li>
 </ol>
+
+<p>不过根据目前的形势，去海外读博基本很难申请到牛逼的实验室；内部的IDL研究院也暂无HC指标；稍微靠谱的也只有外企比如微软的研究院了，然而难度依然不小。</p>
+
+<p>所以，还是先静下心来提升自身的实力吧。参加一两个Kaggle比赛，完成几个Github项目，维护好自己的博客。</p>
+
+<p>为此，我给自己量身定制了一套机器学习的Roadmap：</p>
+
+<ul>
+<li>入门——机器学习和神经网络入门：
+
+<ul>
+<li><del>Andrew Ng在Coursera上的<a href="https://www.coursera.org/learn/machine-learning">Machine Learning</a>课程</del></li>
+<li>Nielson的Online Book <a href="http://neuralnetworksanddeeplearning.com">Neural Networks and Deep Learning</a></li>
+</ul></li>
+<li>基础——机器学习基本理论：
+
+<ul>
+<li>Bishop的<em>Pattern Recognition and Machine Learning</em></li>
+<li>Stanford CS229 课程: <a href="http://open.163.com/special/opencourse/machinelearning.html">Machine Learning</a></li>
+</ul></li>
+<li>进阶——深度学习专题：
+
+<ul>
+<li>Stanford CS224n 课程: <a href="http://web.stanford.edu/class/cs224n/">Natural Language Processing with Deep Learning</a></li>
+<li>Stanford CS231n 课程: <a href="http://cs231n.stanford.edu">Convolutional Neural Networks for Visual Recognition</a></li>
+<li>David Silver <a href="http://edu.ai100.com.cn/course/49">深度强化学习课程</a></li>
+</ul></li>
+<li>深度——深度学习基本理论：
+
+<ul>
+<li>Goodfellow等人所著的<em>Deep Learning</em></li>
+</ul></li>
+<li>拓展：
+
+<ul>
+<li>前沿Papers<br/></li>
+</ul></li>
+<li>实践：
+
+<ul>
+<li><a href="http://course.fast.ai">fast.ai</a>实践课程</li>
+<li>Kaggle上的数据挖掘竞赛</li>
+<li>Github上的开源项目（如Chatbot，股价预测等自己一直想尝试的小项目）</li>
+</ul></li>
+</ul>
+
+<p>在这张Roadmap里，划掉的是我已经完成的学习任务（可见我在机器学习的Roadmap上不过是刚刚起步）。除了最后一项（实践），整张Roadmap遵循自上而下由浅入深的学习顺序。在未来的日子里，我将严格按照这张Roadmap来规划自己的学习任务，也会适时对这张Roadmap进行修补。我希望自己能在两年内达到这张Roadmap里的深度水平（即完成深度学习基本理论的学习），然后进入前沿领域发力。</p>
+
+<p>具体到五月份，我给自己重新规划了三个学习目标：</p>
+
+<ol>
+<li>完成Nielson的Online Book的学习；</li>
+<li>完成fast.ai提供的实践课程；</li>
+<li>开始阅读Bishop的PRML</li>
+</ol>
+
+<p><del>其中，除了Bishop的PRML是一个中长期的学习目标，前两个学习任务都是要限定在五月底前完成。若提前完成，则可以启动CS224n的学习计划。</del></p>
+
+<p><del>时间安排上，我计划每个工作日的上午（10:00 am - 12:00 am）和下午（3:00 pm - 6:00 pm）处理工作事宜；中午（1:00 pm - 3:00 pm）学习Nielson的Online Book（或是CS224n的阅读材料）；晚饭后（7:00 pm - 9:00 pm）阅读fast.ai的Notebook（或是CS224n的阅读材料）；到家后学习fast.ai的课程视频（或是整理当天的学习笔记）。周末上午观看CS224n的视频课程，下午阅读Bishop的PRML。</del></p>
+
+<p>时间安排上，计划给fast.ai上的每一节课分配一周的时间用于学习（欲速则不达！）：每周日晚上观看新一节课的课程视频，了解大致的内容概要；然后，在工作日的中午和晚上，阅读课程wiki，完成课后作业；同时，每天晚上回家后，再有针对性地观看课程视频片段。周五晚上整理本节课学习笔记，完成一节课的学习。周六则阅读PRML。周日白天休息。</p>
+
+<p>目测接下来将会是艰苦的一个月。不过，总算是朝着自己的梦想在奔跑。加油吧！</p>
 
 
     
@@ -170,16 +217,16 @@ GainEntropy(T) &amp;= Entropy(C) − Entropy(C|T) \\<br/>
         <div class="large-6 columns">
         <p class="text-left" style="padding:15px 0px;">
       
-          <a href="14902627439324.html" 
-          title="Previous Post: Gensim入门教程">&laquo; Gensim入门教程</a>
+          <a href="prml_chapter3.1-3.2.html" 
+          title="Previous Post: PRML读书笔记——线性回归模型（上）">&laquo; PRML读书笔记——线性回归模型（上）</a>
       
         </p>
         </div>
         <div class="large-6 columns">
       <p class="text-right" style="padding:15px 0px;">
       
-          <a  href="14902607196341.html" 
-          title="Next Post: iTerms2结合Expect实现SSH自动登录">iTerms2结合Expect实现SSH自动登录 &raquo;</a>
+          <a  href="14923205660148.html" 
+          title="Next Post: 深度学习开发环境搭建教程（Mac篇）">深度学习开发环境搭建教程（Mac篇） &raquo;</a>
       
       </p>
         </div>
