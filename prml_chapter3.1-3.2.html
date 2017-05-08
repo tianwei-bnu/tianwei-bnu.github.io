@@ -259,13 +259,25 @@
 
 <p>因此，我们只能用一个含参的函数猜想\(y(\mathbf{x}, \mathbf{w})\)对\(h(\mathbf{x})\)进行建模，然后在给定的数据集\(\mathcal{D}\)上用最大似然法找到参数\(\mathbf{w}\)的点估计。最后，我们用这个拟合模型\(y(\mathbf{x}, \mathcal{D})\)近似真实的条件期望\(h(\mathbf{x})\)，作为\(y(\mathbf{x})\)的一个最佳估计。这一切，正是造成模型存在泛化误差的幕后根源。下面给出更深入的分析。</p>
 
-<p>按照频率学派的观点，数据集\(\mathcal{D}\)是一个随机变量，因此，我们在这个数据集上对\(h(\mathbf{x})\)的近似\(y(\mathbf{x}, \mathcal{D})\)也是一个随机变量——采样自同一分布的不同数据集将得到不同参数的回归函数和回归误差。也因此，对于上式中\(E[L]\)分解的第一项：\(\int{\{y(\mathbf{x})-h(\mathbf{x})\}^2p(\mathbf{x})}d\mathbf{x}\)，我们可以用一个期望：\(E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-h(\mathbf{x})\}^2]\)替代。</p>
+<p>按照频率学派的观点，数据集\(\mathcal{D}\)是一个随机变量，因此，我们在这个数据集上对\(h(\mathbf{x})\)的近似\(y(\mathbf{x}, \mathcal{D})\)也是一个随机变量——采样自同一分布的不同数据集将得到不同参数的回归函数和回归误差。也因此，对于上式中\(E[L]\)分解的第一项中的积分项：\(\{y(\mathbf{x})-h(\mathbf{x})\}^2\)，我们选择用一个期望：\(E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-h(\mathbf{x})\}^2]\)来替代。</p>
 
-<p>进一步对\(E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-h(\mathbf{x})\}^2]\)进行分解，我们得到一个十分重要的公式，也就是本小节的主角——Bias-Variance分解：</p>
+<p>对这个期望进行分解，我们得到：</p>
 
 <p>\[E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-h(\mathbf{x})\}^2] = \{E_{\mathcal{D}}[y(\mathbf{x}, \mathcal{D})]-h(\mathbf{x})\}^2 + E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-E_{\mathcal{D}}[y(\mathbf{x}, \mathcal{D})]\}^2]\]</p>
 
-<p>这个等式的第一项是模型的Bias——它衡量了我们的回归模型\(y(\mathbf{x}, \mathbf{w})\)与真实的回归函数\(h(\mathbf{x})\)之间的差异；第二项是模型的Variance——它衡量了在不同数据集上模型拟合的方差。</p>
+<p>等式右边的第一项是模型的Bias——它衡量了我们的回归模型\(y(\mathbf{x}, \mathbf{w})\)与真实的回归函数\(h(\mathbf{x})\)之间的差异；第二项是模型的Variance——它衡量了在不同数据集上模型拟合的方差。</p>
+
+<p>最后，通过对上式遍历所有的输入变量\(\mathbf{x}\)，我们得到一个十分重要的结论——模型的期望误差\(E[L]\)可以被拆分成三个相互独立的部分：<br/>
+\[E[L] = (bias)^2 + variance + noise\]</p>
+
+<p>其中，<br/>
+\[\begin{align*}<br/>
+(bias)^2 &amp; =  \int\{E_{\mathcal{D}}[y(\mathbf{x}, \mathcal{D})]-h(\mathbf{x})\}^2 p(\mathbf{x})d{\mathbf{x}}\\<br/>
+variance &amp; =  \int E_{\mathcal{D}}[\{y(\mathbf{x}, \mathcal{D})-E_{\mathcal{D}}[y(\mathbf{x}, \mathcal{D})]\}^2] p(\mathbf{x})d{\mathbf{x}}\\<br/>
+noise &amp; =  \int{\{h(\mathbf{x})-t\}^2p(\mathbf{x}, t)}d\mathbf{x}dt<br/>
+\end{align*}\]</p>
+
+<p>这正是本小节要出场的主角——Bias-Variance分解。该公式可以帮助我们更好地理解一个模型泛化误差的来源。</p>
 
 <p>直觉上来看，模型的Bias和Variance均与模型的复杂度有着密切的联系。显然，简单的模型可能会过于偏离真实的\(h(\mathbf{x})\)而使得模型的bias过高；而在同一份数据集上，复杂的模型的拟合往往具有更高的波动性。进一步的实验证实了这一猜想。我们使用正则系数\(\lambda\)控制回归模型的有效复杂度，并在抽样自同一分布的多个数据集上拟合模型，得到的结果如下图：<br/>
 <img src="http://on8zjjnhp.bkt.clouddn.com/14941649159181.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
