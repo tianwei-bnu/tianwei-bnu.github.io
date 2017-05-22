@@ -4,13 +4,228 @@
   <title><![CDATA[公子天的网络日志]]></title>
   <link href="whiskytina.coding.me/atom.xml" rel="self"/>
   <link href="whiskytina.coding.me/"/>
-  <updated>2017-05-08T18:08:59+08:00</updated>
+  <updated>2017-05-08T18:09:28+08:00</updated>
   <id>whiskytina.coding.me/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[PRML读书笔记——线性回归模型（下）]]></title>
+    <link href="whiskytina.coding.me/prml_chapter3.3-3.5.html"/>
+    <updated>2017-05-14T20:46:22+08:00</updated>
+    <id>whiskytina.coding.me/prml_chapter3.3-3.5.html</id>
+    <content type="html"><![CDATA[
+<p>本章接下来的几小节将从贝叶斯概率的角度重新审视线性回归模型。</p>
+
+<p>在前面的讨论里，我们使用最大似然法针对线性回归模型给出了一个漂亮的解析解。然而，最大似然法并不能帮助我们选择模型的有效复杂度——基函数的个数或是正则项的系数。简单地使用MLE几乎总是会导向一个极其复杂的模型从而使得模型过拟合现象的发生。一个常见的解决方案是从训练数据中随机挑选出一部分数据作为验证集来确定模型的复杂度<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup>。</p>
+
+<p>而下面要介绍的贝叶斯方法，将从根本上解决MLE存在的模型过拟合问题，且仅从训练数据中就可以自动地确定出模型的有效复杂度。</p>
+
+<span id="more"></span><!-- more -->
+
+<h2 id="toc_0">参数的先验/后验分布</h2>
+
+<p>贝叶斯学派认为，模型的参数是一组有着先验分布的随机变量；观测数据集改变了这些参数的后验分布，进而影响到模型对预测变量概率分布的估计。</p>
+
+<p>对于线性回归模型参数\(w\)的先验分布，考虑到似然函数\(p(t|w)\)是\(w^2\)的指数函数，我们取其<strong>共轭分布</strong>——也即高斯分布函数——作为\(w\)的先验分布：<br/>
+\[p(w) = \mathcal{N}(w|m_0, S_0)\]</p>
+
+<p>接下来，我们计算\(w\)在观测数据集\(\mathcal{D}\)上的后验分布\(p(w|t)\)——其正比于\(\mathcal{D}\)的似然函数\(p(t|w)\)与\(w\)的先验分布\(p(w)\)的乘积。由于我们选择了高斯共轭的先验分布假设，这个后验分布也是一个高斯分布。假定数据上的噪声（似然分布的标准差）由一个超参数\(\beta\)来控制。通过幂次项对齐，我们得到这一后验分布的参数：<br/>
+\[p(w|t) = \mathcal{N}(w|m_N, S_N)\]<br/>
+其中，<br/>
+\[\begin{align*}<br/>
+m_N &amp; = S_N(S_0^{-1}m_0+\beta\Phi^Tt) \\<br/>
+S_N^{-1} &amp; = S_0^{-1} + \beta\Phi^T\Phi<br/>
+\end{align*}\]</p>
+
+<p>由于高斯分布的最大值恰好是其均值，因此MAP（最大后验概率法）给出的\(w\)的解为：<br/>
+\[w_{MAP} = m_N\]</p>
+
+<p>为了简化分析，通常我们取\(w\)的先验分布为一个各向同性（isotropic）且均值为\(0\)的高斯分布：<br/>
+\[p(w|\alpha) = \mathcal{N}(w|0, \alpha^{-1}I)\]</p>
+
+<p>此时，\(w\)的对数后验分布简化为：<br/>
+\[\ln p(w|t) = -\frac{\beta}{2}\sum_{n=1}^N\{t_n - w^T\phi(x_n)\}^2 - \frac{\alpha}{2}w^Tw + const\]</p>
+
+<p>最大化这个对数后验分布恰等价于最小化带正则项的误差平方和损失函数！</p>
+
+<p>最后，我们从序列学习的角度来直观地理解后验分布的学习过程。</p>
+
+<p><img src="media/14947659820844/14948522163608.jpg" alt="" class="mw_img_center" style="display: block; clear:both; margin: 0 auto;"/></p>
+
+<p>上图展示了使用贝叶斯方法拟合线性模型\(y(x,w)=w_0+w_1x\)的学习过程。在没有观测到任何训练数据时，\(w\)服从一个先验的高斯分布（第一行中）；每观测到一条训练数据，\(w\)的后验分布也随之发生变化。图中最左列给出了这条训练数据对应的似然值与\(w\)的函数关系（注意其在\(w\)空间上的等高线是两条平行线：\(|t_k-w_0-w_1x_k| = c\)）。将这个似然函数与上一行中\(w\)的先验分布相乘，我们就得到了\(w\)的后验分布。不断地重复这一过程，可以看出\(w\)的后验分布逐渐变成了聚焦在其真实值附近的delta函数。图中最右列给出了\(w\)每一种后验分布下的抽样模型。</p>
+
+<h2 id="toc_1">目标变量的预估分布</h2>
+
+<p>不过在实际中，我们通常并不关心\(w\)的取值——目标变量\(t\)的分布才是我们预估的目标：<br/>
+\[p(t|\mathbf{t}, \alpha, \beta) = \int p(t|w, \beta)p(w|\mathbf{t}, \alpha, \beta)dw\]</p>
+
+<p>可见，在贝叶斯学派的理论里\(w\)只是模型的一个隐变量。</p>
+
+<p>对上式展开计算（对两个高斯分布的卷积操作），我们得到\(t\)的预估分布依然是一个高斯分布：<br/>
+\[p(t|x, \mathbf{t}, \alpha, \beta) = \mathcal{N}(t|m_N^T\phi(x), \sigma^2_N(x))\]<br/>
+其中分布的方差满足：\(\sigma^2_N(x)=\beta^{-1}+\phi(x)^TS_N\phi(x)\)</p>
+
+<p>从上式中可以看出，\(E[t|x]=m_N^T\phi(x)=w_{MAP}^T\phi(x)\)，也就是说，在高斯分布假设下的线性模型里，<strong>贝叶斯概率对目标变量的预估等同于最大后验概率法给出的模型。</strong></p>
+
+<p>方差项则表明，随着观测到更多的数据，\(t\)的不确定性也越小（本质上，这是由于\(w\)的不确定性变小）<sup id="fnref2"><a href="#fn2" rel="footnote">2</a></sup>。</p>
+
+<h2 id="toc_2">等价核函数模型</h2>
+
+<p>从贝叶斯概率的后验解出发，我们可以导出线性模型的另一种解释：基于核方法的模型（从最大似然法给出的正则解也能得出类似的结论）。</p>
+
+<p>在上面的讨论中，我们得到了目标变量\(t\)的后验分布和预估均值（式子中\(x_n\)是观测数据，\(x\)是待预估数据）：<br/>
+\[y(x, m_N) = m_N^T\phi(x) = \beta\phi(x)^TS_N\Phi^Tt=\sum_{n=1}^N{\beta\phi(x)^TS_N\phi(x_n)t_n}\]</p>
+
+<p>另\(k(x, x&#39;)=\beta\phi(x)^TS_N\phi(x&#39;)\)，<br/>
+则有：<br/>
+\[y(x) = \sum_{n=1}^Nk(x, x_n)t_n\]</p>
+
+<p>也就是说，对目标变量\(t\)的线性回归等价于对训练数据集上\(t_n\)的一个线性组合（类似于KNN等非参模型的估计），其中线性组合的权重\(k(x, x&#39;)\)也被称为等价内核（equivalent kernel）。一般我们会固定\(x\)，将其看作是\(x&#39;\)的函数来研究。核函数具体的形式依赖于训练数据集上的\(x_n\)。</p>
+
+<p>\(k(x, x&#39;)\)具有良好的局域性：在距离\(x\)越近的点上的取值越大。这也符合我们的认知：我们在对目标变量进行预估时也倾向于赋予\(x\)附近的\(t_n\)更高的权重。这种局域性对于包括高斯函数在内的多种基函数都成立。</p>
+
+<p>线性回归模型的核函数表达让我们对回归问题有了新的认识：我们可以直接建立用一组局部核函数来对未知变量进行回归预估的模型。这个模型框架被称为高斯过程（Gaussian processes），在后面的章节的学习中我们会详细介绍。</p>
+
+<p>最后，注意到核函数是归一化的。对于任意\(x\)，均满足：<br/>
+\[\sum_{n=1}^N{k(x, x_n)} = 1\]</p>
+
+<p>但这并不意味着我们对目标变量的预估一定是训练数据集的凸组合（convex combination）——因为核函数可负可正。</p>
+
+<h2 id="toc_3">模型选择</h2>
+
+<p>在前面的章节里，我们讨论了最大似然估计所隐含的模型过拟合问题，也提出了如何用交叉验证的方法选择合适的模型。在本小节里，我们将从贝叶斯概率出发探讨模型选择的问题。</p>
+
+<p>设若我们有\(L\)个候选模型\(\{\mathcal{M}_i\}\)（这里的\(\mathcal{M}_i\)可以理解为是一组超参数，例如线性回归模型里的\(\alpha_i\)和\(\beta_i\)）和一组由其中某个未知模型\(\mathcal{M}_k\)所产生的观测数据集\(\mathcal{D}\)，我们的目标是要从观测数据集\(\mathcal{D}\)中找到其背后真实的模型\(\mathcal{M}_k\)。</p>
+
+<p>我们可以用一个后验概率\(p(\mathcal{M}_i|\mathcal{D})\)表示我们对模型选择的不确定性：<br/>
+\[p(\mathcal{M}_i|\mathcal{D}) \sim p(\mathcal{M}_i)p(\mathcal{D}|\mathcal{M}_i)\]</p>
+
+<p>其中，\(p(\mathcal{M}_i)\)是模型的先验概率，我们通常假定这是一个与模型无关的常量。因此，我们更关注上式中乘积的第二项：\(p(\mathcal{D}|\mathcal{M}_i)\)，也被称为<em>model evidence</em>，或边缘似然函数（<em>marginal likelihood</em>）。注意，与前面介绍到的似然函数不同，边缘似然是一个建立在模型超参数空间上的似然函数——事实上，它的名字正是源于其对参数空间\(w\)的边缘化。两个模型在同一个数据集上的边缘似然的比值也被称为<em>Bayes factor</em>，正如我们下面要看到的，是模型选择的一个重要依据。</p>
+
+<p>一旦我们得到了模型的边缘似然，也就得到了这个模型的后验概率分布。进一步地，我们可以用一个全概率公式预估目标变量的概率分布：<br/>
+\[p(t|\mathbf{x}, \mathcal{D}) = \sum_{i=1}^L{p(t|\mathbf{x}, \mathcal{M}_i, \mathcal{D})p(\mathcal{M}_i|\mathcal{D})}\]</p>
+
+<p>不过这个公式的计算很复杂，在实际中，我们通常是选择一个后验概率最大（也即边缘似然最大）的模型来近似在整个模型空间上的求和。</p>
+
+<p>那么，如何计算这个边缘似然函数呢？依然借助全概率公式，我们将边缘似然在参数空间\(w\)上展开：<br/>
+\[p(\mathcal{D}|\mathcal{M}_i) = \int{p(\mathcal{D}|\mathbf{w}, \mathcal{M}_i)p(\mathbf{w}|\mathcal{M}_i)}d\mathbf{w}\]<br/>
+事实上，这也正是之前在用贝叶斯公式计算\(w\)的后验分布\(p(\mathbf{w}|\mathcal{D}, \mathcal{M}_i)\)时的归一项分母:<br/>
+\[p(\mathbf{w}|\mathcal{D}, \mathcal{M}_i) = \frac{p(\mathcal{D}|\mathbf{w}, \mathcal{M}_i)p(\mathbf{w}|\mathcal{M}_i)}{p(\mathcal{D}|\mathcal{M}_i)}\]</p>
+
+<p>我们可以用这个公式计算出候选模型的边缘似然，然后通过最大化这个似然函数进行模型的选择。</p>
+
+<p>边缘似然函数与模型的复杂度有着密切的联系。书中通过一些假设简化了似然函数的计算，给出了这一联系的直观理解。这里就不再赘述。总的来说，简单或复杂的模型在同一份数据集上都有着较低的似然，因此，最大似然总会给出一个合适的复杂度，从而避免了模型过拟合的问题。事实上，考虑两个模型\(\mathcal{M}_1\)和\(\mathcal{M}_2\)，如果我们假定其中一个模型\(\mathcal{M}_1\)是数据真实分布的模型，那么在所有数据集上对这两个模型的<em>Bayes Factor</em>积分，得到一个KL散度：<br/>
+\[\int{p(\mathcal{D}|\mathcal{M}_1)\ln\frac{p(\mathcal{D}|\mathcal{M}_1)}{p(\mathcal{D}|\mathcal{M}_2)}}d\mathcal{D}\]<br/>
+这个式子恒大于\(0\)。因此，平均意义上，我们总能通过最大化\(p(\mathcal{D}|\mathcal{M})\)得到一个近似真实的模型。</p>
+
+<p>讨论到这里，我们可以简单总结一下频率学派和贝叶斯学派在对模型拟合和模型选择的方法上的比对。</p>
+
+<p>频率学派假定了模型的参数是一个客观存在的事实，并通过最大似然法的点估计去拟合这个参数。在模型选择上，频率学派采用了交叉验证的方法。而这一方法的本质是在一个验证数据集上去计算模型超参数的似然，并选择最大似然值所对应的模型。值得注意的是，频率学派认为模型的参数是一个确定的值，因此将这个参数的最大似然估计\(w^*\)代入到对模型超参数的似然函数的计算中，也即\(p(\mathcal{D}|w^*, \lambda)\)。这个似然函数形式上等同于\(w\)的似然函数。实际应用中，这意味着我们可以在验证集上用同一个误差损失函数优化模型的超参数。</p>
+
+<p>而贝叶斯学派则认为模型的参数是一个由超参数控制的随机变量，并通过最大后验概率法给出模型参数的一个点估计——虽然更多情况下是把模型参数视为一个隐变量去计算目标变量在数据集和超参数上的边缘概率分布。由于这个后验概率是固定模型超参数下的一个条件分布，我们无法直接用其优化模型的超参数——这意味着在实际应用中我们无法在训练集上用同一个误差损失函数同时优化模型参数和正则化系数。事实上，在模型选择时，贝叶斯学派专门设计了一个超参数的边缘似然分布，可以通过在训练集上最大化这个边缘似然函数来找到合适的超参数。这个边缘似然函数是在整个参数空间上对参数的似然函数的期望。</p>
+
+<p>可以看出，贝叶斯学派在模型选择时用到的最大边缘似然函数法，与频率学派在模型拟合时用到的最大似然法，二者在基本思想上是一致的（都是通过最大化一个似然函数进行点估计）。而频率学派在模型选择时是通过在另一份独立数据集上最大化一组最优参数所对应的似然函数来寻找超参数；贝叶斯学派则是在同一份数据集上建立了一个全局似然函数来寻找超参数。</p>
+
+<p>因此，与频率学派的MLE相比，贝叶斯的MAP或预估变量的边缘概率分布并不能解决模型过拟合的问题——事实上，选择不恰当的超参数依然会导致模型较高的泛化误差。贝叶斯方法的真正优势是提出了一个建立在参数空间上的边缘似然函数，从而可以在一份训练数据集上同时优化模型的参数和超参数，并避免过拟合的问题。</p>
+
+<p>最后，书中给出了贝叶斯模型选择方法在线性回归模型上的应用，这里也不再赘述。</p>
+
+<div class="footnotes">
+<hr/>
+<ol>
+
+<li id="fn1">
+<p>为什么在训练集上拟合模型的复杂度会导致over-fitting？我的理解是，由于MLE的泛化误差可以被分解为模型所带来的Bias和数据集所带来的Variance，后者正是模型过拟合的根源。而仅在同一份数据集上是无法有效地评估模型的Variance的。&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
+</li>
+
+<li id="fn2">
+<p>不过这并不能解释为什么贝叶斯方法可以天然地避免过拟合的问题。事实上，由于可能观测到不同数据集，\(t\)的后验分布也并非是一个确定的分布。而这种分布的不确定性（不是变量的不确定性）才是过拟合问题的来源。&nbsp;<a href="#fnref2" rev="footnote">&#8617;</a></p>
+</li>
+
+</ol>
+</div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CS224N NLP with Deep Learning: Lecture 1 课程笔记]]></title>
+    <link href="whiskytina.coding.me/14947653164873.html"/>
+    <updated>2017-05-14T20:35:16+08:00</updated>
+    <id>whiskytina.coding.me/14947653164873.html</id>
+    <content type="html"><![CDATA[
+<p>Stanford大学在2015年开设了一门Deep Learning for Natural Language Processing的课程，广受好评。并在2016年春季再次开课。我将开始这门课程的学习，并做好每节课的课程笔记放在博客上。争取做到每周一更吧。<br/>
+本文是第一篇。</p>
+
+<hr/>
+
+<h2 id="toc_0">NLP简介</h2>
+
+<p>NLP，全名Natural Language Processing（自然语言处理），是一门集计算机科学，人工智能，语言学三者于一身的交叉性学科。她的终极研究目标是让计算机能够处理甚至是“理解”人类的自然语言，进而帮助人类解决一些现实生活中遇到的实际问题。这里的语言“理解”是一个很抽象也很哲学的概念。在NLP中，我们将对语言的“理解”定义为是学习一个能够解决具体问题的复杂函数的过程。</p>
+
+<p>对NLP的研究通常在5个Level上进行：<br/>
+1. 语音／文本分析：包括语言识别技术、OCR技术、分词技术等<br/>
+2. 词形分析：例如分析一个word的前后缀、词根等<br/>
+3. 语法分析：从语法结构上分析一个句子的构成<br/>
+4. 语义分析：理解一个句子或单词的语义<br/>
+5. 篇章分析：理解一段篇章的含义</p>
+
+<p>注意，虽然这5个Level在研究的对象和难度上是一种递进的关系，但对这5个Level的研究并不一定是连续的——例如，我们可以跳过对一个句子语法结构的分析而直接去理解句子的语义。</p>
+
+<p>接下来简单列举一些NLP技术的应用，以让大家对NLP能够处理什么样的问题有一个感性的认识：<br/>
+* 简单的任务：拼写检查，关键词检索，同义词检索等<br/>
+* 复杂一点的任务：信息提取（比如从网页中提取价格，产地，公司名等信息），情感分析，文本分类等<br/>
+* 更复杂的任务：机器翻译，人机对话，QA系统</p>
+
+<p>最后讨论一个问题：Why is NLP so HARD？为什么要把NLP从机器学习的任务列表中单独抽取出来做为一门课程甚至是研究的对象？根本原因在于语言用于表达客观世界的内在复杂性和多义性。举一个简单的例子：&quot;Jane hit June and then she [fell/ran]&quot;。当she所伴随的动作不同（fell or ran），其所指代的对象也发生了变化（June or Jane）。这样的例子太多，显然我们无法通过枚举所有的规则来解决语言内在的复杂性。另一个多义性的例子是：&quot;I made her duck&quot;。我们可以理解为：&quot;I cooked her a duck&quot;，或是&quot;I curved her a wooden duck&quot;，也可以理解为：&quot;I transformed her into a duck with some magic&quot;。</p>
+
+<h2 id="toc_1">Deep Learning简介</h2>
+
+<p>深度学习是机器学习的一个研究子领域。传统机器学习算法面临的一个问题是，模型的优劣往往很大程度上依赖于特征的选取。例如，对于一个NER问题（Named Entity Recognition，命名实体识别），传统的机器学习算法（如CRF）通常需要输入目标词的大小写特征，词性特征，以及其上下文环境里的词性分布等特征。人工挑选一组合适的特征是一件非常琐碎的活。此外，这些特征往往是data-specific，这意味着，在处理一份新的数据集，比方说是另一门语言的语料，你需要再一次坐下来审视这批数据，以挑选新的特征组合。</p>
+
+<p>毫不夸张的说，在传统机器学习领域，90%的时间被用于数据的处理。算法和模型只是简单的权重优化。</p>
+
+<p>而深度学习的魅力在于，她将特征的提取变成了一个自动化的学习过程。</p>
+
+<p>深度学习是一类特征学习（Representation Learning）。她可以从原始数据（比如原始的像素点，原始的单词甚至是字符）中自动学习到多个层次上的特征表达，并完成最终的分类或翻译的任务。（这里的“深度”一词可能会带来歧义：例如对于我们下一节课将要学习到的word2vec模型。她其实是一个非常浅层的网络模型。）</p>
+
+<p>神经网络家族是深度学习算法的主流模型。我们的课程也主要以介绍不同种类的神经网络及其在NLP领域中的应用为主。也许有人会问，神经网络不过是一组logistic regression单元的堆砌，为什么会有如此优异的特征学习的能力呢？原因在于，我们同时引入了一些基本的建模原则，比如端对端的训练机制。这些指导性原则可以帮助神经元更好地从最终结果中学习到原始输入的特征。此外，人工神经网络模型和神经科学里的脑模型也有着千丝万缕的联系。这些联系在NLP问题中不是那么明显，但在计算机视觉领域（卷积神经网络，CNN）扮演着很重要的角色。</p>
+
+<p>为什么我们要采用深度学习模型对NLP问题进行建模？这是因为，与传统的机器学习算法相比，深度学习模型通常不需要特定领域的先验知识，因此可以快速高效地进行特征的学习。与此同时，深度学习提供了一套灵活通用的特征学习框架（适用于包括语音、文字、视觉信息在内的多种数据的学习）。最后，深度学习可以有监督或无监督地从大量原始语料中学习到有用的特征。</p>
+
+<p>另一个有趣的问题是：考虑到神经网络并不是近些年才提出的新技术，为什么直到现在深度学习才突然被人们所关注呢？这主要得益于近些年大数据的兴起和高速CPU／GPU的发展。数据是深度学习的食物。而高性能的计算资源可以帮助深度学习更好地消化这些食物。当然，深度学习的发展也离不开一些新的模型算法的提出（比如end-to-end的模型框架，机器翻译中的attention机制等）。</p>
+
+<p>最后，对深度学习的发展历史感兴趣的同学，可以进一步阅读这篇文献：<a href="http://www2.econ.iastate.edu/tesfatsi/DeepLearningInNeuralNetworksOverview.JSchmidhuber2015.pdf">Deep Learning in Neural Networks: An Overview</a></p>
+
+<h2 id="toc_2">Deep Learning + NLP = Deep NLP</h2>
+
+<p>Deep Learning的技术首先是在语音识别和计算机视觉的领域里取得了重大突破，直到近些年才被广泛地应用于NLP领域中。接下来，我们简单看下深度学习模型是如何帮助解决NLP难题的 。</p>
+
+<ol>
+<li>语音Phonology：
+传统的语音识别模型是通过人工建立一张语音词表，将相似发音的字母划分为一类；并借助一个分类模型实现语音到字母的转译。而深度学习模型将语音表达为一个embedding向量，可以直接从语音的向量特征中预测相应的单词。</li>
+<li>词形Morphology：
+传统的词形学将一个单词拆分为前缀、词干、后缀的表达，这些前后缀和词干统称为Morpheme。而深度学习将每一个Morpheme都处理成一个向量的表达，并借助于一个Recursive Neural Network将不同的Morpheme向量拼接成一个向量——这个向量代表了相应的Morpheme拼接后得到的单词。
+这种将word表达成向量的思想在Deep NLP中十分基础。如果我们将这些词向量投影到一个二维平面上，会发现一些有趣的pattern。例如，相似的动词集中出现在平面的同一片区域内。</li>
+<li>句法分析Syntax
+在得到了词的表达后，接下来我们讨论句子的结构。
+传统的句法分析将一个完整的句子解析成一棵语法树——每一个节点对应着一个特定的语法单元（例如，NP或VP）。而在深度学习中，我们可以对词向量进行计算，得到短语乃至整个句子的向量表达。并基于这些向量完成后续的分类预测等任务。</li>
+<li>语义分析Semantics
+传统的语义分析借助于一种叫做Lambda Calculus的技术。基本思想是在一棵句法树上递归地调用人工事先设定的Lambda函数进行语义的计算。而在深度学习中，同样地，我们对每一个单词，每一个短语，乃至每一个逻辑关系（比如\(A \in B\)）都用一个向量去表达。借助于神经网络的计算，我们可以准确地预测两个句子之间的逻辑关系（例如，if &quot;all reptiles walk&quot; then &quot;some turtles move&quot;）。有趣的是，在深度学习中，我们并不需要事先指定&quot;reptiles&quot;和&quot;turtles&quot;，&quot;walk&quot;和&quot;move&quot;之间的逻辑关系。</li>
+</ol>
+
+<p>可以看出，与传统的NLP技术相比，Deep NLP核心思想在于 ：everything can be a vector。无论是low level的音频，还是high level的短语。深度神经网络模型将低level的vector组装成更高level的vector，进一步完成分类、翻译等高级任务。</p>
+
+<hr/>
+
+<p>本节课的内容不多，主要是对NLP和深度学习技术的一个概要性介绍。下一节课，我们将开始学习计算word vector的几种常用模型。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[PRML读书笔记——线性回归模型（上）]]></title>
@@ -2155,492 +2370,6 @@ docker load --input myanaconda.tar
 <li><p>自然语言的理解。虽然RNN已被广泛应用于自然语言处理，然而在教会机器理解自然语言的目标上，还有很长的一段路要走。</p></li>
 <li><p>特征学习和特征推断的结合。这或许会极大地推动人工智能的发展</p></li>
 </ol>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[（转自MWeb官方文档）Markdown 语法和 MWeb 写作使用说明]]></title>
-    <link href="whiskytina.coding.me/14902751600359.html"/>
-    <updated>2017-03-23T21:19:20+08:00</updated>
-    <id>whiskytina.coding.me/14902751600359.html</id>
-    <content type="html"><![CDATA[
-<h2 id="toc_0">Markdown 的设计哲学</h2>
-
-<blockquote>
-<p>Markdown 的目標是實現「易讀易寫」。<br/>
-不過最需要強調的便是它的可讀性。一份使用 Markdown 格式撰寫的文件應該可以直接以純文字發佈，並且看起來不會像是由許多標籤或是格式指令所構成。<br/>
-Markdown 的語法有個主要的目的：用來作為一種網路內容的<em>寫作</em>用語言。</p>
-</blockquote>
-
-<span id="more"></span><!-- more -->
-
-<h2 id="toc_1">本文约定</h2>
-
-<p>如果有写 <code>效果如下：</code>， 在 MWeb 编辑状态下只有用 <code>CMD + R</code> 预览才可以看效果。</p>
-
-<h2 id="toc_2">标题</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code># 第一级标题 `&lt;h1&gt;` 
-## 第二级标题 `&lt;h2&gt;` 
-###### 第六级标题 `&lt;h6&gt;` 
-</code></pre>
-
-<p>效果如下：</p>
-
-<h1 id="toc_3">第一级标题 <code>&lt;h1&gt;</code></h1>
-
-<h2 id="toc_4">第二级标题 <code>&lt;h2&gt;</code></h2>
-
-<h6 id="toc_5">第六级标题 <code>&lt;h6&gt;</code></h6>
-
-<h2 id="toc_6">强调</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>*这些文字会生成`&lt;em&gt;`*
-_这些文字会生成`&lt;u&gt;`_
-
-**这些文字会生成`&lt;strong&gt;`**
-__这些文字会生成`&lt;strong&gt;`__
-</code></pre>
-
-<p>在 MWeb 中的快捷键为： <code>CMD + U</code>、<code>CMD + I</code>、<code>CMD + B</code><br/>
-效果如下：</p>
-
-<p><em>这些文字会生成<code>&lt;em&gt;</code></em><br/>
-<u>这些文字会生成<code>&lt;u&gt;</code></u></p>
-
-<p><strong>这些文字会生成<code>&lt;strong&gt;</code></strong><br/>
-<strong>这些文字会生成<code>&lt;strong&gt;</code></strong></p>
-
-<h2 id="toc_7">换行</h2>
-
-<p>四个及以上空格加回车。<br/>
-如果不想打这么多空格，只要回车就为换行，请勾选：<code>Preferences</code> - <code>Themes</code> - <code>Translate newlines to &lt;br&gt; tags</code></p>
-
-<h2 id="toc_8">列表</h2>
-
-<h3 id="toc_9">无序列表</h3>
-
-<p>Markdown 语法：</p>
-
-<pre><code>* 项目一 无序列表 `* + 空格键`
-* 项目二
-    * 项目二的子项目一 无序列表 `TAB + * + 空格键`
-    * 项目二的子项目二
-</code></pre>
-
-<p>在 MWeb 中的快捷键为： <code>Option + U</code><br/>
-效果如下：</p>
-
-<ul>
-<li>项目一 无序列表 <code>* + 空格键</code></li>
-<li>项目二
-
-<ul>
-<li>项目二的子项目一 无序列表 <code>TAB + * + 空格键</code></li>
-<li>项目二的子项目二</li>
-</ul></li>
-</ul>
-
-<h3 id="toc_10">有序列表</h3>
-
-<p>Markdown 语法：</p>
-
-<pre><code>1. 项目一 有序列表 `数字 + . + 空格键`
-2. 项目二 
-3. 项目三
-    1. 项目三的子项目一 有序列表 `TAB + 数字 + . + 空格键`
-    2. 项目三的子项目二
-</code></pre>
-
-<p>效果如下：</p>
-
-<ol>
-<li>项目一 有序列表 <code>数字 + . + 空格键</code></li>
-<li>项目二 </li>
-<li>项目三
-
-<ol>
-<li>项目三的子项目一 有序列表 <code>TAB + 数字 + . + 空格键</code></li>
-<li>项目三的子项目二</li>
-</ol></li>
-</ol>
-
-<h3 id="toc_11">任务列表（Task lists）</h3>
-
-<p>Markdown 语法：</p>
-
-<pre><code>- [ ] 任务一 未做任务 `- + 空格 + [ ]`
-- [x] 任务二 已做任务 `- + 空格 + [x]`
-</code></pre>
-
-<p>效果如下：</p>
-
-<ul>
-<li class="task-list-item"><input disabled="disabled" type="checkbox" /> 任务一 未做任务 <code>- + 空格 + [ ]</code>
-</li>
-<li class="task-list-item"><input disabled="disabled" type="checkbox" checked /> 任务二 已做任务 <code>- + 空格 + [x]</code>
-</li>
-</ul>
-
-<h2 id="toc_12">图片</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>![GitHub set up](http://zh.mweb.im/asset/img/set-up-git.gif)
-格式: ![Alt Text](url)
-</code></pre>
-
-<p><code>Control + Shift + I</code> 可插入Markdown语法。<br/>
-如果是 MWeb 的文档库中的文档，还可以用拖放图片、<code>CMD + V</code> 粘贴、<code>CMD + Option + I</code> 导入这三种方式来增加图片。<br/>
-效果如下：</p>
-
-<p><img src="http://zh.mweb.im/asset/img/set-up-git.gif" alt="GitHub set up"/></p>
-
-<h2 id="toc_13">链接</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>email &lt;example@example.com&gt;
-[GitHub](http://github.com)
-自动生成连接  &lt;http://www.github.com/&gt;
-</code></pre>
-
-<p><code>Control + Shift + L</code> 可插入Markdown语法。<br/>
-如果是 MWeb 的文档库中的文档，拖放或<code>CMD + Option + I</code> 导入非图片时，会生成连接。<br/>
-效果如下：</p>
-
-<p>Email 连接： <a href="mailto:example@example.com">example@example.com</a><br/>
-<a href="http://github.com">连接标题Github网站</a><br/>
-自动生成连接像： <a href="http://www.github.com/">http://www.github.com/</a> 这样</p>
-
-<h2 id="toc_14">区块引用</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>某某说:
-&gt; 第一行引用
-&gt; 第二行费用文字
-</code></pre>
-
-<p><code>CMD + Shift + B</code> 可插入Markdown语法。<br/>
-效果如下：</p>
-
-<p>某某说:</p>
-
-<blockquote>
-<p>第一行引用<br/>
-第二行费用文字</p>
-</blockquote>
-
-<h2 id="toc_15">行内代码</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>像这样即可：`&lt;addr&gt;` `code`
-</code></pre>
-
-<p><code>CMD + K</code> 可插入Markdown语法。<br/>
-效果如下：</p>
-
-<p>像这样即可：<code>&lt;addr&gt;</code> <code>code</code></p>
-
-<h2 id="toc_16">多行或者一段代码</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>```js
-function fancyAlert(arg) {
-  if(arg) {
-    $.facebox({div:&#39;#foo&#39;})
-  }
-
-}
-```
-</code></pre>
-
-<p><code>CMD + Shift + K</code> 可插入Markdown语法。<br/>
-效果如下：</p>
-
-<pre><code class="language-js">function fancyAlert(arg) {
-    if(arg) {
-        $.facebox({div:&#39;#foo&#39;})
-    }
-    
-}
-</code></pre>
-
-<h2 id="toc_17">顺序图或流程图</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>```sequence
-张三-&gt;李四: 嘿，小四儿, 写博客了没?
-Note right of 李四: 李四愣了一下，说：
-李四--&gt;张三: 忙得吐血，哪有时间写。
-```
-
-```flow
-st=&gt;start: 开始
-e=&gt;end: 结束
-op=&gt;operation: 我的操作
-cond=&gt;condition: 确认？
-
-st-&gt;op-&gt;cond
-cond(yes)-&gt;e
-cond(no)-&gt;op
-```
-</code></pre>
-
-<p>效果如下（ <code>Preferences</code> - <code>Themes</code> - <code>Enable sequence &amp; flow chart</code> 才会看到效果 ）：</p>
-
-<pre><code class="language-sequence">张三-&gt;李四: 嘿，小四儿, 写博客了没?
-Note right of 李四: 李四愣了一下，说：
-李四--&gt;张三: 忙得吐血，哪有时间写。
-</code></pre>
-
-<pre><code class="language-flow">st=&gt;start: 开始
-e=&gt;end: 结束
-op=&gt;operation: 我的操作
-cond=&gt;condition: 确认？
-
-st-&gt;op-&gt;cond
-cond(yes)-&gt;e
-cond(no)-&gt;op
-</code></pre>
-
-<p>更多请参考：<a href="http://bramp.github.io/js-sequence-diagrams/">http://bramp.github.io/js-sequence-diagrams/</a>, <a href="http://adrai.github.io/flowchart.js/">http://adrai.github.io/flowchart.js/</a></p>
-
-<h2 id="toc_18">表格</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>第一格表头 | 第二格表头
---------- | -------------
-内容单元格 第一列第一格 | 内容单元格第二列第一格
-内容单元格 第一列第二格 多加文字 | 内容单元格第二列第二格
-</code></pre>
-
-<p>效果如下：</p>
-
-<table>
-<thead>
-<tr>
-<th></th>
-<th>第一格表头</th>
-<th>第二格表头</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>helo</td>
-<td>内容单元格 第一列第一格</td>
-<td>内容单元格第二列第一格</td>
-</tr>
-<tr>
-<td>world</td>
-<td>内容单元格 第一列第二格 多加文字</td>
-<td>内容单元格第二列第二格</td>
-</tr>
-</tbody>
-</table>
-
-<h2 id="toc_19">删除线</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>加删除线像这样用： ~~删除这些~~
-</code></pre>
-
-<p>效果如下：</p>
-
-<p>加删除线像这样用： <del>删除这些</del></p>
-
-<h2 id="toc_20">分隔线</h2>
-
-<p>以下三种方式都可以生成分隔线：</p>
-
-<pre><code>***
-
-*****
-
-- - -
-</code></pre>
-
-<p>效果如下：</p>
-
-<hr/>
-
-<hr/>
-
-<hr/>
-
-<h2 id="toc_21">MathJax</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>块级公式：
-$$  x = \dfrac{-b \pm \sqrt{b^2 - 4ac}}{2a} $$
-
-\\[ \frac{1}{\Bigl(\sqrt{\phi \sqrt{5}}-\phi\Bigr) e^{\frac25 \pi}} =
-1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}}
-{1+\frac{e^{-8\pi}} {1+\ldots} } } } \\]
-
-行内公式： $\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N$
-</code></pre>
-
-<p>效果如下（<code>Preferences</code> - <code>Themes</code> - <code>Enable MathJax</code> 才会看到效果）：</p>
-
-<p>块级公式：<br/>
-\[  x = \dfrac{-b \pm \sqrt{b^2 - 4ac}}{2a} \]</p>
-
-<p>\[ \frac{1}{\Bigl(\sqrt{\phi \sqrt{5}}-\phi\Bigr) e^{\frac25 \pi}} =<br/>
-1+\frac{e^{-2\pi}} {1+\frac{e^{-4\pi}} {1+\frac{e^{-6\pi}}<br/>
-{1+\frac{e^{-8\pi}} {1+\ldots} } } } \]</p>
-
-<p>行内公式： \(\Gamma(n) = (n-1)!\quad\forall n\in\mathbb N\)</p>
-
-<h2 id="toc_22">脚注（Footnote）</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>这是一个脚注：[^sample_footnote]
-</code></pre>
-
-<p>效果如下：</p>
-
-<p>这是一个脚注：<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup></p>
-
-<h2 id="toc_23">注释和阅读更多</h2>
-
-<!-- comment -->
-
-<!-- more -->
-
-<p>Actions-&gt;Insert Read More Comment <em>或者</em> <code>Command + .</code><br/>
-<strong>注</strong> 阅读更多的功能只用在生成网站或博客时。</p>
-
-<h2 id="toc_24">TOC</h2>
-
-<p>Markdown 语法：</p>
-
-<pre><code>[TOC]
-</code></pre>
-
-<p>效果如下：</p>
-
-<ul>
-<li>
-<a href="#toc_0">Markdown 的设计哲学</a>
-</li>
-<li>
-<a href="#toc_1">本文约定</a>
-</li>
-<li>
-<a href="#toc_2">标题</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_3">第一级标题 <code>&lt;h1&gt;</code></a>
-<ul>
-<li>
-<a href="#toc_4">第二级标题 <code>&lt;h2&gt;</code></a>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<ul>
-<li>
-<a href="#toc_5">第六级标题 <code>&lt;h6&gt;</code></a>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_6">强调</a>
-</li>
-<li>
-<a href="#toc_7">换行</a>
-</li>
-<li>
-<a href="#toc_8">列表</a>
-<ul>
-<li>
-<a href="#toc_9">无序列表</a>
-</li>
-<li>
-<a href="#toc_10">有序列表</a>
-</li>
-<li>
-<a href="#toc_11">任务列表（Task lists）</a>
-</li>
-</ul>
-</li>
-<li>
-<a href="#toc_12">图片</a>
-</li>
-<li>
-<a href="#toc_13">链接</a>
-</li>
-<li>
-<a href="#toc_14">区块引用</a>
-</li>
-<li>
-<a href="#toc_15">行内代码</a>
-</li>
-<li>
-<a href="#toc_16">多行或者一段代码</a>
-</li>
-<li>
-<a href="#toc_17">顺序图或流程图</a>
-</li>
-<li>
-<a href="#toc_18">表格</a>
-</li>
-<li>
-<a href="#toc_19">删除线</a>
-</li>
-<li>
-<a href="#toc_20">分隔线</a>
-</li>
-<li>
-<a href="#toc_21">MathJax</a>
-</li>
-<li>
-<a href="#toc_22">脚注（Footnote）</a>
-</li>
-<li>
-<a href="#toc_23">注释和阅读更多</a>
-</li>
-<li>
-<a href="#toc_24">TOC</a>
-</li>
-</ul>
-
-
-<div class="footnotes">
-<hr/>
-<ol>
-
-<li id="fn1">
-<p>这里是脚注信息&nbsp;<a href="#fnref1" rev="footnote">&#8617;</a></p>
-</li>
-
-</ol>
-</div>
 
 ]]></content>
   </entry>

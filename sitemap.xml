@@ -2,7 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
   <loc>whiskytina.coding.me/</loc>
-  <lastmod>2017-05-08T18:09:28+08:00</lastmod>
+  <lastmod>2017-05-22T13:00:10+08:00</lastmod>
+</url>
+
+<url>
+  <loc>whiskytina.coding.me/prml_chapter3.3-3.5.html</loc>
+  <lastmod>2017-05-14T20:46:22+08:00</lastmod>
+</url>
+
+<url>
+  <loc>whiskytina.coding.me/14947653164873.html</loc>
+  <lastmod>2017-05-14T20:35:16+08:00</lastmod>
 </url>
 
 <url>
@@ -108,7 +118,7 @@
 
 <url>
   <loc>whiskytina.coding.me/navigate.html</loc>
-  <lastmod>2017-05-08T12:00:43+08:00</lastmod>
+  <lastmod>2017-05-22T12:59:59+08:00</lastmod>
 </url>
 
 <url>
@@ -147,6 +157,14 @@
 
 <url>
   <loc>whiskytina.coding.me/others.html</loc>
+</url>
+
+<url>
+  <loc>whiskytina.coding.me/courses.html</loc>
+</url>
+
+<url>
+  <loc>whiskytina.coding.me/cs224n.html</loc>
 </url>
 
 

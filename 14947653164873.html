@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  研究笔记 - 公子天的网络日志
+  CS224N NLP with Deep Learning: Lecture 1 课程笔记 - 公子天的网络日志
   
   </title>
   
@@ -102,61 +102,36 @@
        
 
  <script type="text/javascript">
-	$(function(){
-		$('#menu_item_index').addClass('is_active');
-	});
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
 </script>
 <div class="row">
-	<div class="large-8 medium-8 columns">
-		<div class="markdown-body home-categories">
-		
-			<div class="article">
-                <a class="clearlink" href="prml_chapter3.3-3.5.html">
-                
-                  <h1>PRML读书笔记——线性回归模型（下）</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>本章接下来的几小节将从贝叶斯概率的角度重新审视线性回归模型。</p>
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>CS224N NLP with Deep Learning: Lecture 1 课程笔记</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2017/5/14</span>
 
-<p>在前面的讨论里，我们使用最大似然法针对线性回归模型给出了一个漂亮的解析解。然而，最大似然法并不能帮助我们选择模型的有效复杂度——基函数的个数或是正则项的系数。简单地使用MLE几乎总是会导向一个极其复杂的模型从而使得模型过拟合现象的发生。一个常见的解决方案是从训练数据中随机挑选出一部分数据作为验证集来确定模型的复杂度<sup id="fnref1"><a href="#fn1" rel="footnote">1</a></sup>。</p>
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='cs224n.html'>CS224n</a></span>
+           
+         
+          <span class="comments">
+            
 
-<p>而下面要介绍的贝叶斯方法，将从根本上解决MLE存在的模型过拟合问题，且仅从训练数据中就可以自动地确定出模型的有效复杂度。</p>
+            
+          </span>
 
+        </div>
+      </div><!-- article -->
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="prml_chapter3.3-3.5.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/5/14</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='prml.html'>Pattern Recognition and Machine Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="14947653164873.html">
-                
-                  <h1>CS224N NLP with Deep Learning: Lecture 1 课程笔记</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>Stanford大学在2015年开设了一门Deep Learning for Natural Language Processing的课程，广受好评。并在2016年春季再次开课。我将开始这门课程的学习，并做好每节课的课程笔记放在博客上。争取做到每周一更吧。<br/>
+      <div class="article-content">
+      <p>Stanford大学在2015年开设了一门Deep Learning for Natural Language Processing的课程，广受好评。并在2016年春季再次开课。我将开始这门课程的学习，并做好每节课的课程笔记放在博客上。争取做到每周一更吧。<br/>
 本文是第一篇。</p>
 
 <hr/>
@@ -222,278 +197,43 @@
 
 <p>本节课的内容不多，主要是对NLP和深度学习技术的一个概要性介绍。下一节课，我们将开始学习计算word vector的几种常用模型。</p>
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2017/5/14</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='cs224n.html'>CS224n</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="prml_chapter3.1-3.2.html">
-                
-                  <h1>PRML读书笔记——线性回归模型（上）</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>本章开始学习第一个有监督学习模型——线性回归模型。&quot;线性&quot;在这里的含义仅限定了模型必须是<strong>参数</strong>的线性函数。而正如我们接下来要看到的，线性回归模型可以是输入变量\(x\)的非线性函数。</p>
+    
 
-<p>书中首先对回归问题给出了一个简短的不那么正式的定义：</p>
+      </div>
 
-<blockquote>
-<p>Given a training data set comprising \(N\) observations \(\{x_n\}\), where \(n = 1, ... , N\), together with corresponding target values \(\{t_n\}\), the goal is to predict the value of \(t\) for a new value of \(x\).</p>
-</blockquote>
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="prml_chapter3.3-3.5.html" 
+          title="Previous Post: PRML读书笔记——线性回归模型（下）">&laquo; PRML读书笔记——线性回归模型（下）</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="prml_chapter3.1-3.2.html" 
+          title="Next Post: PRML读书笔记——线性回归模型（上）">PRML读书笔记——线性回归模型（上） &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          
 
-<p>而解决这个问题有两种思路：一种是直接对\(x \rightarrow t\)的映射\(y(x)\)进行建模，类似判别式模型的建模思路；另一种则从概率的角度出发，首先建模预测变量\(t\)的条件概率分布\(p(t|x)\)，然后通过最小化一个损失函数——对于实数变量通常是均方误差（squared loss）——给出\(t\)的一个最优估计：\(y(x)=E_t[t|x]\)。（注意区分这里的损失函数和用于参数回归的损失函数。）</p>
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
 
 
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="prml_chapter3.1-3.2.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2017/5/7</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='prml.html'>Pattern Recognition and Machine Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
 
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="14902626300821.html">
-                
-                  <h1>特征选择中的常用指标</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>在特征选择中，有三类常用的指标：信息增益；信息增益率；和基尼系数。这些指标也是决策树算法的基础。现摘录这三个指标的定义如下：</p>
-
-<ol>
-<li><p>信息增益（Information Gain）<br/>
-特征\(T\)为分类系统\(C\)带来的信息增益为：<br/>
-\[\begin{aligned}<br/>
-GainEntropy(T) &amp;= Entropy(C) − Entropy(C|T) \\<br/>
-&amp;= Entropy(C) − \sum_i{p(T_i)Entropy(C|T_i)} \\<br/>
-\end{aligned}\]<br/>
-其中，\(Entropy(C)\)为系统关于分类属性\(C\)的信息熵，定义了系统描述某一个分类所需要的平均信息量。计算公式为：<br/>
-\[Entropy(C) = -\sum_i{p(C_i)\log_2{p(C_i)}}\]<br/>
-\(Entropy(C|T_i )\)为固定特征\(T=T_i\)下系统关于分类属性\(C\)的条件信息熵，计算公式为：<br/>
-\[Entropy(C|T_i) = -\sum_j{p(C_j|T_i)\log_2{p(C_j|T_i)}}\]</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14902626300821.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2016/9/14</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='others.html'>研究笔记-其他</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="word2vec.html">
-                
-                  <h1>word2vec前世今生</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>2013年，Google开源了一款用于词向量计算的工具——word2vec，引起了工业界和学术界的关注。首先，word2vec可以在百万数量级的词典和上亿的数据集上进行高效地训练；其次，该工具得到的训练结果——词向量（word embedding），可以很好地度量词与词之间的相似性。随着深度学习（Deep Learning）在自然语言处理中应用的普及，很多人误以为word2vec是一种深度学习算法。其实word2vec算法的背后是一个浅层神经网络。另外需要强调的一点是，word2vec是一个计算word vector的开源工具。当我们在说word2vec算法或模型的时候，其实指的是其背后用于计算word vector的CBoW模型和Skip-gram模型。很多人以为word2vec指的是一个算法或模型，这也是一种谬误。接下来，本文将从统计语言模型出发，尽可能详细地介绍word2vec工具背后的算法模型的来龙去脉。</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="word2vec.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2016/7/17</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='papers.html'>研究笔记-论文</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="alphago.html">
-                
-                  <h1>AlphaGo原理解读</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<h2 id="toc_0">背景：完全信息博弈与MCTS算法</h2>
-
-<p>要完全弄清AlphaGo背后的原理，首先需要了解一下AI在博弈游戏中常用到的蒙特卡洛树搜索算法——MCTS。</p>
-
-<p>在一个完全信息下的博弈游戏中，如果所有参与者都采取最优策略，那么对于游戏中的任意一个局面\(s\)，总有一个确定性的估值函数\(v^*(s)\)可以直接计算出最终的博弈结果。理论上，我们可以通过构建一棵博弈树，递归地求解出\(v^*(s)\)。这就是<a href="https://en.wikipedia.org/wiki/Minimax">Minimax</a>算法。然而在有些问题中，这棵搜索树往往十分巨大（例如在围棋游戏中达到了\(250^{150}\)的搜索空间），以至于穷举的算法并不可行。</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="alphago.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2016/5/16</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='papers.html'>研究笔记-论文</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="prml_chapter1.html">
-                
-                  <h1>PRML读书笔记——机器学习导论</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>什么是模式识别（Pattern Recognition）？</p>
-
-<p>按照Bishop的定义，模式识别就是用机器学习的算法从数据中挖掘出有用的pattern。</p>
-
-<p>人们很早就开始学习如何从大量的数据中发现隐藏在背后的pattern。例如，16世纪的Kepler从他的老师Tycho搜集的大量有关于行星运动的数据中发现了天体运行的规律，并直接导致了牛顿经典力学的诞生。然而，这种依赖于人类经验的、启发式的模式识别过程很难复制到其他的领域中。例如手写数字的识别。这就需要机器学习的技术了。（顺便提一下，开普勒定律在物理学中只是一种唯象的理论，它只对物理事实抽象出概括性的描述，而没有解释内在的原因，也就是牛顿的万有引力定律（其实在更高的层次上，万有引力也是一种唯象的理论，它的解释由量子引力理论给出）。这也意味着，在大数据的机器学习时代，我们挖掘出来的知识更多的也只是一种相关性的规律。）</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="prml_chapter1.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2016/5/16</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='prml.html'>Pattern Recognition and Machine Learning</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="14903538616912.html">
-                
-                  <h1>Nature Review： Deep Learning</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>如今，机器学习的技术在我们的生活中扮演着越来越重要的角色。从搜索引擎到推荐系统，从图像识别到语音识别。而这些应用都开始逐渐使用一类叫做深度学习（Deep Learning）的技术。</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="14903538616912.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2016/5/14</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='papers.html'>研究笔记-论文</a></span>
-          				   
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-              
-
-
-			<div class="row">
-			  <div class="large-6 columns">
-			  <p class="text-left" style="padding-top:25px;">
-			   
-			  </p>
-			  </div>
-			  <div class="large-6 columns">
-			<p class="text-right" style="padding-top:25px;">
-			
-			</p>
-			  </div>
-			</div>
-		</div>
-	</div><!-- large 8 -->
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
